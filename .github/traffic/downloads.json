@@ -16771,5 +16771,136 @@
         "tag": "v1.0.0.0"
       }
     ]
+  },
+  {
+    "timestamp": "2026-05-11T06:31:55Z",
+    "total_downloads": 210,
+    "per_release": [
+      {
+        "assets": [
+          {
+            "downloads": 69,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-27T08:59:33Z",
+        "tag": "v1.0.9.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 10,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-26T18:24:18Z",
+        "tag": "v1.0.8.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 16,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-12T23:09:54Z",
+        "tag": "v1.0.7.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 9,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-11T18:07:19Z",
+        "tag": "v1.0.6.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-08T21:35:25Z",
+        "tag": "v1.0.4.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 8,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-05T19:12:06Z",
+        "tag": "v1.0.3.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 1,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-05T15:33:46Z",
+        "tag": "v1.0.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 26,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-03-01T10:12:25Z",
+        "tag": "v1.0.1.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 12,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-02-27T15:12:12Z",
+        "tag": "v1.0.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 21,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-02-20T14:56:59Z",
+        "tag": "v1.0.0.7"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 24,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "published_at": "2026-02-16T18:47:37Z",
+        "tag": "v2.0.1"
+      },
+      {
+        "assets": [],
+        "published_at": "2026-02-10T15:56:37Z",
+        "tag": "v1.0.0.6"
+      },
+      {
+        "assets": [],
+        "published_at": "2026-02-04T16:30:15Z",
+        "tag": "v1.0.0.5"
+      },
+      {
+        "assets": [],
+        "published_at": "2026-02-01T00:45:44Z",
+        "tag": "v1.0.0.0"
+      }
+    ]
   }
 ]

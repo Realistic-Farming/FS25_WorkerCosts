@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-05-11T18:52:47Z
-**Days tracked:** 41 | **Download snapshots:** 132 (hourly)
+**Last updated:** 2026-05-12T06:08:06Z
+**Days tracked:** 42 | **Download snapshots:** 133 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 124 | 45 |
-| Git Clones | 558 | 152 |
+| Page Views | 115 | 43 |
+| Git Clones | 542 | 146 |
 
-> **Engagement:** 2.7 pages per visitor (14-day avg)
+> **Engagement:** 2.6 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 363 of 45 visitors cloned or downloaded (**806.6%**)
+> **14-day conversion:** 357 of 43 visitors cloned or downloaded (**830.2%**)
 >
-> Unique cloners: 152 | Release downloads: 211
+> Unique cloners: 146 | Release downloads: 211
 
 ---
 
@@ -43,8 +43,8 @@
 | Channel | Count |
 |---------|-------|
 | Zip Downloads | 211 |
-| Git Clones (14-day) | 558 |
-| **Total Acquisitions** | **769** |
+| Git Clones (14-day) | 542 |
+| **Total Acquisitions** | **753** |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 33 | 19 |
-| Google | 21 | 17 |
+| github.com | 31 | 18 |
+| Google | 19 | 15 |
 | kingmods.net | 11 | 4 |
 | Bing | 1 | 1 |
 
@@ -77,10 +77,10 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_WorkerCosts` | 99 | 42 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts` | 91 | 40 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.9.0` | 6 | 4 |
-| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases` | 5 | 5 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.4.0` | 5 | 2 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases` | 4 | 4 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.1.1` | 2 | 2 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/blob/main/CLAUDE.md` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/blob/v1.0.9.0/src/WorkerManager.lua` | 1 | 1 |

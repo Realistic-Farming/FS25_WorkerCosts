@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-05-14T00:06:14Z
-**Days tracked:** 44 | **Download snapshots:** 136 (hourly)
+**Last updated:** 2026-05-14T12:22:23Z
+**Days tracked:** 44 | **Download snapshots:** 137 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 112 | 40 |
-| Git Clones | 536 | 143 |
+| Page Views | 110 | 40 |
+| Git Clones | 551 | 150 |
 
-> **Engagement:** 2.8 pages per visitor (14-day avg)
+> **Engagement:** 2.7 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 355 of 40 visitors cloned or downloaded (**887.5%**)
+> **14-day conversion:** 363 of 40 visitors cloned or downloaded (**907.5%**)
 >
-> Unique cloners: 143 | Release downloads: 212
+> Unique cloners: 150 | Release downloads: 213
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 212 |
-| Git Clones (14-day) | 536 |
-| **Total Acquisitions** | **748** |
+| Zip Downloads | 213 |
+| Git Clones (14-day) | 551 |
+| **Total Acquisitions** | **764** |
 
 ---
 
@@ -56,7 +56,7 @@
 |--------|-------|--------|
 | github.com | 32 | 19 |
 | Google | 17 | 13 |
-| kingmods.net | 10 | 3 |
+| kingmods.net | 11 | 4 |
 | Bing | 1 | 1 |
 
 ---
@@ -77,11 +77,11 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_WorkerCosts` | 88 | 37 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts` | 85 | 37 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.9.0` | 6 | 4 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.4.0` | 5 | 2 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/releases` | 4 | 4 |
-| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.1.1` | 2 | 2 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.1.1` | 3 | 3 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/blob/main/CLAUDE.md` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/blob/v1.0.9.0/src/WorkerManager.lua` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_WorkerCosts/commit/4221b5a8893cfa4635b34fa9d8f5518b5f3bfbae` | 1 | 1 |

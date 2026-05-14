@@ -1,51 +1,59 @@
 name: Feature Request
-description: Suggest an idea or improvement for the mod
-labels: ["enhancement"]
+description: Suggest a new feature or improvement.
+labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Have an idea? We'd love to hear it. Please check existing issues first to avoid duplicates.
+        **Before opening this request:**
+        - Check the roadmap in the README — your idea may already be planned.
+        - Check open issues to avoid duplicates.
+        - Keep requests scoped and specific. "Better worker costs" will be closed. "Add a per-vehicle-type wage multiplier so combine operators cost more than tractor drivers" is actionable.
 
   - type: textarea
     id: problem
     attributes:
       label: What problem does this solve?
-      description: Is there something currently missing or frustrating?
-      placeholder: "It's frustrating that all workers cost the same regardless of what vehicle they're using..."
+      description: Describe the situation or frustration this would address. Focus on the problem, not the solution.
+      placeholder: "All hired workers cost the same flat rate regardless of what they are doing. A combine driver running a $250,000 machine should cost more than a basic field worker."
     validations:
       required: true
 
   - type: textarea
-    id: solution
+    id: proposal
     attributes:
-      label: Describe your idea
-      description: What would you like to see added or changed?
-      placeholder: "A per-vehicle-type wage multiplier so combine drivers cost more than tractor drivers..."
+      label: Proposed Solution
+      description: Describe what you want to happen. Be specific about the behavior, not just the concept.
+      placeholder: "Add configurable wage multipliers per worker category (field work, seeding, harvesting, transport). Each multiplier would be set in the mod settings as a percentage of the base wage."
     validations:
       required: true
 
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives you've considered
-      description: Any other ways this could be solved?
+      label: Alternatives Considered
+      description: Have you thought of other ways to solve this? Why are they not good enough?
+    validations:
+      required: false
 
   - type: dropdown
-    id: priority
+    id: area
     attributes:
-      label: How important is this to you?
+      label: Which part of the mod does this relate to?
       options:
-        - Nice to have
-        - Would improve my experience significantly
-        - I can't enjoy the mod without it
+        - Wage Calculation
+        - Cost Display / HUD
+        - Worker Types
+        - Settings
+        - Mod Compatibility
+        - Other
     validations:
       required: true
 
-  - type: checkboxes
-    id: checklist
+  - type: textarea
+    id: additional
     attributes:
-      label: Checklist
-      options:
-        - label: I searched existing issues and this hasn't been requested yet
-          required: true
+      label: Anything Else?
+      description: Screenshots, mockups, references to how other mods handle this, or any extra context.
+    validations:
+      required: false

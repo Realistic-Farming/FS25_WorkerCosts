@@ -28,22 +28,22 @@ jobs:
           script: |
             const author = context.payload.issue.user.login;
             const repoName = context.repo.repo;
-            const modName = repoName.replace('FS25_', '').replace(/([A-Z])/g, ' $1').trim();
 
             const body = [
-              `Hey @${author}, thanks for opening this issue! 👋`,
+              `Hey @${author}, the farm manager has your report. 🚜`,
               ``,
-              `@TheCodingDad-TisonK has been notified and will take a look as soon as possible.`,
+              `Thanks for opening this issue — @TheCodingDad-TisonK has been notified and will review it as soon as possible.`,
               ``,
-              `**While you wait, please double-check the following:**`,
+              `**Before the HR department can investigate, please confirm:**`,
               ``,
-              `- [ ] You are running the latest version of ${modName} (visible in the mod manager)`,
-              `- [ ] Your issue includes relevant lines from \`log.txt\``,
+              `- [ ] You are running the latest version of Worker Costs (visible in the mod manager)`,
+              `- [ ] Your issue includes the relevant \`[WorkerCosts]\` lines from \`log.txt\``,
               `  - Log location: \`Documents/My Games/FarmingSimulator2025/log.txt\``,
-              `  - Search for \`[${modName}]\` — paste the relevant section in your issue`,
+              `  - Search for \`[WorkerCosts]\` and paste the relevant section here`,
+              `- [ ] If this involves a specific worker type or wage calculation — note the worker type, expected cost, and what was actually charged`,
               `- [ ] You have searched [existing issues](https://github.com/${context.repo.owner}/${repoName}/issues) for a similar report`,
               ``,
-              `> **Important:** If this issue is missing a log snippet, it may be closed without investigation. A log is almost always required to reproduce bugs.`,
+              `> **Note:** Issues without a log snippet are difficult to investigate and may be closed. Wage calculation bugs in particular require log data to trace.`,
             ].join('\n');
 
             await github.rest.issues.createComment({

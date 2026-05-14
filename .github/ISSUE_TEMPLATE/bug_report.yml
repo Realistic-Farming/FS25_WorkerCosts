@@ -1,38 +1,44 @@
 name: Bug Report
-description: Something isn't working correctly in-game
-labels: ["bug"]
+description: Something is broken or behaving incorrectly in-game.
+labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Before submitting, please check that you're on the **latest version** and that the issue isn't already reported.
+        **Before opening this issue:**
+        - Check that you are on the latest version of this mod.
+        - Check that the bug has not already been reported.
+        - Read the log. The game log is at `%USERPROFILE%\Documents\My Games\FarmingSimulator2025\log.txt`. Filter for `[WorkerCosts]` lines.
+
+        Issues opened without a log snippet will be closed without response.
 
   - type: input
     id: mod_version
     attributes:
       label: Mod Version
-      description: Found in the mod manager or modDesc.xml
-      placeholder: "e.g. 1.0.2.0"
+      description: Found in modDesc.xml or the in-game mod manager.
+      placeholder: "e.g. 1.0.6.0"
     validations:
       required: true
 
   - type: input
     id: game_version
     attributes:
-      label: FS25 Game Version
-      description: Shown in the bottom-right corner of the main menu
-      placeholder: "e.g. 1.6.0.0"
+      label: Farming Simulator 25 Version
+      description: Found in the main menu bottom-right corner.
+      placeholder: "e.g. 1.4.0.0"
     validations:
       required: true
 
   - type: dropdown
-    id: multiplayer
+    id: mode
     attributes:
       label: Game Mode
       options:
         - Singleplayer
         - Multiplayer (host)
         - Multiplayer (client)
+        - Dedicated Server
     validations:
       required: true
 
@@ -40,8 +46,8 @@ body:
     id: description
     attributes:
       label: What happened?
-      description: Describe the bug clearly. What did you expect to happen?
-      placeholder: "Workers are being charged twice per payment interval..."
+      description: Describe the bug clearly. What did you see? What did you expect to see?
+      placeholder: "Workers are being charged twice per pay period. I hired a combine driver and the cost was deducted twice from my balance within the same payment interval."
     validations:
       required: true
 
@@ -49,33 +55,45 @@ body:
     id: steps
     attributes:
       label: Steps to Reproduce
+      description: Exact steps that trigger the bug. If you cannot reproduce it reliably, say so.
       placeholder: |
-        1. Hire a worker
-        2. Wait 5 minutes
-        3. Check balance...
+        1. Start a new game on Elmcreek
+        2. Hire a combine driver for field 5
+        3. Wait one payment interval (5 in-game minutes)
+        4. Check balance — deducted twice the expected amount
     validations:
       required: true
 
   - type: textarea
     id: log
     attributes:
-      label: Relevant Log Output
-      description: Paste lines from `log.txt` tagged with `[Worker Costs]` or nearby errors. Find it at `%USERPROFILE%\Documents\My Games\FarmingSimulator2025\log.txt`
+      label: Log Snippet
+      description: |
+        Paste all `[WorkerCosts]` lines from your log.txt covering the session where the bug occurred.
+        If there are errors (lines containing "Error" or "attempt to"), include the full stack trace.
       render: text
+      placeholder: |
+        [WorkerCosts] Initialized. Base wage: $15.00/hr
+        [WorkerCosts] Worker hired: type=COMBINE, rate=22.50
+        [WorkerCosts] Payment applied: worker=COMBINE, amount=22.50
+        [WorkerCosts] Payment applied: worker=COMBINE, amount=22.50
+        ...
+    validations:
+      required: true
 
   - type: textarea
     id: other_mods
     attributes:
-      label: Other Active Mods
-      description: List any other mods that might interact with workers or finances.
-      placeholder: "FS25_NPCFavor, FS25_TaxMod..."
+      label: Other Mods Loaded
+      description: List any other mods active in this save. You can paste the mod list from the game's mod manager.
+      placeholder: "FS25_TaxMod, FS25_IncomeMod, Courseplay, AutoDrive, ..."
+    validations:
+      required: true
 
-  - type: checkboxes
-    id: checklist
+  - type: textarea
+    id: additional
     attributes:
-      label: Checklist
-      options:
-        - label: I am on the latest version of the mod
-          required: true
-        - label: I searched existing issues and this hasn't been reported yet
-          required: true
+      label: Anything Else?
+      description: Screenshots, save files, or any other context that might help.
+    validations:
+      required: false

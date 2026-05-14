@@ -12,7 +12,7 @@ body:
   - type: input
     id: mod_version
     attributes:
-      label: Realistic Worker Costs Version
+      label: Worker Costs Version
       placeholder: "e.g. 1.0.6.0"
     validations:
       required: true
@@ -30,7 +30,7 @@ body:
     attributes:
       label: Conflicting Mod Name
       description: Exact name as shown in the mod manager or modDesc.xml.
-      placeholder: "e.g. FS25_SomeOtherMod"
+      placeholder: "e.g. FS25_TaxMod"
     validations:
       required: true
 
@@ -38,7 +38,7 @@ body:
     id: other_mod_version
     attributes:
       label: Conflicting Mod Version
-      placeholder: "e.g. 1.2.1.0"
+      placeholder: "e.g. 1.1.0.0"
     validations:
       required: true
 
@@ -55,8 +55,8 @@ body:
     id: description
     attributes:
       label: What is the conflict?
-      description: Describe exactly what goes wrong. Wrong values? Crash? Features from one mod disabling the other? Be specific.
-      placeholder: "When FS25_SomeOtherMod is loaded, worker cost deductions are applied twice per pay period."
+      description: Describe exactly what goes wrong. Double-charged wages? Worker cost display broken? Settings not saving? Be specific.
+      placeholder: "When FS25_TaxMod is loaded, worker wages are taxed before being deducted, resulting in workers costing less than configured."
     validations:
       required: true
 
@@ -68,8 +68,8 @@ body:
       placeholder: |
         1. Load both mods
         2. Start a new game
-        3. Hire a worker
-        4. Wait for pay period — costs deducted twice
+        3. Hire a worker and wait for a pay period
+        4. Deducted amount is different from what the cost display shows
     validations:
       required: true
 
@@ -78,7 +78,7 @@ body:
     attributes:
       label: Isolation Test
       description: Did you confirm the issue disappears when the conflicting mod is removed? This is important — without this step we cannot tell which mod is the source.
-      placeholder: "Yes — removing the other mod makes worker cost deductions correct."
+      placeholder: "Yes — removing FS25_TaxMod makes worker costs match the display correctly."
     validations:
       required: true
 
@@ -86,7 +86,7 @@ body:
     id: log
     attributes:
       label: Log Snippet
-      description: Paste all `[Worker Costs]` lines from your log.txt, plus any errors in the same session. Include the full stack trace if there is one.
+      description: Paste all `[WorkerCosts]` lines from your log.txt, plus any errors in the same session. Include the full stack trace if there is one.
       render: text
     validations:
       required: true

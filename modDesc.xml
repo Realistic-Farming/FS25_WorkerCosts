@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
     <version>1.0.9.0</version>
@@ -47,6 +47,8 @@
             <br>Mod Custos Trabalhadores</br>
             <uk>Мод витрат на працівників</uk>
             <ru>Мод расходов на работников</ru>
+        
+            <da>[EN] Worker Costs Mod</da>
         </text>
         
         <text name="wc_enabled_short">
@@ -60,6 +62,8 @@
             <br>Ativar mod</br>
             <uk>Увімкнути мод</uk>
             <ru>Включить мод</ru>
+        
+            <da>[EN] Enable Mod</da>
         </text>
         
         <text name="wc_enabled_long">
@@ -73,6 +77,8 @@
             <br>Ativar ou desativar o mod de custos de trabalhadores</br>
             <uk>Увімкнути або вимкнути мод витрат на працівників</uk>
             <ru>Включить или выключить мод расходов на работников</ru>
+        
+            <da>[EN] Enable or disable the worker costs mod</da>
         </text>
         
         <text name="wc_debug_short">
@@ -86,6 +92,8 @@
             <br>Modo DEBUG</br>
             <uk>Режим DEBUG</uk>
             <ru>Режим DEBUG</ru>
+        
+            <da>[EN] DEBUG Mode</da>
         </text>
         
         <text name="wc_debug_long">
@@ -99,6 +107,8 @@
             <br>Ativar/desativar modo DEBUG (registro adicional)</br>
             <uk>Увімкнути/вимкнути режим DEBUG (додаткове логування)</uk>
             <ru>Включить/выключить режим DEBUG (дополнительное логирование)</ru>
+        
+            <da>[EN] Enable/disable debug mode (extra logging)</da>
         </text>
         
         <text name="wc_costmode_short">
@@ -112,6 +122,8 @@
             <br>Modo de custo</br>
             <uk>Режим витрат</uk>
             <ru>Режим расходов</ru>
+        
+            <da>[EN] Cost Mode</da>
         </text>
         
         <text name="wc_costmode_long">
@@ -125,6 +137,8 @@
             <br>Escolher cálculo de custos: por hora ou por hectare</br>
             <uk>Виберіть розрахунок витрат: погодинно або за гектар</uk>
             <ru>Выбрать расчет расходов: почасово или за гектар</ru>
+        
+            <da>[EN] Choose cost calculation: hourly or per hectare</da>
         </text>
         
         <text name="wc_costmode_1">
@@ -138,6 +152,8 @@
             <br>Por hora ($/h)</br>
             <uk>Погодинно ($/год)</uk>
             <ru>Почасово ($/ч)</ru>
+        
+            <da>[EN] Hourly ($/h)</da>
         </text>
         
         <text name="wc_costmode_2">
@@ -151,6 +167,8 @@
             <br>Por hectare ($/ha)</br>
             <uk>За гектар ($/га)</uk>
             <ru>За гектар ($/га)</ru>
+        
+            <da>[EN] Per Hectare ($/ha)</da>
         </text>
         
         <text name="wc_monthly_salary_short">
@@ -164,6 +182,8 @@
             <br>Salário Mensal</br>
             <uk>Щомісячна заробітна плата</uk>
             <ru>Ежемесячная зарплата</ru>
+        
+            <da>[EN] Monthly Salary</da>
         </text>
 
         <text name="wc_difficulty_short">
@@ -177,6 +197,8 @@
             <br>Nível salarial</br>
             <uk>Рівень оплати</uk>
             <ru>Уровень оплаты</ru>
+        
+            <da>[EN] Wage Level</da>
         </text>
         
         <text name="wc_difficulty_long">
@@ -190,6 +212,8 @@
             <br>Definir taxa salarial base: Baixa=15$/h, Média=25$/h, Alta=40$/h</br>
             <uk>Встановити базову ставку: Низька=15$/год, Середня=25$/год, Висока=40$/год</uk>
             <ru>Установить базовую ставку: Низкая=15$/ч, Средняя=25$/ч, Высокая=40$/ч</ru>
+        
+            <da>[EN] Set base wage rate: Low=$15/h, Medium=$25/h, High=$40/h</da>
         </text>
         
         <text name="wc_diff_1">
@@ -203,6 +227,8 @@
             <br>Baixa (15$/h)</br>
             <uk>Низька (15$/год)</uk>
             <ru>Низкая (15$/ч)</ru>
+        
+            <da>[EN] Low ($15/h)</da>
         </text>
         
         <text name="wc_diff_2">
@@ -216,6 +242,8 @@
             <br>Média (25$/h)</br>
             <uk>Середня (25$/год)</uk>
             <ru>Средняя (25$/ч)</ru>
+        
+            <da>[EN] Medium ($25/h)</da>
         </text>
         
         <text name="wc_diff_3">
@@ -229,6 +257,8 @@
             <br>Alta (40$/h)</br>
             <uk>Висока (40$/год)</uk>
             <ru>Высокая (40$/ч)</ru>
+        
+            <da>[EN] High ($40/h)</da>
         </text>
         
         <text name="wc_notifications_short">
@@ -242,6 +272,8 @@
             <br>Notificações</br>
             <uk>Сповіщення</uk>
             <ru>Уведомления</ru>
+        
+            <da>[EN] Notifications</da>
         </text>
         
         <text name="wc_notifications_long">
@@ -255,6 +287,8 @@
             <br>Ativar/desativar notificações de pagamento de salários</br>
             <uk>Увімкнути/вимкнути сповіщення про виплату заробітної плати</uk>
             <ru>Включить/выключить уведомления о выплате заработной платы</ru>
+        
+            <da>[EN] Enable/disable wage payment notifications</da>
         </text>
         
         <text name="wc_customrate_short">
@@ -268,6 +302,8 @@
             <br>Taxa personalizada</br>
             <uk>Власна ставка</uk>
             <ru>Пользовательская ставка</ru>
+        
+            <da>[EN] Custom Rate</da>
         </text>
         
         <text name="wc_customrate_long">
@@ -281,6 +317,8 @@
             <br>Definir taxa salarial personalizada (0 = usar configuração de nível)</br>
             <uk>Встановити власну ставку оплати (0 = використовувати налаштування рівня)</uk>
             <ru>Установить пользовательскую ставку оплаты (0 = использовать настройку уровня)</ru>
+        
+            <da>[EN] Set custom wage rate (0 = use wage level setting)</da>
         </text>
         
         <text name="wc_reset">
@@ -294,21 +332,67 @@
             <br>Restaurar configurações de trabalhadores</br>
             <uk>Скинути налаштування працівників</uk>
             <ru>Сбросить настройки работников</ru>
+        
+            <da>[EN] Reset Worker Settings</da>
         </text>
 
         <!-- ════ New Pause Menu GUI strings ════ -->
 
         <text name="wc_menu_title">
             <en>Worker Costs</en>
+        
+            <de>[EN] Worker Costs</de>
+            <fr>[EN] Worker Costs</fr>
+            <pl>[EN] Worker Costs</pl>
+            <es>[EN] Worker Costs</es>
+            <it>[EN] Worker Costs</it>
+            <cz>[EN] Worker Costs</cz>
+            <br>[EN] Worker Costs</br>
+            <uk>[EN] Worker Costs</uk>
+            <ru>[EN] Worker Costs</ru>
+            <da>[EN] Worker Costs</da>
         </text>
         <text name="wc_balance_label">
             <en>Balance:</en>
+        
+            <de>[EN] Balance:</de>
+            <fr>[EN] Balance:</fr>
+            <pl>[EN] Balance:</pl>
+            <es>[EN] Balance:</es>
+            <it>[EN] Balance:</it>
+            <cz>[EN] Balance:</cz>
+            <br>[EN] Balance:</br>
+            <uk>[EN] Balance:</uk>
+            <ru>[EN] Balance:</ru>
+            <da>[EN] Balance:</da>
         </text>
         <text name="wc_btn_open_manager">
             <en>Open Manager</en>
+        
+            <de>[EN] Open Manager</de>
+            <fr>[EN] Open Manager</fr>
+            <pl>[EN] Open Manager</pl>
+            <es>[EN] Open Manager</es>
+            <it>[EN] Open Manager</it>
+            <cz>[EN] Open Manager</cz>
+            <br>[EN] Open Manager</br>
+            <uk>[EN] Open Manager</uk>
+            <ru>[EN] Open Manager</ru>
+            <da>[EN] Open Manager</da>
         </text>
         <text name="wc_hint_open_manager">
             <en>Press Accept to open the full Worker Costs manager.</en>
+        
+            <de>[EN] Press Accept to open the full Worker Costs manager.</de>
+            <fr>[EN] Press Accept to open the full Worker Costs manager.</fr>
+            <pl>[EN] Press Accept to open the full Worker Costs manager.</pl>
+            <es>[EN] Press Accept to open the full Worker Costs manager.</es>
+            <it>[EN] Press Accept to open the full Worker Costs manager.</it>
+            <cz>[EN] Press Accept to open the full Worker Costs manager.</cz>
+            <br>[EN] Press Accept to open the full Worker Costs manager.</br>
+            <uk>[EN] Press Accept to open the full Worker Costs manager.</uk>
+            <ru>[EN] Press Accept to open the full Worker Costs manager.</ru>
+            <da>[EN] Press Accept to open the full Worker Costs manager.</da>
         </text>
 
         <!-- Tab titles -->
@@ -318,6 +402,13 @@
             <fr>Tableau de bord</fr>
             <pl>Panel</pl>
             <es>Panel</es>
+        
+            <it>[EN] Dashboard</it>
+            <cz>[EN] Dashboard</cz>
+            <br>[EN] Dashboard</br>
+            <uk>[EN] Dashboard</uk>
+            <ru>[EN] Dashboard</ru>
+            <da>[EN] Dashboard</da>
         </text>
         <text name="wc_tab_wage_settings">
             <en>Wage Settings</en>
@@ -325,64 +416,269 @@
             <fr>Paramètres Salaire</fr>
             <pl>Ustawienia płac</pl>
             <es>Configuración salarial</es>
+        
+            <it>[EN] Wage Settings</it>
+            <cz>[EN] Wage Settings</cz>
+            <br>[EN] Wage Settings</br>
+            <uk>[EN] Wage Settings</uk>
+            <ru>[EN] Wage Settings</ru>
+            <da>[EN] Wage Settings</da>
         </text>
         
         <!-- Section headings -->
         <text name="wc_section_status">
             <en>Mod Status</en>
+        
+            <de>[EN] Mod Status</de>
+            <fr>[EN] Mod Status</fr>
+            <pl>[EN] Mod Status</pl>
+            <es>[EN] Mod Status</es>
+            <it>[EN] Mod Status</it>
+            <cz>[EN] Mod Status</cz>
+            <br>[EN] Mod Status</br>
+            <uk>[EN] Mod Status</uk>
+            <ru>[EN] Mod Status</ru>
+            <da>[EN] Mod Status</da>
         </text>
         <text name="wc_section_workers">
             <en>Active Workers</en>
+        
+            <de>[EN] Active Workers</de>
+            <fr>[EN] Active Workers</fr>
+            <pl>[EN] Active Workers</pl>
+            <es>[EN] Active Workers</es>
+            <it>[EN] Active Workers</it>
+            <cz>[EN] Active Workers</cz>
+            <br>[EN] Active Workers</br>
+            <uk>[EN] Active Workers</uk>
+            <ru>[EN] Active Workers</ru>
+            <da>[EN] Active Workers</da>
         </text>
         <text name="wc_section_payment">
             <en>Payment Info</en>
+        
+            <de>[EN] Payment Info</de>
+            <fr>[EN] Payment Info</fr>
+            <pl>[EN] Payment Info</pl>
+            <es>[EN] Payment Info</es>
+            <it>[EN] Payment Info</it>
+            <cz>[EN] Payment Info</cz>
+            <br>[EN] Payment Info</br>
+            <uk>[EN] Payment Info</uk>
+            <ru>[EN] Payment Info</ru>
+            <da>[EN] Payment Info</da>
         </text>
         <text name="wc_section_general">
             <en>General</en>
+        
+            <de>[EN] General</de>
+            <fr>[EN] General</fr>
+            <pl>[EN] General</pl>
+            <es>[EN] General</es>
+            <it>[EN] General</it>
+            <cz>[EN] General</cz>
+            <br>[EN] General</br>
+            <uk>[EN] General</uk>
+            <ru>[EN] General</ru>
+            <da>[EN] General</da>
         </text>
         <text name="wc_section_cost_mode">
             <en>Cost Mode</en>
+        
+            <de>[EN] Cost Mode</de>
+            <fr>[EN] Cost Mode</fr>
+            <pl>[EN] Cost Mode</pl>
+            <es>[EN] Cost Mode</es>
+            <it>[EN] Cost Mode</it>
+            <cz>[EN] Cost Mode</cz>
+            <br>[EN] Cost Mode</br>
+            <uk>[EN] Cost Mode</uk>
+            <ru>[EN] Cost Mode</ru>
+            <da>[EN] Cost Mode</da>
         </text>
         <text name="wc_section_wage_level">
             <en>Wage Level</en>
+        
+            <de>[EN] Wage Level</de>
+            <fr>[EN] Wage Level</fr>
+            <pl>[EN] Wage Level</pl>
+            <es>[EN] Wage Level</es>
+            <it>[EN] Wage Level</it>
+            <cz>[EN] Wage Level</cz>
+            <br>[EN] Wage Level</br>
+            <uk>[EN] Wage Level</uk>
+            <ru>[EN] Wage Level</ru>
+            <da>[EN] Wage Level</da>
         </text>
         <text name="wc_section_effective">
             <en>Effective Rate</en>
+        
+            <de>[EN] Effective Rate</de>
+            <fr>[EN] Effective Rate</fr>
+            <pl>[EN] Effective Rate</pl>
+            <es>[EN] Effective Rate</es>
+            <it>[EN] Effective Rate</it>
+            <cz>[EN] Effective Rate</cz>
+            <br>[EN] Effective Rate</br>
+            <uk>[EN] Effective Rate</uk>
+            <ru>[EN] Effective Rate</ru>
+            <da>[EN] Effective Rate</da>
         </text>
 
         <!-- Row labels -->
         <text name="wc_label_mod_enabled">
             <en>Mod Active:</en>
+        
+            <de>[EN] Mod Active:</de>
+            <fr>[EN] Mod Active:</fr>
+            <pl>[EN] Mod Active:</pl>
+            <es>[EN] Mod Active:</es>
+            <it>[EN] Mod Active:</it>
+            <cz>[EN] Mod Active:</cz>
+            <br>[EN] Mod Active:</br>
+            <uk>[EN] Mod Active:</uk>
+            <ru>[EN] Mod Active:</ru>
+            <da>[EN] Mod Active:</da>
         </text>
         <text name="wc_label_cost_mode">
             <en>Cost Mode:</en>
+        
+            <de>[EN] Cost Mode:</de>
+            <fr>[EN] Cost Mode:</fr>
+            <pl>[EN] Cost Mode:</pl>
+            <es>[EN] Cost Mode:</es>
+            <it>[EN] Cost Mode:</it>
+            <cz>[EN] Cost Mode:</cz>
+            <br>[EN] Cost Mode:</br>
+            <uk>[EN] Cost Mode:</uk>
+            <ru>[EN] Cost Mode:</ru>
+            <da>[EN] Cost Mode:</da>
         </text>
         <text name="wc_label_wage_level">
             <en>Wage Level:</en>
+        
+            <de>[EN] Wage Level:</de>
+            <fr>[EN] Wage Level:</fr>
+            <pl>[EN] Wage Level:</pl>
+            <es>[EN] Wage Level:</es>
+            <it>[EN] Wage Level:</it>
+            <cz>[EN] Wage Level:</cz>
+            <br>[EN] Wage Level:</br>
+            <uk>[EN] Wage Level:</uk>
+            <ru>[EN] Wage Level:</ru>
+            <da>[EN] Wage Level:</da>
         </text>
         <text name="wc_label_current_rate">
             <en>Current Rate:</en>
+        
+            <de>[EN] Current Rate:</de>
+            <fr>[EN] Current Rate:</fr>
+            <pl>[EN] Current Rate:</pl>
+            <es>[EN] Current Rate:</es>
+            <it>[EN] Current Rate:</it>
+            <cz>[EN] Current Rate:</cz>
+            <br>[EN] Current Rate:</br>
+            <uk>[EN] Current Rate:</uk>
+            <ru>[EN] Current Rate:</ru>
+            <da>[EN] Current Rate:</da>
         </text>
         <text name="wc_label_active_workers">
             <en>Active Workers:</en>
+        
+            <de>[EN] Active Workers:</de>
+            <fr>[EN] Active Workers:</fr>
+            <pl>[EN] Active Workers:</pl>
+            <es>[EN] Active Workers:</es>
+            <it>[EN] Active Workers:</it>
+            <cz>[EN] Active Workers:</cz>
+            <br>[EN] Active Workers:</br>
+            <uk>[EN] Active Workers:</uk>
+            <ru>[EN] Active Workers:</ru>
+            <da>[EN] Active Workers:</da>
         </text>
         <text name="wc_label_next_payment">
             <en>Next Payment:</en>
+        
+            <de>[EN] Next Payment:</de>
+            <fr>[EN] Next Payment:</fr>
+            <pl>[EN] Next Payment:</pl>
+            <es>[EN] Next Payment:</es>
+            <it>[EN] Next Payment:</it>
+            <cz>[EN] Next Payment:</cz>
+            <br>[EN] Next Payment:</br>
+            <uk>[EN] Next Payment:</uk>
+            <ru>[EN] Next Payment:</ru>
+            <da>[EN] Next Payment:</da>
         </text>
         <text name="wc_label_est_cost">
             <en>Est. Cost:</en>
+        
+            <de>[EN] Est. Cost:</de>
+            <fr>[EN] Est. Cost:</fr>
+            <pl>[EN] Est. Cost:</pl>
+            <es>[EN] Est. Cost:</es>
+            <it>[EN] Est. Cost:</it>
+            <cz>[EN] Est. Cost:</cz>
+            <br>[EN] Est. Cost:</br>
+            <uk>[EN] Est. Cost:</uk>
+            <ru>[EN] Est. Cost:</ru>
+            <da>[EN] Est. Cost:</da>
         </text>
         <text name="wc_label_farm_balance">
             <en>Farm Balance:</en>
+        
+            <de>[EN] Farm Balance:</de>
+            <fr>[EN] Farm Balance:</fr>
+            <pl>[EN] Farm Balance:</pl>
+            <es>[EN] Farm Balance:</es>
+            <it>[EN] Farm Balance:</it>
+            <cz>[EN] Farm Balance:</cz>
+            <br>[EN] Farm Balance:</br>
+            <uk>[EN] Farm Balance:</uk>
+            <ru>[EN] Farm Balance:</ru>
+            <da>[EN] Farm Balance:</da>
         </text>
         <text name="wc_label_worker_list">
             <en>Worker Names</en>
+        
+            <de>[EN] Worker Names</de>
+            <fr>[EN] Worker Names</fr>
+            <pl>[EN] Worker Names</pl>
+            <es>[EN] Worker Names</es>
+            <it>[EN] Worker Names</it>
+            <cz>[EN] Worker Names</cz>
+            <br>[EN] Worker Names</br>
+            <uk>[EN] Worker Names</uk>
+            <ru>[EN] Worker Names</ru>
+            <da>[EN] Worker Names</da>
         </text>
         <text name="wc_label_effective_rate">
             <en>Effective Rate:</en>
+        
+            <de>[EN] Effective Rate:</de>
+            <fr>[EN] Effective Rate:</fr>
+            <pl>[EN] Effective Rate:</pl>
+            <es>[EN] Effective Rate:</es>
+            <it>[EN] Effective Rate:</it>
+            <cz>[EN] Effective Rate:</cz>
+            <br>[EN] Effective Rate:</br>
+            <uk>[EN] Effective Rate:</uk>
+            <ru>[EN] Effective Rate:</ru>
+            <da>[EN] Effective Rate:</da>
         </text>
         <text name="wc_label_pay_interval">
             <en>Payment Interval:</en>
+        
+            <de>[EN] Payment Interval:</de>
+            <fr>[EN] Payment Interval:</fr>
+            <pl>[EN] Payment Interval:</pl>
+            <es>[EN] Payment Interval:</es>
+            <it>[EN] Payment Interval:</it>
+            <cz>[EN] Payment Interval:</cz>
+            <br>[EN] Payment Interval:</br>
+            <uk>[EN] Payment Interval:</uk>
+            <ru>[EN] Payment Interval:</ru>
+            <da>[EN] Payment Interval:</da>
         </text>
 
         <!-- Status values -->
@@ -392,6 +688,13 @@
             <fr>Actif</fr>
             <pl>Aktywny</pl>
             <es>Activo</es>
+        
+            <it>[EN] Active</it>
+            <cz>[EN] Active</cz>
+            <br>[EN] Active</br>
+            <uk>[EN] Active</uk>
+            <ru>[EN] Active</ru>
+            <da>[EN] Active</da>
         </text>
         <text name="wc_status_inactive">
             <en>Inactive</en>
@@ -399,6 +702,13 @@
             <fr>Inactif</fr>
             <pl>Nieaktywny</pl>
             <es>Inactivo</es>
+        
+            <it>[EN] Inactive</it>
+            <cz>[EN] Inactive</cz>
+            <br>[EN] Inactive</br>
+            <uk>[EN] Inactive</uk>
+            <ru>[EN] Inactive</ru>
+            <da>[EN] Inactive</da>
         </text>
         <text name="wc_no_workers">
             <en>No active workers</en>
@@ -406,6 +716,13 @@
             <fr>Aucun ouvrier actif</fr>
             <pl>Brak aktywnych pracowników</pl>
             <es>Sin trabajadores activos</es>
+        
+            <it>[EN] No active workers</it>
+            <cz>[EN] No active workers</cz>
+            <br>[EN] No active workers</br>
+            <uk>[EN] No active workers</uk>
+            <ru>[EN] No active workers</ru>
+            <da>[EN] No active workers</da>
         </text>
 
         <!-- Section headers -->
@@ -414,24 +731,56 @@
             <de>Konfiguration</de>
             <fr>Configuration</fr>
             <es>Configuración</es>
+        
+            <pl>[EN] Configuration</pl>
+            <it>[EN] Configuration</it>
+            <cz>[EN] Configuration</cz>
+            <br>[EN] Configuration</br>
+            <uk>[EN] Configuration</uk>
+            <ru>[EN] Configuration</ru>
+            <da>[EN] Configuration</da>
         </text>
         <text name="wc_section_summary">
             <en>Summary</en>
             <de>Zusammenfassung</de>
             <fr>Résumé</fr>
             <es>Resumen</es>
+        
+            <pl>[EN] Summary</pl>
+            <it>[EN] Summary</it>
+            <cz>[EN] Summary</cz>
+            <br>[EN] Summary</br>
+            <uk>[EN] Summary</uk>
+            <ru>[EN] Summary</ru>
+            <da>[EN] Summary</da>
         </text>
         <text name="wc_section_breakdown">
             <en>Worker Breakdown</en>
             <de>Arbeiter-Aufschlüsselung</de>
             <fr>Détail par ouvrier</fr>
             <es>Desglose de trabajadores</es>
+        
+            <pl>[EN] Worker Breakdown</pl>
+            <it>[EN] Worker Breakdown</it>
+            <cz>[EN] Worker Breakdown</cz>
+            <br>[EN] Worker Breakdown</br>
+            <uk>[EN] Worker Breakdown</uk>
+            <ru>[EN] Worker Breakdown</ru>
+            <da>[EN] Worker Breakdown</da>
         </text>
         <text name="wc_section_how_it_works">
             <en>How It Works</en>
             <de>Funktionsweise</de>
             <fr>Comment ça marche</fr>
             <es>Cómo funciona</es>
+        
+            <pl>[EN] How It Works</pl>
+            <it>[EN] How It Works</it>
+            <cz>[EN] How It Works</cz>
+            <br>[EN] How It Works</br>
+            <uk>[EN] How It Works</uk>
+            <ru>[EN] How It Works</ru>
+            <da>[EN] How It Works</da>
         </text>
 
         <!-- Column headers for Worker Stats -->
@@ -440,12 +789,28 @@
             <de>ARBEITER</de>
             <fr>OUVRIER</fr>
             <es>TRABAJADOR</es>
+        
+            <pl>[EN] WORKER</pl>
+            <it>[EN] WORKER</it>
+            <cz>[EN] WORKER</cz>
+            <br>[EN] WORKER</br>
+            <uk>[EN] WORKER</uk>
+            <ru>[EN] WORKER</ru>
+            <da>[EN] WORKER</da>
         </text>
         <text name="wc_col_interval_cost">
             <en>COST / INTERVAL</en>
             <de>KOSTEN / INTERVALL</de>
             <fr>COÛT / INTERVALLE</fr>
             <es>COSTO / INTERVALO</es>
+        
+            <pl>[EN] COST / INTERVAL</pl>
+            <it>[EN] COST / INTERVAL</it>
+            <cz>[EN] COST / INTERVAL</cz>
+            <br>[EN] COST / INTERVAL</br>
+            <uk>[EN] COST / INTERVAL</uk>
+            <ru>[EN] COST / INTERVAL</ru>
+            <da>[EN] COST / INTERVAL</da>
         </text>
 
         <!-- Worker Stats labels -->
@@ -454,12 +819,28 @@
             <de>Pro Arbeiter</de>
             <fr>Par ouvrier</fr>
             <es>Por trabajador</es>
+        
+            <pl>[EN] Per Worker</pl>
+            <it>[EN] Per Worker</it>
+            <cz>[EN] Per Worker</cz>
+            <br>[EN] Per Worker</br>
+            <uk>[EN] Per Worker</uk>
+            <ru>[EN] Per Worker</ru>
+            <da>[EN] Per Worker</da>
         </text>
         <text name="wc_label_total_interval_cost">
             <en>Total / Interval</en>
             <de>Gesamt / Intervall</de>
             <fr>Total / Intervalle</fr>
             <es>Total / Intervalo</es>
+        
+            <pl>[EN] Total / Interval</pl>
+            <it>[EN] Total / Interval</it>
+            <cz>[EN] Total / Interval</cz>
+            <br>[EN] Total / Interval</br>
+            <uk>[EN] Total / Interval</uk>
+            <ru>[EN] Total / Interval</ru>
+            <da>[EN] Total / Interval</da>
         </text>
 
         <!-- Tab titles -->
@@ -468,12 +849,28 @@
             <de>Arbeiter-Statistiken</de>
             <fr>Stats Ouvriers</fr>
             <es>Stats Trabajadores</es>
+        
+            <pl>[EN] Worker Stats</pl>
+            <it>[EN] Worker Stats</it>
+            <cz>[EN] Worker Stats</cz>
+            <br>[EN] Worker Stats</br>
+            <uk>[EN] Worker Stats</uk>
+            <ru>[EN] Worker Stats</ru>
+            <da>[EN] Worker Stats</da>
         </text>
         <text name="wc_tab_about">
             <en>About</en>
             <de>Info</de>
             <fr>À propos</fr>
             <es>Acerca de</es>
+        
+            <pl>[EN] About</pl>
+            <it>[EN] About</it>
+            <cz>[EN] About</cz>
+            <br>[EN] About</br>
+            <uk>[EN] About</uk>
+            <ru>[EN] About</ru>
+            <da>[EN] About</da>
         </text>
 
         <!-- About frame -->
@@ -482,12 +879,28 @@
             <de>VERSION</de>
             <fr>VERSION</fr>
             <es>VERSIÓN</es>
+        
+            <pl>[EN] VERSION</pl>
+            <it>[EN] VERSION</it>
+            <cz>[EN] VERSION</cz>
+            <br>[EN] VERSION</br>
+            <uk>[EN] VERSION</uk>
+            <ru>[EN] VERSION</ru>
+            <da>[EN] VERSION</da>
         </text>
         <text name="wc_about_payment_note">
             <en>Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</en>
             <de>Zahlungen laufen in Echtzeit — die Spielgeschwindigkeit hat keinen Einfluss auf die Abrechnung.</de>
             <fr>Les paiements s'effectuent en temps réel — la vitesse du jeu n'affecte pas la facturation.</fr>
             <es>Los pagos se ejecutan en tiempo real — la velocidad del juego no afecta la facturación.</es>
+        
+            <pl>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</pl>
+            <it>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</it>
+            <cz>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</cz>
+            <br>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</br>
+            <uk>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</uk>
+            <ru>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</ru>
+            <da>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</da>
         </text>
         <text name="wc_about_body">
             <en>Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
@@ -510,6 +923,126 @@ This mod is multiplayer compatible. Settings are saved per save game.</en>
             <de>Realistische Arbeiterkosten ersetzt das Standard-Arbeiterlohnsystem durch ein Abrechnungsmodell auf Basis von Echtzeit.</de>
             <fr>Coûts Réalistes des Ouvriers remplace le système de salaire par défaut par un modèle de facturation basé sur le temps réel.</fr>
             <es>Costos Realistas de Trabajadores reemplaza el sistema de pago de trabajadores predeterminado con un modelo de facturación basado en tiempo real.</es>
+        
+            <pl>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</pl>
+            <it>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</it>
+            <cz>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</cz>
+            <br>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</br>
+            <uk>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</uk>
+            <ru>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</ru>
+            <da>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
+
+Workers are charged on a fixed schedule regardless of game speed. Each active AI worker costs money every payment interval.
+
+HOURLY MODE
+A fixed rate per worker per hour. Charges scale with how many workers are active and how long they work.
+
+PER-HECTARE MODE
+Workers are charged based on area worked. The per-hectare rate scales with your Wage Level setting.
+
+WAGE SETTINGS
+Adjust Cost Mode, Wage Level, and toggle notifications in the Wage Settings tab. Use Reset to restore defaults.
+
+WORKER STATS
+The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
+
+This mod is multiplayer compatible. Settings are saved per save game.</da>
         </text>
 
         <!-- WCMenuPage landing -->
@@ -518,11 +1051,30 @@ This mod is multiplayer compatible. Settings are saved per save game.</en>
             <de>Überwachen Sie Ihre Arbeitskosten und den Abrechnungsstatus auf einen Blick.</de>
             <fr>Surveillez vos coûts de main-d'oeuvre d'un coup d'oeil. Ouvrez le Gestionnaire pour les statistiques en direct.</fr>
             <es>Supervise los costos de sus trabajadores de un vistazo. Abra el Administrador para estadísticas en vivo.</es>
+        
+            <pl>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</pl>
+            <it>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</it>
+            <cz>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</cz>
+            <br>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</br>
+            <uk>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</uk>
+            <ru>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</ru>
+            <da>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</da>
         </text>
 
         <!-- Help text for Wage Settings tab -->
         <text name="wc_help_title">
             <en>Help</en>
+        
+            <de>[EN] Help</de>
+            <fr>[EN] Help</fr>
+            <pl>[EN] Help</pl>
+            <es>[EN] Help</es>
+            <it>[EN] Help</it>
+            <cz>[EN] Help</cz>
+            <br>[EN] Help</br>
+            <uk>[EN] Help</uk>
+            <ru>[EN] Help</ru>
+            <da>[EN] Help</da>
         </text>
         <text name="wc_help_body">
             <en>COST MODE
@@ -538,6 +1090,137 @@ PAYMENTS
 Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
 
 Use Reset to restore all settings to their defaults.</en>
+        
+            <de>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</de>
+            <fr>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</fr>
+            <pl>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</pl>
+            <es>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</es>
+            <it>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</it>
+            <cz>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</cz>
+            <br>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</br>
+            <uk>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</uk>
+            <ru>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</ru>
+            <da>[EN] COST MODE
+Hourly — pay a fixed rate per worker per real-time hour.
+Per Hectare — pay based on area worked.
+
+WAGE LEVEL
+Low    = $15 per worker per hour
+Medium = $25 per worker per hour
+High   = $40 per worker per hour
+
+PAYMENTS
+Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+
+Use Reset to restore all settings to their defaults.</da>
         </text>
     </l10n>
 

@@ -9779,39 +9779,39 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-05-17T06:16:06Z",
+    "timestamp": "2026-05-17T18:57:56Z",
     "date": "2026-05-17",
     "views": {
-      "count": 117,
-      "uniques": 42
+      "count": 106,
+      "uniques": 41
     },
     "clones": {
-      "count": 554,
-      "uniques": 161
+      "count": 490,
+      "uniques": 143
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 46,
-        "uniques": 22
+        "count": 41,
+        "uniques": 21
       },
       {
         "referrer": "Google",
-        "count": 17,
-        "uniques": 13
+        "count": 15,
+        "uniques": 11
       },
       {
         "referrer": "kingmods.net",
-        "count": 10,
-        "uniques": 3
+        "count": 7,
+        "uniques": 4
       }
     ],
     "popular_paths": [
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 81,
-        "uniques": 39
+        "count": 77,
+        "uniques": 38
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.9.0",
@@ -9820,22 +9820,10 @@
         "uniques": 6
       },
       {
-        "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.4.0",
-        "title": "/releases/tag/v1.0.4.0",
-        "count": 5,
-        "uniques": 2
-      },
-      {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/issues",
         "title": "/issues",
-        "count": 4,
-        "uniques": 2
-      },
-      {
-        "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases",
-        "title": "/releases",
         "count": 3,
-        "uniques": 3
+        "uniques": 1
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/blob/main/modDesc.xml",
@@ -9844,8 +9832,8 @@
         "uniques": 2
       },
       {
-        "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.1.1",
-        "title": "/releases/tag/v1.0.1.1",
+        "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.4.0",
+        "title": "/releases/tag/v1.0.4.0",
         "count": 2,
         "uniques": 2
       },
@@ -9866,13 +9854,25 @@
         "title": "/blob/main/CLAUDE.md",
         "count": 1,
         "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/blob/main/src/utils/UIHelper.lua",
+        "title": "/blob/main/src/utils/UIHelper.lua",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/blob/v1.0.9.0/src/WorkerManager.lua",
+        "title": "/blob/v1.0.9.0/src/WorkerManager.lua",
+        "count": 1,
+        "uniques": 1
       }
     ],
     "releases": [
       {
         "assets": [
           {
-            "downloads": 77,
+            "downloads": 79,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

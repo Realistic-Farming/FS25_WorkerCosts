@@ -192,37 +192,44 @@ function WorkerSystem:getActiveWorkers()
     -- job.isRunning is the correct running-state field (not job.isActive).
     -- Vehicle is accessed via job.vehicleParameter:getVehicle() on field-work jobs,
     -- with a fallback to job.vehicle for any custom job types that set it directly.
+    -- job.startedFarmId (set by AIJob:start) identifies the owning farm; skip jobs
+    -- started by other farms (e.g. NPC neighbor workers from neighbour mods).
+    local playerFarmId = g_currentMission:getFarmId()
     for _, job in ipairs(activeJobs) do
         if job and job.isRunning then
-            -- Get vehicle: prefer the official vehicleParameter API
-            local vehicle = nil
-            if job.vehicleParameter and job.vehicleParameter.getVehicle then
-                vehicle = job.vehicleParameter:getVehicle()
-            elseif job.vehicle then
-                vehicle = job.vehicle
-            end
+            if playerFarmId and job.startedFarmId and job.startedFarmId ~= playerFarmId then
+                -- skip: job belongs to a different farm
+            else
+                -- Get vehicle: prefer the official vehicleParameter API
+                local vehicle = nil
+                if job.vehicleParameter and job.vehicleParameter.getVehicle then
+                    vehicle = job.vehicleParameter:getVehicle()
+                elseif job.vehicle then
+                    vehicle = job.vehicle
+                end
 
-            if vehicle then
-                -- Helper name: job:getHelperName() is defined on AIJob base class
-                local name = "Worker"
-                if job.getHelperName then
-                    local ok, helperName = pcall(function() return job:getHelperName() end)
-                    if ok and helperName and helperName ~= "" then
-                        name = helperName
+                if vehicle then
+                    -- Helper name: job:getHelperName() is defined on AIJob base class
+                    local name = "Worker"
+                    if job.getHelperName then
+                        local ok, helperName = pcall(function() return job:getHelperName() end)
+                        if ok and helperName and helperName ~= "" then
+                            name = helperName
+                        end
                     end
-                end
-                -- Fall back to vehicle name if helper name unavailable
-                if name == "Worker" then
-                    name = (vehicle.getFullName and vehicle:getFullName())
-                       or (vehicle.getName and vehicle:getName())
-                       or "Worker"
-                end
+                    -- Fall back to vehicle name if helper name unavailable
+                    if name == "Worker" then
+                        name = (vehicle.getFullName and vehicle:getFullName())
+                           or (vehicle.getName and vehicle:getName())
+                           or "Worker"
+                    end
 
-                table.insert(workers, {
-                    vehicle = vehicle,
-                    job     = job,
-                    name    = name
-                })
+                    table.insert(workers, {
+                        vehicle = vehicle,
+                        job     = job,
+                        name    = name
+                    })
+                end
             end
         end
     end

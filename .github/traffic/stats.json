@@ -10622,7 +10622,7 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-05-22T06:43:17Z",
+    "timestamp": "2026-05-22T18:49:39Z",
     "date": "2026-05-22",
     "views": {
       "count": 122,
@@ -10718,9 +10718,13 @@
     ],
     "releases": [
       {
+        "assets": [],
+        "tag": "v1.0.9.1"
+      },
+      {
         "assets": [
           {
-            "downloads": 87,
+            "downloads": 88,
             "name": "FS25_WorkerCosts.zip"
           }
         ],
@@ -10738,7 +10742,7 @@
       {
         "assets": [
           {
-            "downloads": 17,
+            "downloads": 18,
             "name": "FS25_WorkerCosts.zip"
           }
         ],
@@ -10829,7 +10833,7 @@
         "tag": "v1.0.0.0"
       }
     ],
-    "stars": 10,
+    "stars": 11,
     "forks": 0,
     "watchers": 2
   }

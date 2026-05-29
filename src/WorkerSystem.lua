@@ -28,7 +28,8 @@ function WorkerSystem.new(settings)
     -- dayTime advances ~48x faster than real time at speed x1, which caused
     -- wages to be ~20x too high before this fix.
     self.realTimeAccumulator = 0   -- real ms accumulated since last payment
-    self.paymentInterval = 300000  -- 5 real-world minutes in real milliseconds
+    self.paymentInterval = 1800000 -- 30 real-world minutes in real milliseconds
+    self.workerJobTotal  = {}      -- cumulative amount charged per vehicle since job start
     self.isInitialized = false
     self._isProcessingPayment = false
     self._originalAddMoney = nil   -- stored so we can restore on delete
@@ -348,6 +349,7 @@ function WorkerSystem:update(dt)
         if not self.workerHours[vehicleId] then
             self.workerHours[vehicleId] = 0
             self.workerHectares[vehicleId] = 0
+            self.workerJobTotal[vehicleId]  = 0
             self:log("Started tracking worker: %s", worker.name)
         end
         -- Always refresh the name so dismissed-worker payments use the latest value
@@ -404,6 +406,8 @@ function WorkerSystem:processWorkerPayments(silent)
                     self:chargeWage(worker.name, wage, self.settings:getCostModeName(), silent)
                     totalPaid = totalPaid + wage
                     workersCount = workersCount + 1
+                    -- Accumulate into job total for the completion notification
+                    self.workerJobTotal[vehicleId] = (self.workerJobTotal[vehicleId] or 0) + wage
                 end
             end
 
@@ -426,17 +430,27 @@ function WorkerSystem:processWorkerPayments(silent)
             local pseudoWorker = {}
             local wage = self:calculateWorkerWage(pseudoWorker, hoursWorked, hectaresWorked)
 
+            local name = self.workerNames[vehicleId] or "Dismissed Worker"
             if wage > 0 then
-                local name = self.workerNames[vehicleId] or "Dismissed Worker"
-                self:chargeWage(name, wage, self.settings:getCostModeName(), silent)
+                self:chargeWage(name, wage, self.settings:getCostModeName(), true)
                 totalPaid = totalPaid + wage
                 workersCount = workersCount + 1
+            end
+
+            -- Show a job-completion summary (always, regardless of silent flag)
+            if not silent and self.settings.showNotifications then
+                local jobTotal = (self.workerJobTotal[vehicleId] or 0) + wage
+                local totalStr = g_i18n and g_i18n:formatMoney(jobTotal, 0, true, true)
+                             or string.format("$%d", jobTotal)
+                self:showNotification("Job Complete",
+                    string.format("%s: job done - Total: -%s", name, totalStr))
             end
 
             -- Remove stale entries to prevent unbounded table growth
             self.workerHours[vehicleId]    = nil
             self.workerHectares[vehicleId] = nil
             self.workerNames[vehicleId]    = nil
+            self.workerJobTotal[vehicleId] = nil
         end
     end
 

@@ -13,7 +13,7 @@
         <GuiElement profile="fs25_subCategorySelectorTabbedContainer" position="0px -80px">
 
             <!-- LEFT: Settings form (wider — needs room for option switchers) -->
-            <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="480px" position="0px 20px">
+            <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="560px" position="0px 20px">
                 <Bitmap profile="fs25_menuContainerArrow"/>
                 <GuiElement profile="fs25_subCategoryContainer" width="540px">
 
@@ -21,39 +21,39 @@
                     <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_section_general"/>
                     <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
 
-                    <!-- Toggle rows: WC_CheckSwitcher replaces fs25_optionCheckbox (absent in FS25 1.17) -->
-                    <CheckedOption profile="WC_CheckSwitcher" id="optEnabled" position="5px -52px" size="140px 32px"/>
-                    <Text profile="WC_RowLabel" position="155px -58px" width="375px" text="$l10n_wc_enabled_short"/>
+                    <!-- Toggle rows: 50px vertical spacing gives CheckedOption widgets room to breathe -->
+                    <CheckedOption profile="WC_CheckSwitcher" id="optEnabled" position="5px -54px" size="140px 36px"/>
+                    <Text profile="WC_RowLabel" position="155px -62px" width="375px" text="$l10n_wc_enabled_short"/>
 
-                    <CheckedOption profile="WC_CheckSwitcher" id="optNotifications" position="5px -90px" size="140px 32px"/>
-                    <Text profile="WC_RowLabel" position="155px -96px" width="375px" text="$l10n_wc_notifications_short"/>
+                    <CheckedOption profile="WC_CheckSwitcher" id="optNotifications" position="5px -104px" size="140px 36px"/>
+                    <Text profile="WC_RowLabel" position="155px -112px" width="375px" text="$l10n_wc_notifications_short"/>
 
-                    <CheckedOption profile="WC_CheckSwitcher" id="optDebugMode" position="5px -128px" size="140px 32px"/>
-                    <Text profile="WC_RowLabel" position="155px -134px" width="375px" text="$l10n_wc_debug_short"/>
+                    <CheckedOption profile="WC_CheckSwitcher" id="optDebugMode" position="5px -154px" size="140px 36px"/>
+                    <Text profile="WC_RowLabel" position="155px -162px" width="375px" text="$l10n_wc_debug_short"/>
 
                     <!-- COST MODE -->
-                    <Text profile="WC_SectionTitle" position="10px -174px" text="$l10n_wc_section_cost_mode"/>
-                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -198px" width="520px"/>
+                    <Text profile="WC_SectionTitle" position="10px -210px" text="$l10n_wc_section_cost_mode"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -234px" width="520px"/>
 
-                    <BoxLayout profile="WC_RowBoxH" position="5px -218px" width="530px">
+                    <BoxLayout profile="WC_RowBoxH" position="5px -256px" width="530px">
                         <Text profile="WC_RowLabel" text="$l10n_wc_costmode_short" width="150px"/>
                         <MultiTextOption profile="WC_FilterSwitcher" id="optCostMode" size="370px 32px"/>
                     </BoxLayout>
 
                     <!-- WAGE LEVEL -->
-                    <Text profile="WC_SectionTitle" position="10px -262px" text="$l10n_wc_section_wage_level"/>
-                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -286px" width="520px"/>
+                    <Text profile="WC_SectionTitle" position="10px -302px" text="$l10n_wc_section_wage_level"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -326px" width="520px"/>
 
-                    <BoxLayout profile="WC_RowBoxH" position="5px -306px" width="530px">
+                    <BoxLayout profile="WC_RowBoxH" position="5px -348px" width="530px">
                         <Text profile="WC_RowLabel" text="$l10n_wc_difficulty_short" width="150px"/>
                         <MultiTextOption profile="WC_FilterSwitcher" id="optWageLevel" size="370px 32px"/>
                     </BoxLayout>
 
                     <!-- Reset button (3-layer: Bg + Hit + Text) -->
-                    <Bitmap profile="WC_BtnBgRed" id="btnResetBg" position="10px -372px" size="240px 40px"/>
-                    <Button profile="WC_BtnHit" position="10px -372px" size="240px 40px"
+                    <Bitmap profile="WC_BtnBgRed" id="btnResetBg" position="10px -422px" size="240px 40px"/>
+                    <Button profile="WC_BtnHit" position="10px -422px" size="240px 40px"
                             onClick="onClickReset" onFocus="onBtnResetFocus" onLeave="onBtnResetLeave"/>
-                    <Text profile="WC_BtnText" position="10px -372px" size="240px 40px" text="$l10n_wc_reset"/>
+                    <Text profile="WC_BtnText" position="10px -422px" size="240px 40px" text="$l10n_wc_reset"/>
 
                 </GuiElement>
             </ThreePartBitmap>
@@ -61,8 +61,8 @@
             <!-- Vertical separator -->
             <Bitmap profile="fs25_settingsTooltipSeparator" position="596px 0px"/>
 
-            <!-- RIGHT: Live rate preview + Help -->
-            <GuiElement position="614px 30px" width="420px" height="480px">
+            <!-- RIGHT: Live rate preview + Cost Structure -->
+            <GuiElement position="614px 30px" width="420px" height="560px">
 
                 <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_section_effective"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>
@@ -82,7 +82,7 @@
 
                 <Text profile="WC_SectionTitle" position="0px -234px" text="$l10n_wc_help_title"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -258px" width="400px"/>
-                <Text profile="WC_BodyText" position="0px -278px" size="400px 190px" text="$l10n_wc_help_body"/>
+                <Text profile="WC_BodyText" position="0px -278px" size="400px 260px" text="$l10n_wc_help_body"/>
 
             </GuiElement>
 

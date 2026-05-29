@@ -13,14 +13,14 @@
         <GuiElement profile="fs25_subCategorySelectorTabbedContainer" position="0px -80px">
 
             <!-- LEFT: How it works body text -->
-            <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="480px" position="0px 20px">
+            <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="560px" position="0px 20px">
                 <Bitmap profile="fs25_menuContainerArrow"/>
                 <GuiElement profile="fs25_subCategoryContainer" width="540px">
 
                     <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_section_how_it_works"/>
                     <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
 
-                    <Text profile="WC_BodyText" position="10px -54px" size="520px 390px" text="$l10n_wc_about_body"/>
+                    <Text profile="WC_BodyText" position="10px -54px" size="520px 480px" text="$l10n_wc_about_body"/>
 
                 </GuiElement>
             </ThreePartBitmap>
@@ -29,7 +29,7 @@
             <Bitmap profile="fs25_settingsTooltipSeparator" position="596px 0px"/>
 
             <!-- RIGHT: Quick reference — wage table + payment info -->
-            <GuiElement position="614px 30px" width="420px" height="480px">
+            <GuiElement position="614px 30px" width="420px" height="560px">
 
                 <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_section_wage_level"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>

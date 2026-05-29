@@ -755,17 +755,17 @@
             <da>Oversigt</da>
         </text>
         <text name="wc_section_breakdown">
-            <en>Worker Breakdown</en>
+            <en>Labor Cost Breakdown</en>
             <de>Arbeiter-Aufschlüsselung</de>
             <fr>Détail par ouvrier</fr>
             <es>Desglose de trabajadores</es>
-        
-            <pl>[EN] Worker Breakdown</pl>
-            <it>[EN] Worker Breakdown</it>
-            <cz>[EN] Worker Breakdown</cz>
-            <br>[EN] Worker Breakdown</br>
-            <uk>[EN] Worker Breakdown</uk>
-            <ru>[EN] Worker Breakdown</ru>
+
+            <pl>[EN] Labor Cost Breakdown</pl>
+            <it>[EN] Labor Cost Breakdown</it>
+            <cz>[EN] Labor Cost Breakdown</cz>
+            <br>[EN] Labor Cost Breakdown</br>
+            <uk>[EN] Labor Cost Breakdown</uk>
+            <ru>[EN] Labor Cost Breakdown</ru>
             <da>Medarbejderoversigt</da>
         </text>
         <text name="wc_section_how_it_works">
@@ -1063,18 +1063,18 @@ Denne mod er kompatibel med multiplayer. Indstillinger gemmes pr. savegame.</da>
 
         <!-- Help text for Wage Settings tab -->
         <text name="wc_help_title">
-            <en>Help</en>
-        
-            <de>[EN] Help</de>
-            <fr>[EN] Help</fr>
-            <pl>[EN] Help</pl>
-            <es>[EN] Help</es>
-            <it>[EN] Help</it>
-            <cz>[EN] Help</cz>
-            <br>[EN] Help</br>
-            <uk>[EN] Help</uk>
-            <ru>[EN] Help</ru>
-            <da>Hjælp</da>
+            <en>Cost Structure</en>
+
+            <de>[EN] Cost Structure</de>
+            <fr>[EN] Cost Structure</fr>
+            <pl>[EN] Cost Structure</pl>
+            <es>[EN] Cost Structure</es>
+            <it>[EN] Cost Structure</it>
+            <cz>[EN] Cost Structure</cz>
+            <br>[EN] Cost Structure</br>
+            <uk>[EN] Cost Structure</uk>
+            <ru>[EN] Cost Structure</ru>
+            <da>Omkostningsstruktur</da>
         </text>
         <text name="wc_help_body">
             <en>COST MODE

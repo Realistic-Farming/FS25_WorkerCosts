@@ -40,11 +40,16 @@ function WCAboutFrame:refresh()
         self.txtPayInterval:setText(string.format("%d min", min))
     end
 
-    -- Mod version from g_modManager
+    -- Mod version: try the stored modName (captured at load time), then the folder name fallback
     if self.txtVersion then
         local version = "unknown"
         if g_modManager then
-            local mod = g_modManager:getModByName("FS25_WorkerCostsMod")
+            local modName = (g_WorkerManager and g_WorkerManager.modName) or "FS25_WorkerCosts"
+            local mod = g_modManager:getModByName(modName)
+            -- Some FS25 builds key by folder name rather than <modName>; try both
+            if not (mod and mod.version) then
+                mod = g_modManager:getModByName("FS25_WorkerCosts")
+            end
             if mod and mod.version then
                 version = mod.version
             end

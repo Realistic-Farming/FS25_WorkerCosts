@@ -12368,30 +12368,30 @@
     "watchers": 3
   },
   {
-    "timestamp": "2026-05-31T06:54:10Z",
+    "timestamp": "2026-05-31T18:06:41Z",
     "date": "2026-05-31",
     "views": {
-      "count": 275,
-      "uniques": 77
+      "count": 288,
+      "uniques": 79
     },
     "clones": {
-      "count": 570,
-      "uniques": 230
+      "count": 602,
+      "uniques": 241
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 128,
-        "uniques": 41
+        "count": 138,
+        "uniques": 42
       },
       {
         "referrer": "Google",
-        "count": 19,
-        "uniques": 12
+        "count": 20,
+        "uniques": 13
       },
       {
         "referrer": "kingmods.net",
-        "count": 19,
+        "count": 20,
         "uniques": 10
       },
       {
@@ -12404,14 +12404,14 @@
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 151,
-        "uniques": 71
+        "count": 160,
+        "uniques": 72
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 24,
-        "uniques": 18
+        "count": 28,
+        "uniques": 19
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.9.1",
@@ -12428,14 +12428,14 @@
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.9.0",
         "title": "/releases/tag/v1.0.9.0",
-        "count": 13,
-        "uniques": 12
+        "count": 12,
+        "uniques": 11
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v1.0.9.2",
         "title": "/releases/tag/v1.0.9.2",
-        "count": 10,
-        "uniques": 10
+        "count": 11,
+        "uniques": 11
       },
       {
         "path": "/TheCodingDad-TisonK/FS25_WorkerCosts/issues/38",
@@ -12466,7 +12466,7 @@
       {
         "assets": [
           {
-            "downloads": 26,
+            "downloads": 29,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

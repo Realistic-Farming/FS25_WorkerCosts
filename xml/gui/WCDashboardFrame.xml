@@ -76,7 +76,7 @@
                 <Text profile="WC_SectionTitle" position="0px -248px" text="$l10n_wc_label_worker_list"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -272px" width="640px"/>
 
-                <Text profile="WC_BodyText" id="txtWorkerNames" position="0px -292px" size="640px 180px"/>
+                <Text profile="WC_BodyText" id="txtWorkerNames" position="0px -292px" size="640px 180px" textMaxNumLines="6"/>
 
             </GuiElement>
 

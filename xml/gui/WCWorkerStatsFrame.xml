@@ -74,7 +74,7 @@
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -80px" width="640px"/>
 
                 <!-- Worker list with costs -->
-                <Text profile="WC_BodyText" id="txtWorkerList" position="0px -100px" size="640px 340px"/>
+                <Text profile="WC_BodyText" id="txtWorkerList" position="0px -100px" size="640px 340px" textMaxNumLines="12"/>
 
             </GuiElement>
 

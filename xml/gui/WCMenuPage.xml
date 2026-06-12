@@ -89,7 +89,7 @@
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -286px" width="640px"/>
 
                 <!-- Description / tagline -->
-                <Text profile="WC_BodyText" position="0px -306px" size="640px 150px" text="$l10n_wc_menu_description"/>
+                <Text profile="WC_BodyText" position="0px -306px" size="640px 150px" textMaxNumLines="4" text="$l10n_wc_menu_description"/>
 
             </GuiElement>
 

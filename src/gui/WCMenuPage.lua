@@ -122,10 +122,8 @@ function WCMenuPage:refreshLive()
     end
 
     if self.txtEstCost then
-        if workerCount > 0 and settings.costMode == Settings.COST_MODE_HOURLY then
-            local rate          = settings:getWageRate()
-            local intervalHours = ws.paymentInterval / 3600000
-            local estimate      = math.floor(rate * intervalHours * workerCount)
+        if workerCount > 0 then
+            local estimate = ws:getEstimatedIntervalCost(workerCount)
             self.txtEstCost:setText(g_i18n:formatMoney(estimate, 0, true, false))
         else
             self.txtEstCost:setText("-")

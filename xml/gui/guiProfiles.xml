@@ -70,13 +70,16 @@
         <textColor value="1 1 1 0.6"/>
     </Profile>
 
-    <!-- Body / list text with wrapping -->
+    <!-- Body / list text with wrapping.
+         NOTE: textWrap is NOT a real FS25 TextElement attribute - wrapping is
+         controlled by textMaxNumLines (engine default = 1, which truncates with
+         "..."). Every WC_BodyText usage must size textMaxNumLines to its box. -->
     <Profile name="WC_BodyText" extends="fs25_textDefault" with="anchorTopLeft">
         <textSize value="16px"/>
         <textBold value="false"/>
         <textColor value="1 1 1 0.85"/>
         <textAlignment value="left"/>
-        <textWrap value="true"/>
+        <textMaxNumLines value="4"/>
         <width value="380px"/>
     </Profile>
 

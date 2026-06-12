@@ -20,7 +20,7 @@
                     <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_section_how_it_works"/>
                     <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
 
-                    <Text profile="WC_BodyText" position="10px -54px" size="520px 480px" text="$l10n_wc_about_body"/>
+                    <Text profile="WC_BodyText" position="10px -54px" size="520px 500px" textMaxNumLines="24" text="$l10n_wc_about_body"/>
 
                 </GuiElement>
             </ThreePartBitmap>
@@ -48,7 +48,7 @@
                     <Text profile="WC_RowValue" id="txtPayInterval" width="190px"/>
                 </BoxLayout>
 
-                <Text profile="WC_BodyText" position="0px -240px" size="400px 120px" text="$l10n_wc_about_payment_note"/>
+                <Text profile="WC_BodyText" position="0px -240px" size="400px 120px" textMaxNumLines="5" text="$l10n_wc_about_payment_note"/>
 
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -370px" width="400px"/>
 

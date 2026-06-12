@@ -97,7 +97,12 @@ function WCDashboardFrame:refreshLive()
         if workerCount > 0 then
             local names = {}
             for _, w in ipairs(workers) do
-                table.insert(names, w.name)
+                -- Show which vehicle the helper is driving (#48)
+                local label = w.name
+                if w.vehicleName ~= nil and w.vehicleName ~= w.name then
+                    label = string.format("%s (%s)", w.name, w.vehicleName)
+                end
+                table.insert(names, label)
             end
             self.txtWorkerNames:setText(table.concat(names, "\n"))
         else
@@ -113,12 +118,10 @@ function WCDashboardFrame:refreshLive()
         self.txtNextPayment:setText(string.format("%d:%02d", mins, secs))
     end
 
-    -- ── Estimated cost this interval (workers × rate × 5 min) ─
+    -- ── Estimated cost this interval ───────────────────────────
     if self.txtEstimatedCost then
-        if workerCount > 0 and settings.costMode == Settings.COST_MODE_HOURLY then
-            local rate = settings:getWageRate()
-            local intervalHours = ws.paymentInterval / 3600000
-            local estimate = math.floor(rate * intervalHours * workerCount)
+        if workerCount > 0 then
+            local estimate = ws:getEstimatedIntervalCost(workerCount)
             self.txtEstimatedCost:setText(g_i18n:formatMoney(estimate, 0, true, false))
         else
             self.txtEstimatedCost:setText("-")

@@ -79,7 +79,7 @@
 
                 <Text profile="WC_SectionTitle" position="0px -234px" text="$l10n_wc_help_title"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -258px" width="400px"/>
-                <Text profile="WC_BodyText" id="txtHelpBody" position="0px -278px" size="400px 260px" text="$l10n_wc_help_body"/>
+                <Text profile="WC_BodyText" id="txtHelpBody" position="0px -278px" size="400px 280px" textSize="14px" textMaxNumLines="16" text="$l10n_wc_help_body"/>
 
             </GuiElement>
 

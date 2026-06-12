@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>1.0.9.3</version>
+    <version>1.0.9.4</version>
     <modName>FS25_WorkerCostsMod</modName>
     <title>
         <en>Realistic Worker Costs</en>
@@ -1087,7 +1087,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</en>
         
@@ -1101,7 +1101,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</de>
             <fr>[EN] COST MODE
@@ -1114,7 +1114,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</fr>
             <pl>[EN] COST MODE
@@ -1127,7 +1127,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</pl>
             <es>[EN] COST MODE
@@ -1140,7 +1140,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</es>
             <it>[EN] COST MODE
@@ -1153,7 +1153,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</it>
             <cz>[EN] COST MODE
@@ -1166,7 +1166,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</cz>
             <br>[EN] COST MODE
@@ -1179,7 +1179,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</br>
             <uk>[EN] COST MODE
@@ -1192,7 +1192,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</uk>
             <ru>[EN] COST MODE
@@ -1205,7 +1205,7 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 5 real-time minutes, independent of game speed. The rate preview on this page reflects the exact charge per billing interval.
+Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</ru>
             <da>OMKOSTNINGSTILSTAND
@@ -1232,7 +1232,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</en>
 
@@ -1245,7 +1245,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</de>
             <fr>[EN] COST MODE
@@ -1257,7 +1257,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</fr>
             <pl>[EN] COST MODE
@@ -1269,7 +1269,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</pl>
             <es>[EN] COST MODE
@@ -1281,7 +1281,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</es>
             <it>[EN] COST MODE
@@ -1293,7 +1293,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</it>
             <cz>[EN] COST MODE
@@ -1305,7 +1305,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</cz>
             <br>[EN] COST MODE
@@ -1317,7 +1317,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</br>
             <uk>[EN] COST MODE
@@ -1329,7 +1329,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</uk>
             <ru>[EN] COST MODE
@@ -1341,7 +1341,7 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 5 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</ru>
             <da>OMKOSTNINGSTILSTAND

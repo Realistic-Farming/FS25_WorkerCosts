@@ -76,6 +76,10 @@ function WCWorkerStatsFrame:refreshLive()
         if isHourly and workerCount > 0 then
             local costPer = math.floor(rate * intervalHrs)
             self.txtCostPerWorker:setText(g_i18n:formatMoney(costPer, 0, true, false))
+        elseif workerCount > 0 then
+            -- Per-hectare: average of the accrued costs so far this interval
+            local total = ws:getEstimatedIntervalCost(workerCount)
+            self.txtCostPerWorker:setText(g_i18n:formatMoney(math.floor(total / workerCount), 0, true, false))
         else
             self.txtCostPerWorker:setText("-")
         end
@@ -83,8 +87,8 @@ function WCWorkerStatsFrame:refreshLive()
 
     -- Total cost per interval
     if self.txtTotalCost then
-        if isHourly and workerCount > 0 then
-            local total = math.floor(rate * intervalHrs * workerCount)
+        if workerCount > 0 then
+            local total = ws:getEstimatedIntervalCost(workerCount)
             self.txtTotalCost:setText(g_i18n:formatMoney(total, 0, true, false))
         else
             self.txtTotalCost:setText("-")
@@ -96,14 +100,15 @@ function WCWorkerStatsFrame:refreshLive()
         if workerCount > 0 then
             local lines = {}
             for _, w in ipairs(workers) do
-                local costStr
+                local cost
                 if isHourly then
-                    costStr = g_i18n:formatMoney(math.floor(rate * intervalHrs), 0, true, false)
+                    cost = math.floor(rate * intervalHrs)
                 else
-                    -- Per-hectare cost depends on area worked during the interval — not estimable in advance
-                    costStr = "-"
+                    -- Per-hectare: cost accrued from area worked so far this interval (#46)
+                    local hectares = ws.workerHectares[tostring(w.vehicle)] or 0
+                    cost = math.floor(rate * hectares)
                 end
-                table.insert(lines, w.name .. "   -" .. costStr)
+                table.insert(lines, w.name .. "   -" .. g_i18n:formatMoney(cost, 0, true, false))
             end
             self.txtWorkerList:setText(table.concat(lines, "\n"))
         else

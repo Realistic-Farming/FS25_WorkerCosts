@@ -32,7 +32,7 @@
             <!-- Worker list -->
             <Text profile="WC_BodyText" id="txtWorkerList"
                   position="100px -106px" size="380px 160px"
-                  textSize="14px" textAlignment="left" textWrap="true"/>
+                  textSize="14px" textAlignment="left" textMaxNumLines="9"/>
 
             <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -272px" width="580px"/>
 

@@ -210,6 +210,11 @@ function WorkerSystem:getActiveWorkers()
                 end
 
                 if vehicle then
+                    -- Vehicle display name, used as name fallback and shown
+                    -- beside the helper name on the dashboard (#48)
+                    local vehicleName = (vehicle.getFullName and vehicle:getFullName())
+                                     or (vehicle.getName and vehicle:getName())
+
                     -- Helper name: job:getHelperName() is defined on AIJob base class
                     local name = "Worker"
                     if job.getHelperName then
@@ -220,15 +225,14 @@ function WorkerSystem:getActiveWorkers()
                     end
                     -- Fall back to vehicle name if helper name unavailable
                     if name == "Worker" then
-                        name = (vehicle.getFullName and vehicle:getFullName())
-                           or (vehicle.getName and vehicle:getName())
-                           or "Worker"
+                        name = vehicleName or "Worker"
                     end
 
                     table.insert(workers, {
-                        vehicle = vehicle,
-                        job     = job,
-                        name    = name
+                        vehicle     = vehicle,
+                        job         = job,
+                        name        = name,
+                        vehicleName = vehicleName
                     })
                 end
             end
@@ -236,6 +240,30 @@ function WorkerSystem:getActiveWorkers()
     end
 
     return workers
+end
+
+--- Estimated wage bill for the current payment interval (UI display only).
+-- Hourly mode: projects the full interval for every active worker.
+-- Per-hectare mode: rate × area accrued so far this interval, so the value
+-- starts at $0 and grows live as workers cover ground (#46). Skill
+-- multipliers are intentionally ignored — this is an estimate.
+---@param workerCount number  number of currently active workers
+---@return number  estimated cost in $ for this interval
+function WorkerSystem:getEstimatedIntervalCost(workerCount)
+    local rate = self.settings:getWageRate()
+
+    if self.settings.costMode == Settings.COST_MODE_HOURLY then
+        local intervalHours = self.paymentInterval / 3600000
+        return math.floor(rate * intervalHours * workerCount)
+    end
+
+    -- Per-hectare: sum the area tracked since the last payment tick.
+    -- Includes workers dismissed mid-interval — they will still be charged.
+    local totalHectares = 0
+    for _, hectares in pairs(self.workerHectares) do
+        totalHectares = totalHectares + hectares
+    end
+    return math.floor(rate * totalHectares)
 end
 
 function WorkerSystem:calculateWorkerWage(worker, hoursWorked, hectaresWorked)

@@ -35,6 +35,7 @@ function WorkerSettingsGUI:registerConsoleCommands()
     addConsoleCommand("WorkerCostsTestMonthlySalary", "Trigger monthly salary dialog right now (for testing)", "consoleCommandTestMonthlySalary", self)
     
     addConsoleCommand("WorkerCostsShowSettings", "Show current settings", "consoleCommandShowSettings", self)
+    addConsoleCommand("WorkerCostsShowRoster", "Show the Pro-Staff worker roster (id, name, level, hours, jobs, XP)", "consoleCommandShowRoster", self)
     addConsoleCommand("WorkerCostsDiagnostic", "Run full diagnostic report", "consoleCommandDiagnostic", self)
     
     addConsoleCommand("WorkerCostsResetSettings", "Reset all settings to defaults", "consoleCommandResetSettings", self)
@@ -56,6 +57,7 @@ function WorkerSettingsGUI:consoleCommandHelp()
     print("WorkerCostsTestPayment - Test payment system")
     print("WorkerCostsDebug true|false - Toggle debug logging")
     print("WorkerCostsShowSettings - Show current settings")
+    print("WorkerCostsShowRoster - Show the worker roster")
     print("WorkerCostsDiagnostic - Run full diagnostic report")
     print("WorkerCostsResetSettings - Reset to defaults")
     print("===========================================")
@@ -200,6 +202,39 @@ function WorkerSettingsGUI:consoleCommandShowSettings()
     end
 
     return "Error: Worker Costs Mod not initialized"
+end
+
+-- Pro-Staff (Phase 0/1) read-only roster dump. Server/SP holds the authoritative
+-- roster; on an MP client this prints whatever has been synced (nothing until
+-- Phase 5). A handy way to verify auto-hire + hours/jobs/XP accrual.
+function WorkerSettingsGUI:consoleCommandShowRoster()
+    if g_WorkerManager == nil or g_WorkerManager.workerRoster == nil then
+        return "Error: Worker Costs Mod not initialized"
+    end
+
+    local roster = g_WorkerManager.workerRoster
+    local workers = roster:getAll()
+    local lines = { string.format("=== Worker Roster (%d) ===", #workers) }
+
+    if #workers == 0 then
+        table.insert(lines, "(empty — start an AI helper to auto-hire one)")
+    else
+        local levelNames = { [1] = "Novice", [2] = "Experienced", [3] = "Master" }
+        for _, w in ipairs(workers) do
+            local levelName = levelNames[w.level] or tostring(w.level)
+            table.insert(lines, string.format(
+                "#%d  %-16s  %-11s  hrs=%.2f  jobs=%d  XP=%.1f  %s",
+                w.uuid, w.name or "Worker", levelName,
+                w.totalHours or 0, w.totalJobs or 0, w.totalXP or 0,
+                w.assignedVehicleId and ("[working]") or "[idle]"
+            ))
+        end
+    end
+    table.insert(lines, "==========================")
+
+    local out = table.concat(lines, "\n")
+    print(out)
+    return out
 end
 
 function WorkerSettingsGUI:consoleCommandSetDebug(valueStr)

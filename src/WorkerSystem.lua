@@ -15,15 +15,33 @@
 WorkerSystem = {}
 local WorkerSystem_mt = Class(WorkerSystem)
 
+-- PRO-STAFF BUILD CHECKLIST — work in THIS file (full plan: docs/PRO_STAFF_PLAN.md):
+--   [x] Phase 3 — calculateLaborCost pipeline (skill -> level -> fatigue -> night
+--                 -> weather -> overtime); daily fatigue recovery + overtime reset
+--   [x] Phase 4 — getEstimatedIntervalCost runs the full pipeline (UI accuracy)
+
+-- Pro-Staff Phase 3 wage modifiers (multiplicative pipeline, applied in order).
+-- Defined once here so the additive-vs-multiplicative order can't drift.
+WorkerSystem.LEVEL_WAGE_FACTOR = { [1] = 1.00, [2] = 0.95, [3] = 0.90 } -- higher level = efficiency discount (perk)
+WorkerSystem.FATIGUE_SURCHARGE = 0.50   -- up to +50% at full fatigue (Master is immune)
+WorkerSystem.NIGHT_MULT        = 1.25   -- night-shift / after-hours premium
+WorkerSystem.WEATHER_MULT      = 1.15   -- bad-weather (rain) premium
+WorkerSystem.OVERTIME_HOURS    = 8      -- real hours worked in one in-game day before overtime
+WorkerSystem.OVERTIME_MULT     = 1.50   -- premium once a vehicle passes the daily overtime threshold
+
 ---@param settings Settings
+---@param roster WorkerRoster|nil  Pro-Staff roster for level/fatigue (Phase 3)
 ---@return WorkerSystem
-function WorkerSystem.new(settings)
+function WorkerSystem.new(settings, roster)
     local self = setmetatable({}, WorkerSystem_mt)
     self.settings = settings
+    self.roster = roster       -- Phase 3: source of level/fatigue for the wage pipeline
     self.activeWorkers = {}
     self.workerHours = {}      -- accumulated real hours per vehicleId since last payment
     self.workerHectares = {}   -- accumulated hectares per vehicleId since last payment
     self.workerNames = {}      -- last-known display name per vehicleId (for dismissed workers)
+    self.workerRosterUuid = {} -- vehicleId -> roster worker uuid (captured while bound; survives unbind at settlement)
+    self.workerDailyHours = {} -- vehicleId -> hours worked this in-game day (Phase 3 overtime); reset on day change
     -- Use real-time dt for ALL timing, NOT environment.dayTime.
     -- dayTime advances ~48x faster than real time at speed x1, which caused
     -- wages to be ~20x too high before this fix.
@@ -243,56 +261,140 @@ function WorkerSystem:getActiveWorkers()
 end
 
 --- Estimated wage bill for the current payment interval (UI display only).
--- Hourly mode: projects the full interval for every active worker.
--- Per-hectare mode: rate × area accrued so far this interval, so the value
--- starts at $0 and grows live as workers cover ground (#46). Skill
--- multipliers are intentionally ignored — this is an estimate.
----@param workerCount number  number of currently active workers
+-- Phase 4: now runs each active worker through the same calculateLaborCost
+-- pipeline (level / fatigue / night / weather / overtime) so the dashboard
+-- estimate matches what will actually be charged.
+-- Hourly mode: projects the full interval per worker.
+-- Per-hectare mode: uses the area accrued so far this interval, so it grows live.
+---@param workerCount number  unused; kept for call-site compatibility
 ---@return number  estimated cost in $ for this interval
 function WorkerSystem:getEstimatedIntervalCost(workerCount)
-    local rate = self.settings:getWageRate()
+    local workers = self:getActiveWorkers()
+    local intervalHours = self.paymentInterval / 3600000
+    local isHourly = (self.settings.costMode == Settings.COST_MODE_HOURLY)
+    local total = 0
 
-    if self.settings.costMode == Settings.COST_MODE_HOURLY then
-        local intervalHours = self.paymentInterval / 3600000
-        return math.floor(rate * intervalHours * workerCount)
+    for _, w in ipairs(workers) do
+        local vehicleId    = tostring(w.vehicle)
+        local rosterWorker = self.roster and self.roster:getWorker(self.workerRosterUuid[vehicleId])
+        local dailyHours   = self.workerDailyHours[vehicleId]
+        if isHourly then
+            total = total + self:calculateLaborCost(w, intervalHours, 0, rosterWorker, dailyHours)
+        else
+            local hectares = self.workerHectares[vehicleId] or 0
+            total = total + self:calculateLaborCost(w, 0, hectares, rosterWorker, dailyHours)
+        end
     end
 
-    -- Per-hectare: sum the area tracked since the last payment tick.
-    -- Includes workers dismissed mid-interval — they will still be charged.
-    local totalHectares = 0
-    for _, hectares in pairs(self.workerHectares) do
-        totalHectares = totalHectares + hectares
-    end
-    return math.floor(rate * totalHectares)
+    return math.floor(total)
 end
 
-function WorkerSystem:calculateWorkerWage(worker, hoursWorked, hectaresWorked)
+-- Pro-Staff Phase 3: ordered labor-cost pipeline (replaces calculateWorkerWage).
+-- base(mode) -> game skill -> roster level -> fatigue -> night -> weather.
+-- All multiplicative; the order is fixed here so nothing double-dips.
+---@param worker table        billing worker {job=...} (may be a bare pseudo-worker)
+---@param hoursWorked number
+---@param hectaresWorked number
+---@param rosterWorker table|nil  roster entry providing level/fatigue (may be nil)
+---@param dailyHours number|nil   hours this vehicle has worked today (overtime axis)
+function WorkerSystem:calculateLaborCost(worker, hoursWorked, hectaresWorked, rosterWorker, dailyHours)
     local baseRate = self.settings:getWageRate()
 
-    -- Apply skill multiplier (0.8x to 1.2x based on skill level)
-    local skillMultiplier = 1.0
-
-    -- Try to get skill from worker/job
-    if worker.job and worker.job.getSkillLevel then
-        local skill = worker.job:getSkillLevel() or 0.5
-        skillMultiplier = 0.8 + (skill * 0.4) -- Range: 0.8 to 1.2
-    end
-
-    local wage = 0
+    local cost
     if self.settings.costMode == Settings.COST_MODE_HOURLY then
-        wage = baseRate * hoursWorked * skillMultiplier
+        cost = baseRate * hoursWorked
     else
-        -- Per-hectare mode: fall back to 0 when no area was tracked.
-        -- This can happen for implements that don't expose getLastHa().
-        -- The caller checks wage > 0 before deducting, so free-work is the
-        -- only consequence — but we log it so it's visible in debug mode.
+        -- Per-hectare mode: 0 when no area was tracked (implement without getLastHa).
+        -- The caller checks cost > 0 before deducting, so free-work is the only
+        -- consequence — logged in debug mode.
         if hectaresWorked <= 0 then
-            self:log("Per-hectare wage skipped for worker with 0 ha tracked (implement may not support getLastHa)")
+            self:log("Per-hectare cost skipped for worker with 0 ha tracked (implement may not support getLastHa)")
         end
-        wage = baseRate * hectaresWorked * skillMultiplier
+        cost = baseRate * hectaresWorked
     end
 
-    return math.floor(wage)
+    if cost <= 0 then
+        return 0
+    end
+
+    -- Game skill multiplier (0.8x..1.2x), unchanged from the original behaviour.
+    if worker and worker.job and worker.job.getSkillLevel then
+        local skill = worker.job:getSkillLevel() or 0.5
+        cost = cost * (0.8 + skill * 0.4)
+    end
+
+    local level   = (rosterWorker and rosterWorker.level)   or WorkerRoster.LEVEL_NOVICE
+    local fatigue = (rosterWorker and rosterWorker.fatigue) or 0
+
+    -- 1. Level efficiency discount (perk: higher level => cheaper per unit).
+    cost = cost * (WorkerSystem.LEVEL_WAGE_FACTOR[level] or 1.0)
+
+    -- 2. Fatigue surcharge — Master workers are immune (Phase 2 perk).
+    if level ~= WorkerRoster.LEVEL_MASTER and fatigue > 0 then
+        cost = cost * (1 + fatigue * WorkerSystem.FATIGUE_SURCHARGE)
+    end
+
+    -- 3. Night / after-hours premium.
+    if self:_isNight() then
+        cost = cost * WorkerSystem.NIGHT_MULT
+    end
+
+    -- 4. Bad-weather (rain) premium.
+    if self:_isBadWeather() then
+        cost = cost * WorkerSystem.WEATHER_MULT
+    end
+
+    -- 5. Overtime: once a vehicle passes the daily hour threshold, the rest of
+    -- the day bills at the overtime rate.
+    if dailyHours and dailyHours > WorkerSystem.OVERTIME_HOURS then
+        cost = cost * WorkerSystem.OVERTIME_MULT
+    end
+
+    return math.floor(cost)
+end
+
+-- Night = the engine's own sun flag is off. environment.isSunOn is what the base
+-- game keys vehicle lights / solar panels / crop sensors off (verified in source).
+function WorkerSystem:_isNight()
+    local env = g_currentMission and g_currentMission.environment
+    return env ~= nil and env.isSunOn == false
+end
+
+-- Bad weather = currently raining. environment.weather:getIsRaining() is the
+-- boolean the base game uses (NightlightFlicker, SunAdmirer, BeehiveSystem).
+function WorkerSystem:_isBadWeather()
+    local env = g_currentMission and g_currentMission.environment
+    if not env or not env.weather or not env.weather.getIsRaining then
+        return false
+    end
+    local ok, raining = pcall(function() return env.weather:getIsRaining() end)
+    return ok and raining == true
+end
+
+-- Pro-Staff Phase 3: per-in-game-day housekeeping — reset overtime counters and
+-- recover idle workers' fatigue.
+function WorkerSystem:onDayChange()
+    local env = g_currentMission and g_currentMission.environment
+    if not env or env.currentDay == nil then
+        return
+    end
+    if self.lastDay == env.currentDay then
+        return
+    end
+    local firstObservation = (self.lastDay == -1)
+    self.lastDay = env.currentDay
+
+    -- New day: the overtime counters reset.
+    self.workerDailyHours = {}
+
+    if firstObservation or not self.roster then
+        return  -- baseline only; no recovery on the first frame after load
+    end
+    for _, w in ipairs(self.roster:getAll()) do
+        if w.assignedVehicleId == nil and (w.fatigue or 0) > 0 then
+            WorkerRoster.recoverFatigue(w, 1)
+        end
+    end
 end
 
 -- @param silent  If true, suppresses the per-payment HUD notification.
@@ -383,7 +485,20 @@ function WorkerSystem:update(dt)
         -- Always refresh the name so dismissed-worker payments use the latest value
         self.workerNames[vehicleId] = worker.name
 
+        -- Phase 3: remember which roster worker this vehicle maps to while the
+        -- binding still exists, so the wage pipeline can apply level/fatigue even
+        -- at the final (dismissed) settlement after the job ended and unbound it.
+        if self.roster then
+            local rw = self.roster:getWorkerByVehicle(vehicleId)
+            if rw then
+                self.workerRosterUuid[vehicleId] = rw.uuid
+            end
+        end
+
         self.workerHours[vehicleId] = self.workerHours[vehicleId] + realHoursThisFrame
+        -- Phase 3 overtime: accumulate the day's hours (persists across jobs;
+        -- reset only on day change, not at per-job settlement).
+        self.workerDailyHours[vehicleId] = (self.workerDailyHours[vehicleId] or 0) + realHoursThisFrame
 
         -- Track hectares if the job exposes them
         if worker.job and worker.job.getLastHa then
@@ -399,6 +514,9 @@ function WorkerSystem:update(dt)
         self:processWorkerPayments()
         self.realTimeAccumulator = self.realTimeAccumulator - self.paymentInterval
     end
+
+    -- Phase 3: daily housekeeping (overtime reset + idle fatigue recovery).
+    self:onDayChange()
 
     -- Monthly salary: check if the last day of the month has just been reached
     if self.settings.monthlySalaryEnabled then
@@ -428,7 +546,8 @@ function WorkerSystem:processWorkerPayments(silent)
             local hectaresWorked = self.workerHectares[vehicleId] or 0
 
             if hoursWorked > 0 or hectaresWorked > 0 then
-                local wage = self:calculateWorkerWage(worker, hoursWorked, hectaresWorked)
+                local rosterWorker = self.roster and self.roster:getWorker(self.workerRosterUuid[vehicleId])
+                local wage = self:calculateLaborCost(worker, hoursWorked, hectaresWorked, rosterWorker, self.workerDailyHours[vehicleId])
 
                 if wage > 0 then
                     self:chargeWage(worker.name, wage, self.settings:getCostModeName(), silent)
@@ -447,16 +566,18 @@ function WorkerSystem:processWorkerPayments(silent)
 
     -- Pay workers that were dismissed mid-interval (accumulated time but no longer active).
     -- Without this, any time worked since the last payment tick is silently lost.
-    -- NOTE: We construct a minimal pseudo-worker table so we can reuse calculateWorkerWage()
+    -- NOTE: We construct a minimal pseudo-worker table so we can reuse calculateLaborCost()
     -- and avoid duplicating the wage formula here.
     for vehicleId, hoursWorked in pairs(self.workerHours) do
         if not activeIds[vehicleId] and (hoursWorked > 0 or (self.workerHectares[vehicleId] or 0) > 0) then
             local hectaresWorked = self.workerHectares[vehicleId] or 0
-            -- Use a bare pseudo-worker so calculateWorkerWage applies the same
+            -- Use a bare pseudo-worker so calculateLaborCost applies the same
             -- formula (including any future changes) as for active workers.
-            -- Dismissed workers have no job object, so skillMultiplier defaults to 1.0.
+            -- Dismissed workers have no job object, so skill defaults to neutral.
+            -- The roster uuid was captured while bound, so level/fatigue still apply.
+            local rosterWorker = self.roster and self.roster:getWorker(self.workerRosterUuid[vehicleId])
             local pseudoWorker = {}
-            local wage = self:calculateWorkerWage(pseudoWorker, hoursWorked, hectaresWorked)
+            local wage = self:calculateLaborCost(pseudoWorker, hoursWorked, hectaresWorked, rosterWorker, self.workerDailyHours[vehicleId])
 
             local name = self.workerNames[vehicleId] or "Dismissed Worker"
             if wage > 0 then
@@ -475,10 +596,11 @@ function WorkerSystem:processWorkerPayments(silent)
             end
 
             -- Remove stale entries to prevent unbounded table growth
-            self.workerHours[vehicleId]    = nil
-            self.workerHectares[vehicleId] = nil
-            self.workerNames[vehicleId]    = nil
-            self.workerJobTotal[vehicleId] = nil
+            self.workerHours[vehicleId]      = nil
+            self.workerHectares[vehicleId]   = nil
+            self.workerNames[vehicleId]      = nil
+            self.workerJobTotal[vehicleId]   = nil
+            self.workerRosterUuid[vehicleId] = nil
         end
     end
 

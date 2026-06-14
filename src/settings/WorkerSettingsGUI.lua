@@ -36,6 +36,7 @@ function WorkerSettingsGUI:registerConsoleCommands()
     
     addConsoleCommand("WorkerCostsShowSettings", "Show current settings", "consoleCommandShowSettings", self)
     addConsoleCommand("WorkerCostsShowRoster", "Show the Pro-Staff worker roster (id, name, level, hours, jobs, XP)", "consoleCommandShowRoster", self)
+    addConsoleCommand("WorkerCostsGrantXP", "TESTING: add XP (=hours) to all roster workers; recomputes level (Experienced=40, Master=160)", "consoleCommandGrantXP", self)
     addConsoleCommand("WorkerCostsDiagnostic", "Run full diagnostic report", "consoleCommandDiagnostic", self)
     
     addConsoleCommand("WorkerCostsResetSettings", "Reset all settings to defaults", "consoleCommandResetSettings", self)
@@ -58,6 +59,7 @@ function WorkerSettingsGUI:consoleCommandHelp()
     print("WorkerCostsDebug true|false - Toggle debug logging")
     print("WorkerCostsShowSettings - Show current settings")
     print("WorkerCostsShowRoster - Show the worker roster")
+    print("WorkerCostsGrantXP <xp> - TESTING: grant XP to all workers")
     print("WorkerCostsDiagnostic - Run full diagnostic report")
     print("WorkerCostsResetSettings - Reset to defaults")
     print("===========================================")
@@ -219,14 +221,13 @@ function WorkerSettingsGUI:consoleCommandShowRoster()
     if #workers == 0 then
         table.insert(lines, "(empty — start an AI helper to auto-hire one)")
     else
-        local levelNames = { [1] = "Novice", [2] = "Experienced", [3] = "Master" }
         for _, w in ipairs(workers) do
-            local levelName = levelNames[w.level] or tostring(w.level)
             table.insert(lines, string.format(
-                "#%d  %-16s  %-11s  hrs=%.2f  jobs=%d  XP=%.1f  %s",
-                w.uuid, w.name or "Worker", levelName,
+                "#%d  %-16s  %-11s  hrs=%.2f  jobs=%d  XP=%.1f  fat=%d%%  %s",
+                w.uuid, w.name or "Worker", WorkerRoster.levelName(w.level),
                 w.totalHours or 0, w.totalJobs or 0, w.totalXP or 0,
-                w.assignedVehicleId and ("[working]") or "[idle]"
+                math.floor((w.fatigue or 0) * 100),
+                w.assignedVehicleId and "[working]" or "[idle]"
             ))
         end
     end
@@ -235,6 +236,37 @@ function WorkerSettingsGUI:consoleCommandShowRoster()
     local out = table.concat(lines, "\n")
     print(out)
     return out
+end
+
+-- TESTING aid: grant XP to every roster worker so levels (and the wage discount /
+-- fatigue immunity that ride on them) can be exercised without 40+ hours of work.
+function WorkerSettingsGUI:consoleCommandGrantXP(amountStr)
+    if g_WorkerManager == nil or g_WorkerManager.workerRoster == nil then
+        return "Error: Worker Costs Mod not initialized"
+    end
+    local amount = tonumber(amountStr)
+    if amount == nil then
+        return "Usage: WorkerCostsGrantXP <xp>   (xp == hours; Experienced=40, Master=160)"
+    end
+    local roster = g_WorkerManager.workerRoster
+    local workers = roster:getAll()
+    if #workers == 0 then
+        return "Roster is empty - start an AI helper first to auto-hire a worker"
+    end
+    local promoted = {}
+    for _, w in ipairs(workers) do
+        w.totalXP = (w.totalXP or 0) + amount
+        local newLevel = roster:recomputeLevel(w)
+        if newLevel then
+            table.insert(promoted, string.format("%s -> %s", w.name or "Worker", WorkerRoster.levelName(newLevel)))
+        end
+    end
+    local msg = string.format("Granted %g XP to %d worker(s).", amount, #workers)
+    if #promoted > 0 then
+        msg = msg .. " Promotions: " .. table.concat(promoted, ", ")
+    end
+    print(msg)
+    return msg
 end
 
 function WorkerSettingsGUI:consoleCommandSetDebug(valueStr)

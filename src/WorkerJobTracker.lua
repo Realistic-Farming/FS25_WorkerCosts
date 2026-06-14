@@ -34,9 +34,10 @@
 -- PRO-STAFF BUILD CHECKLIST — work in THIS file, ticked per phase
 -- (full plan: docs/PRO_STAFF_PLAN.md):
 --   [x] Phase 1 — AI_JOB_STARTED/STOPPED subscription; attribute jobs to roster
---                 workers (auto-hire bridge); finalize hours/jobs/XP on stop
---   [ ] Phase 2 — recompute Novice/Experienced/Master tier from totalXP on stop
---   [ ] Phase 3 — feed fatigue / overtime signals into the wage pipeline
+--                 workers (auto-hire bridge); finalize hours/jobs/XP on stop;
+--                 flushActiveJobs() credits in-progress time on save
+--   [x] Phase 2 — recompute tier from totalXP on stop/flush; promotion notice
+--   [x] Phase 3 — accrue fatigue per hour worked (recovery lives in WorkerSystem)
 --   [ ] Phase 4 — surface the job-complete summary in the UI (currently log-only)
 --   [ ] Phase 5 — broadcast roster mutations (hire/assign/level) to MP clients
 -- =========================================================
@@ -167,18 +168,63 @@ function WorkerJobTracker:_onJobStopped(job, aiMessage)
     local elapsedMs = math.max(0, now - (rec.startTime or now))
     local hours     = elapsedMs / MS_PER_HOUR
 
-    worker.totalHours = (worker.totalHours or 0) + hours
-    worker.totalJobs  = (worker.totalJobs or 0) + 1
-    -- Raw XP accrues at 1 per real hour worked. Phase 2 maps totalXP -> level tier.
-    worker.totalXP    = (worker.totalXP or 0) + hours
+    local newLevel = self:_creditWork(worker, hours)
+    worker.totalJobs = (worker.totalJobs or 0) + 1
 
     -- Free the worker so it can take the next job (and be reused by the bridge).
     self.roster:unassignVehicle(rec.vehicleId)
 
-    -- Phase 1 milestone (2.0.0) is invisible to players: log only, no HUD popup.
-    -- The player-facing job summary is surfaced by the Phase 4 UI refresh.
-    self:log("Job done: '%s' +%.2fh (totalHours=%.2f, jobs=%d, XP=%.1f)",
-        worker.name, hours, worker.totalHours, worker.totalJobs, worker.totalXP)
+    self:log("Job done: '%s' +%.2fh (totalHours=%.2f, jobs=%d, XP=%.1f, lvl=%s, fatigue=%.2f)",
+        worker.name, hours, worker.totalHours, worker.totalJobs, worker.totalXP,
+        WorkerRoster.levelName(worker.level), worker.fatigue or 0)
+
+    if newLevel then
+        self:_notifyLevelUp(worker, newLevel)
+    end
+end
+
+-- Credit worked time to a roster worker: hours, XP, fatigue, and a level
+-- recompute. Returns the new level if the worker leveled up, else nil.
+-- Shared by job completion and the save-time flush so the math lives in one place.
+function WorkerJobTracker:_creditWork(worker, hours)
+    if not worker or hours <= 0 then
+        return nil
+    end
+    worker.totalHours = (worker.totalHours or 0) + hours
+    -- XP accrues at 1 per real hour worked; Phase 2 maps totalXP -> level tier.
+    worker.totalXP = (worker.totalXP or 0) + hours
+    WorkerRoster.addFatigue(worker, hours)
+    return self.roster and self.roster:recomputeLevel(worker) or nil
+end
+
+-- Phase 1 refinement: credit every in-flight job's elapsed time WITHOUT ending
+-- it, then advance each start time so the eventual stop only counts the
+-- remainder. Called before a roster save so saving mid-job persists accrued time.
+function WorkerJobTracker:flushActiveJobs()
+    local now = (g_currentMission and g_currentMission.time) or 0
+    for _, rec in pairs(self.activeJobs) do
+        local worker = self.roster and self.roster:getWorker(rec.workerUuid)
+        if worker then
+            local hours = math.max(0, now - (rec.startTime or now)) / MS_PER_HOUR
+            local newLevel = self:_creditWork(worker, hours)
+            if newLevel then
+                self:_notifyLevelUp(worker, newLevel)
+            end
+        end
+        rec.startTime = now  -- avoid double-counting when the job later stops
+    end
+end
+
+-- Phase 2: player-facing promotion notice (milestone 2.1.0 is no longer invisible).
+function WorkerJobTracker:_notifyLevelUp(worker, newLevel)
+    self:log("Level up: '%s' -> %s", worker.name, WorkerRoster.levelName(newLevel))
+    if not (self.settings and self.settings.showNotifications) then
+        return
+    end
+    if g_currentMission and g_currentMission.hud and g_currentMission.hud.showBlinkingWarning then
+        g_currentMission.hud:showBlinkingWarning(
+            string.format("%s promoted to %s", worker.name, WorkerRoster.levelName(newLevel)), 4000)
+    end
 end
 
 -- ---------------------------------------------------------------------------

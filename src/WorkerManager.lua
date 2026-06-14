@@ -14,10 +14,12 @@
 -- PRO-STAFF BUILD CHECKLIST — coordinator wiring in THIS file, ticked per phase
 -- (full plan: docs/PRO_STAFF_PLAN.md):
 --   [x] Phase 0 — own WorkerRoster; load on mission start; expose save entry
---   [x] Phase 1 — own WorkerJobTracker; subscribe on load, unsubscribe on delete
---   [ ] Phase 2 — drive XP accrual + level recompute
---   [ ] Phase 3 — own the calculateLaborCost modifier pipeline
---   [ ] Phase 4 — feed roster data (level/fatigue) to the WC*Frame UI
+--   [x] Phase 1 — own WorkerJobTracker; subscribe on load, unsubscribe on delete;
+--                 flush in-progress jobs before each roster save
+--   [x] Phase 2 — XP/level handled by tracker+roster (no extra wiring needed)
+--   [x] Phase 3 — pass the roster to WorkerSystem for the labor-cost pipeline
+--   [x] Phase 4 — roster reachable via g_WorkerManager.workerRoster; WCWorkerStatsFrame
+--                 shows level/fatigue (dashboard/wage-settings columns still pending)
 --   [ ] Phase 5 — expose getRosterSnapshot(); register MP roster-sync events
 -- =========================================================
 ---@class WorkerManager
@@ -46,7 +48,9 @@ function WorkerManager.new(mission, modDirectory, modName)
     -- workers and finalizes their hours/XP. Subscribed in onMissionLoaded.
     self.jobTracker = WorkerJobTracker.new(self.workerRoster, self.settings)
 
-    self.workerSystem = WorkerSystem.new(self.settings)
+    -- Phase 3: WorkerSystem reads the roster (level/fatigue) for the labor-cost
+    -- pipeline and recovers idle workers' fatigue daily.
+    self.workerSystem = WorkerSystem.new(self.settings, self.workerRoster)
     
     if mission:getIsClient() and g_gui then
         self.WorkerSettingsUI = WorkerSettingsUI.new(self.settings)
@@ -129,6 +133,11 @@ end
 function WorkerManager:saveWorkerData(missionInfo)
     if not self.workerRoster then
         return
+    end
+    -- Phase 1 refinement: credit in-progress jobs so a save mid-job persists the
+    -- time worked so far (stats otherwise only finalize on job stop).
+    if self.jobTracker then
+        self.jobTracker:flushActiveJobs()
     end
     missionInfo = missionInfo or (g_currentMission and g_currentMission.missionInfo)
     self.workerRoster:save(missionInfo)

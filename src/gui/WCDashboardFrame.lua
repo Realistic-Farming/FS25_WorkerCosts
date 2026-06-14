@@ -4,6 +4,9 @@
 -- =========================================================
 -- Author: TisonK
 -- =========================================================
+-- PRO-STAFF CHECKLIST: [x] Phase 4 — worker list prefixed with roster level;
+--   estimate reflects the Phase 3 pipeline via getEstimatedIntervalCost.
+-- =========================================================
 
 ---@class WCDashboardFrame
 WCDashboardFrame = {}
@@ -96,11 +99,19 @@ function WCDashboardFrame:refreshLive()
     if self.txtWorkerNames then
         if workerCount > 0 then
             local names = {}
+            local roster = g_WorkerManager.workerRoster
             for _, w in ipairs(workers) do
                 -- Show which vehicle the helper is driving (#48)
                 local label = w.name
                 if w.vehicleName ~= nil and w.vehicleName ~= w.name then
                     label = string.format("%s (%s)", w.name, w.vehicleName)
+                end
+                -- Phase 4: prefix the roster level so the dashboard shows seniority.
+                if roster then
+                    local rw = roster:getWorkerByVehicle(tostring(w.vehicle))
+                    if rw then
+                        label = string.format("[%s] %s", WorkerRoster.levelName(rw.level), label)
+                    end
                 end
                 table.insert(names, label)
             end

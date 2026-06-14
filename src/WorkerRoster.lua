@@ -22,8 +22,8 @@
 --   [x] Phase 0 — identity model + workerData.xml persistence
 --   [x] Phase 1 — roster API for job attribution (createWorker / assignVehicle /
 --                 getWorkerByVehicle / findIdleByName / unassignVehicle)
---   [ ] Phase 2 — XP accrual + Novice/Experienced/Master tier from totalXP
---   [ ] Phase 3 — fatigue feeds the wage modifier pipeline
+--   [x] Phase 2 — levelForXP / recomputeLevel / levelName (Novice/Exp/Master)
+--   [x] Phase 3 — fatigue model (addFatigue / recoverFatigue) for the wage pipeline
 --   [ ] Phase 4 — (no change here; UI reads the roster via the manager)
 --   [ ] Phase 5 — getRosterSnapshot() read API + MP (de)serialization, and
 --                 persist a STABLE vehicle uniqueId for assignedVehicleId
@@ -43,6 +43,16 @@ WorkerRoster.SCHEMA_VERSION = "1.0"
 WorkerRoster.LEVEL_NOVICE      = 1
 WorkerRoster.LEVEL_EXPERIENCED = 2
 WorkerRoster.LEVEL_MASTER      = 3
+
+-- Pro-Staff Phase 2: XP -> level thresholds. XP accrues at 1 per real hour
+-- worked (see WorkerJobTracker), so these are effectively "hours worked". Tunable.
+WorkerRoster.XP_EXPERIENCED = 40
+WorkerRoster.XP_MASTER      = 160
+
+-- Pro-Staff Phase 3: fatigue model (0..1). Accrues with work, recovers when idle.
+WorkerRoster.FATIGUE_MAX          = 1.0
+WorkerRoster.FATIGUE_PER_HOUR     = 0.05   -- added per real hour worked
+WorkerRoster.FATIGUE_RECOVERY_DAY = 0.34   -- removed per full idle in-game day
 
 function WorkerRoster.new()
     local self = setmetatable({}, WorkerRoster_mt)
@@ -169,6 +179,59 @@ function WorkerRoster:clear()
     self.workers = {}
     self.byId    = {}
     self.nextId  = 1
+end
+
+-- ---------------------------------------------------------------------------
+-- Phase 2: levels  /  Phase 3: fatigue (model-level mutators)
+-- ---------------------------------------------------------------------------
+
+--- The level tier implied by an XP total.
+function WorkerRoster.levelForXP(xp)
+    xp = xp or 0
+    if xp >= WorkerRoster.XP_MASTER then
+        return WorkerRoster.LEVEL_MASTER
+    elseif xp >= WorkerRoster.XP_EXPERIENCED then
+        return WorkerRoster.LEVEL_EXPERIENCED
+    end
+    return WorkerRoster.LEVEL_NOVICE
+end
+
+--- Human-readable level name (also used by the UI and console dump).
+function WorkerRoster.levelName(level)
+    if level == WorkerRoster.LEVEL_MASTER then
+        return "Master"
+    elseif level == WorkerRoster.LEVEL_EXPERIENCED then
+        return "Experienced"
+    end
+    return "Novice"
+end
+
+--- Recompute a worker's level from its XP. Returns the new level if it changed
+-- (so callers can fire a level-up notification), or nil if unchanged.
+function WorkerRoster:recomputeLevel(worker)
+    if not worker then
+        return nil
+    end
+    local newLevel = WorkerRoster.levelForXP(worker.totalXP or 0)
+    if newLevel ~= worker.level then
+        worker.level = newLevel
+        return newLevel
+    end
+    return nil
+end
+
+--- Add fatigue for `hours` of work, clamped to FATIGUE_MAX.
+function WorkerRoster.addFatigue(worker, hours)
+    if not worker then return end
+    worker.fatigue = math.min(WorkerRoster.FATIGUE_MAX,
+        (worker.fatigue or 0) + (hours or 0) * WorkerRoster.FATIGUE_PER_HOUR)
+end
+
+--- Recover fatigue for `days` of rest, floored at 0.
+function WorkerRoster.recoverFatigue(worker, days)
+    if not worker then return end
+    worker.fatigue = math.max(0,
+        (worker.fatigue or 0) - (days or 1) * WorkerRoster.FATIGUE_RECOVERY_DAY)
 end
 
 -- ---------------------------------------------------------------------------

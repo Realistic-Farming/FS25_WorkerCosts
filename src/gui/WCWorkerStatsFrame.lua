@@ -4,6 +4,12 @@
 -- =========================================================
 -- Author: TisonK
 -- =========================================================
+-- PRO-STAFF CHECKLIST (full plan: docs/PRO_STAFF_PLAN.md):
+--   [x] Phase 4 — per-worker level + fatigue in the breakdown list; dashboard
+--                 shows level; estimate folds the Phase 3 modifiers
+--   note: the Wage Settings tab stays settings-only (rates/toggles); payroll
+--         detail lives here and on the dashboard, not there.
+-- =========================================================
 
 ---@class WCWorkerStatsFrame
 WCWorkerStatsFrame = {}
@@ -99,6 +105,7 @@ function WCWorkerStatsFrame:refreshLive()
     if self.txtWorkerList then
         if workerCount > 0 then
             local lines = {}
+            local roster = g_WorkerManager.workerRoster
             for _, w in ipairs(workers) do
                 local cost
                 if isHourly then
@@ -108,7 +115,16 @@ function WCWorkerStatsFrame:refreshLive()
                     local hectares = ws.workerHectares[tostring(w.vehicle)] or 0
                     cost = math.floor(rate * hectares)
                 end
-                table.insert(lines, w.name .. "   -" .. g_i18n:formatMoney(cost, 0, true, false))
+                -- Phase 4: surface the roster worker's level + fatigue next to the cost.
+                local tag = ""
+                if roster then
+                    local rw = roster:getWorkerByVehicle(tostring(w.vehicle))
+                    if rw then
+                        tag = string.format(" [%s, fatigue %d%%]",
+                            WorkerRoster.levelName(rw.level), math.floor((rw.fatigue or 0) * 100))
+                    end
+                end
+                table.insert(lines, w.name .. tag .. "   -" .. g_i18n:formatMoney(cost, 0, true, false))
             end
             self.txtWorkerList:setText(table.concat(lines, "\n"))
         else

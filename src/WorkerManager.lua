@@ -59,6 +59,16 @@ function WorkerManager.new(mission, modDirectory, modName)
 end
 
 function WorkerManager:onMissionLoaded()
+    -- Reload settings here, not in new().  WorkerManager.new() runs during
+    -- Mission00.load (prepended), before missionInfo.savegameDirectory is set, so
+    -- the load() in the constructor reads nothing and falls back to defaults.
+    -- loadMission00Finished is the first guaranteed-safe window: the savegame has
+    -- been read and savegameDirectory is populated for loaded careers, so the saved
+    -- FS25_WorkerCosts.xml is actually applied (fixes settings reverting on reload).
+    if self.settings then
+        self.settings:load()
+    end
+
     if self.workerSystem then
         self.workerSystem:initialize()
     end

@@ -36,15 +36,15 @@
                     <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -234px" width="520px"/>
 
                     <!-- Absolute layout avoids BoxLayout input forwarding that caused rapid cycling (#41) -->
-                    <Text profile="WC_RowLabel" position="5px -263px" text="$l10n_wc_costmode_short" width="150px"/>
-                    <MultiTextOption profile="WC_FilterSwitcher" id="optCostMode" position="165px -256px" size="370px 32px"/>
+                    <!-- Row label removed (#51): the "Payment Strategy" section title above already names this -->
+                    <MultiTextOption profile="WC_FilterSwitcher" id="optCostMode" position="5px -256px" size="520px 32px"/>
 
                     <!-- WAGE LEVEL -->
                     <Text profile="WC_SectionTitle" position="10px -302px" text="$l10n_wc_section_wage_level"/>
                     <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -326px" width="520px"/>
 
-                    <Text profile="WC_RowLabel" position="5px -355px" text="$l10n_wc_difficulty_short" width="150px"/>
-                    <MultiTextOption profile="WC_FilterSwitcher" id="optWageLevel" position="165px -348px" size="370px 32px"/>
+                    <!-- Row label removed (#51): the "Compensation Tier" section title above already names this -->
+                    <MultiTextOption profile="WC_FilterSwitcher" id="optWageLevel" position="5px -348px" size="520px 32px"/>
 
                     <!-- Reset button (3-layer: Bg + Hit + Text) -->
                     <Bitmap profile="WC_BtnBgRed" id="btnResetBg" position="10px -422px" size="240px 40px"/>

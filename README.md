@@ -234,6 +234,11 @@ Search for `[Worker Costs]` — all mod activity (when Debug Mode is on) and any
 
 ## Changelog
 
+### v1.0.9.5 — Settings Persistence & UI Wording
+- Fixed: Payment Strategy and Compensation Tier reverted to defaults after a save/reload — settings are now reloaded once the savegame is available, so your choices stick
+- Changed: renamed "Cost Mode" to **Payment Strategy** and "Wage Level" to **Compensation Tier** in the Wage Settings tab
+- Polish: removed the duplicate row labels under each section header in the Wage Settings tab
+
 ### v1.0.4.0 — Audit & Polish
 - Fixed: per-hectare mode showed mode-name string as a cost value in Worker Stats tab
 - Fixed: worker cost rows showed a `+` prefix (implying income) — corrected to `-`

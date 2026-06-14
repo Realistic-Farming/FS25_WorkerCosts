@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>1.0.9.4</version>
+    <version>1.0.9.5</version>
     <modName>FS25_WorkerCostsMod</modName>
     <title>
         <en>Realistic Worker Costs</en>
@@ -111,20 +111,6 @@
             <da>Slå debug-tilstand til/fra (ekstra logning)</da>
         </text>
         
-        <text name="wc_costmode_short">
-            <en>Cost Mode</en>
-            <de>Kostenmodus</de>
-            <fr>Mode de Coût</fr>
-            <pl>Tryb kosztów</pl>
-            <es>Modo de costo</es>
-            <it>Modalità costo</it>
-            <cz>Režim nákladů</cz>
-            <br>Modo de custo</br>
-            <uk>Режим витрат</uk>
-            <ru>Режим расходов</ru>
-        
-            <da>Omkostningstilstand</da>
-        </text>
         
         <text name="wc_costmode_long">
             <en>Choose cost calculation: hourly or per hectare</en>
@@ -186,20 +172,6 @@
             <da>Månedsløn</da>
         </text>
 
-        <text name="wc_difficulty_short">
-            <en>Wage Level</en>
-            <de>Lohnniveau</de>
-            <fr>Niveau de Salaire</fr>
-            <pl>Poziom płac</pl>
-            <es>Nivel de salario</es>
-            <it>Livello salariale</it>
-            <cz>Úroveň mezd</cz>
-            <br>Nível salarial</br>
-            <uk>Рівень оплати</uk>
-            <ru>Уровень оплаты</ru>
-        
-            <da>Lønniveau</da>
-        </text>
         
         <text name="wc_difficulty_long">
             <en>Set base wage rate: Low=$15/h, Medium=$25/h, High=$40/h</en>
@@ -483,32 +455,32 @@
             <da>Generalt</da>
         </text>
         <text name="wc_section_cost_mode">
-            <en>Cost Mode</en>
+            <en>Payment Strategy</en>
         
-            <de>[EN] Cost Mode</de>
-            <fr>[EN] Cost Mode</fr>
-            <pl>[EN] Cost Mode</pl>
-            <es>[EN] Cost Mode</es>
-            <it>[EN] Cost Mode</it>
-            <cz>[EN] Cost Mode</cz>
-            <br>[EN] Cost Mode</br>
-            <uk>[EN] Cost Mode</uk>
-            <ru>[EN] Cost Mode</ru>
-            <da>Omkostningstilstand</da>
+            <de>[EN] Payment Strategy</de>
+            <fr>[EN] Payment Strategy</fr>
+            <pl>[EN] Payment Strategy</pl>
+            <es>[EN] Payment Strategy</es>
+            <it>[EN] Payment Strategy</it>
+            <cz>[EN] Payment Strategy</cz>
+            <br>[EN] Payment Strategy</br>
+            <uk>[EN] Payment Strategy</uk>
+            <ru>[EN] Payment Strategy</ru>
+            <da>Betalingsstrategi</da>
         </text>
         <text name="wc_section_wage_level">
-            <en>Wage Level</en>
+            <en>Compensation Tier</en>
         
-            <de>[EN] Wage Level</de>
-            <fr>[EN] Wage Level</fr>
-            <pl>[EN] Wage Level</pl>
-            <es>[EN] Wage Level</es>
-            <it>[EN] Wage Level</it>
-            <cz>[EN] Wage Level</cz>
-            <br>[EN] Wage Level</br>
-            <uk>[EN] Wage Level</uk>
-            <ru>[EN] Wage Level</ru>
-            <da>Løn Niveau</da>
+            <de>[EN] Compensation Tier</de>
+            <fr>[EN] Compensation Tier</fr>
+            <pl>[EN] Compensation Tier</pl>
+            <es>[EN] Compensation Tier</es>
+            <it>[EN] Compensation Tier</it>
+            <cz>[EN] Compensation Tier</cz>
+            <br>[EN] Compensation Tier</br>
+            <uk>[EN] Compensation Tier</uk>
+            <ru>[EN] Compensation Tier</ru>
+            <da>Kompensationsniveau</da>
         </text>
         <text name="wc_section_effective">
             <en>Effective Rate</en>
@@ -1077,11 +1049,11 @@ Denne mod er kompatibel med multiplayer. Indstillinger gemmes pr. savegame.</da>
             <da>Omkostningsstruktur</da>
         </text>
         <text name="wc_help_body">
-            <en>COST MODE
+            <en>PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1091,11 +1063,11 @@ Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</en>
         
-            <de>[EN] COST MODE
+            <de>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1104,11 +1076,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</de>
-            <fr>[EN] COST MODE
+            <fr>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1117,11 +1089,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</fr>
-            <pl>[EN] COST MODE
+            <pl>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1130,11 +1102,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</pl>
-            <es>[EN] COST MODE
+            <es>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1143,11 +1115,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</es>
-            <it>[EN] COST MODE
+            <it>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1156,11 +1128,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</it>
-            <cz>[EN] COST MODE
+            <cz>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1169,11 +1141,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</cz>
-            <br>[EN] COST MODE
+            <br>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1182,11 +1154,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</br>
-            <uk>[EN] COST MODE
+            <uk>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1195,11 +1167,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</uk>
-            <ru>[EN] COST MODE
+            <ru>[EN] PAYMENT STRATEGY
 Hourly — pay a fixed rate per worker per real-time hour.
 Per Hectare — pay based on area worked.
 
-WAGE LEVEL
+COMPENSATION TIER
 Low    = $15 per worker per hour
 Medium = $25 per worker per hour
 High   = $40 per worker per hour
@@ -1208,11 +1180,11 @@ PAYMENTS
 Deducted every 30 real-time minutes, independent of game speed.
 
 Use Reset to restore all settings to their defaults.</ru>
-            <da>OMKOSTNINGSTILSTAND
+            <da>BETALINGSSTRATEGI
 Timebaseret — betal en fast sats pr. medarbejder pr. realtidstime.
 Pr. hektar — betal baseret på det bearbejdede areal.
 
-LØNNIVEAU
+KOMPENSATIONSNIVEAU
 Lav = $15 pr. medarbejder pr. time
 Mellem = $25 pr. medarbejder pr. time
 Høj = $40 pr. medarbejder pr. time
@@ -1223,10 +1195,10 @@ Fratrækkes hvert 5. realtidsminut, uafhængigt af spillets hastighed. Satsforh�
 Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
         </text>
         <text name="wc_help_body_ha">
-            <en>COST MODE
+            <en>PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1236,10 +1208,10 @@ Deducted every 30 real-time minutes based on area worked. Workers not currently 
 
 Use Reset to restore all settings to their defaults.</en>
 
-            <de>[EN] COST MODE
+            <de>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1248,10 +1220,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</de>
-            <fr>[EN] COST MODE
+            <fr>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1260,10 +1232,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</fr>
-            <pl>[EN] COST MODE
+            <pl>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1272,10 +1244,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</pl>
-            <es>[EN] COST MODE
+            <es>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1284,10 +1256,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</es>
-            <it>[EN] COST MODE
+            <it>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1296,10 +1268,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</it>
-            <cz>[EN] COST MODE
+            <cz>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1308,10 +1280,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</cz>
-            <br>[EN] COST MODE
+            <br>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1320,10 +1292,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</br>
-            <uk>[EN] COST MODE
+            <uk>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1332,10 +1304,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</uk>
-            <ru>[EN] COST MODE
+            <ru>[EN] PAYMENT STRATEGY
 Per Hectare — workers are billed per hectare of field worked during each payment interval.
 
-WAGE LEVEL (per hectare)
+COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
 Medium = $25 per hectare worked
 High   = $40 per hectare worked
@@ -1344,10 +1316,10 @@ PAYMENTS
 Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
 
 Use Reset to restore all settings to their defaults.</ru>
-            <da>OMKOSTNINGSTILSTAND
+            <da>BETALINGSSTRATEGI
 Pr. hektar — medarbejdere opkræves pr. hektar bearbejdet mark i hvert betalingsinterval.
 
-LØNNIVEAU (pr. hektar)
+KOMPENSATIONSNIVEAU (pr. hektar)
 Lav = $15 pr. hektar bearbejdet
 Mellem = $25 pr. hektar bearbejdet
 Høj = $40 pr. hektar bearbejdet

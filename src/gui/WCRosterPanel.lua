@@ -352,26 +352,39 @@ function WCRosterPanel:handleClick(id, data)
         return
     end
 
-    -- Mutations are server/SP only for now (MP sync is a later sub-batch).
+    -- This panel renders from the local roster, which only the host holds, so it
+    -- stays server/SP only. MP clients manage workers from the Farm Tablet Personnel
+    -- app instead (it reads the synced snapshot). All mutations now route through the
+    -- WorkerManager command API so a host action also broadcasts to clients and the
+    -- recruit-pool / hire-cost rules apply everywhere (single source of truth).
     if not self:_isServer() then
-        self.infoMsg = "Only the host can manage workers (MP sync coming later)"
+        self.infoMsg = "Only the host can manage workers from this panel"
         return
     end
     if self.roster == nil then return end
 
+    local mgr = g_currentMission and g_currentMission.workerCostsManager
+
     if id == "hire" then
-        local name = NAME_POOL[math.random(1, #NAME_POOL)]
-        local w = self.roster:createWorker(name)
-        self.infoMsg = string.format("Hired %s (id=%d)", w.name, w.uuid)
+        if mgr then
+            local pool = mgr:getRecruitPool()
+            local cand = pool and pool[1]
+            mgr:hireWorker(1)
+            if cand then
+                local money = g_i18n and g_i18n:formatMoney(cand.hireCost or 0, 0, true, true) or ("$" .. (cand.hireCost or 0))
+                self.infoMsg = string.format("Hired %s  (signing %s)", cand.name, money)
+            else
+                self.infoMsg = "No recruits available"
+            end
+        end
 
     elseif id:sub(1, 5) == "fire_" and data then
-        local severance = 0
-        if self.workerSystem then
-            severance = self.workerSystem:chargeSeverance(data.name or "Worker", data.level)
+        if mgr then
+            local severance = (mgr.workerSystem and mgr.workerSystem:computeSeverance(data.level)) or 0
+            mgr:fireWorker(data.uuid)
+            local money = g_i18n and g_i18n:formatMoney(severance, 0, true, true) or ("$" .. severance)
+            self.infoMsg = string.format("Fired %s  (severance %s)", data.name or "Worker", money)
         end
-        self.roster:removeWorker(data.uuid)
-        local money = g_i18n and g_i18n:formatMoney(severance, 0, true, true) or ("$" .. severance)
-        self.infoMsg = string.format("Fired %s  (severance %s)", data.name or "Worker", money)
 
     elseif id:sub(1, 7) == "assign_" and data then
         local vehicle = self:_getCurrentVehicle()
@@ -384,12 +397,12 @@ function WCRosterPanel:handleClick(id, data)
             self.infoMsg = "That vehicle has no stable id yet - save once, then assign"
             return
         end
-        self.roster:assignVehiclePersistent(data.uuid, uniqueId)
+        if mgr then mgr:assignWorker(data.uuid, uniqueId) end
         local vname = (vehicle.getFullName and vehicle:getFullName()) or "vehicle"
         self.infoMsg = string.format("Pinned to %s", vname)
 
     elseif id:sub(1, 9) == "unassign_" and data then
-        self.roster:unassignPersistent(data.uuid)
+        if mgr then mgr:unassignWorker(data.uuid) end
         self.infoMsg = "Pin removed"
     end
 end

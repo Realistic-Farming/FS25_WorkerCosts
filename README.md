@@ -234,6 +234,12 @@ Search for `[Worker Costs]` — all mod activity (when Debug Mode is on) and any
 
 ## Changelog
 
+### v2.1.0.0 — Pro-Staff Goes Multiplayer
+- New: **full multiplayer** — the roster is host-authoritative and syncs to every client; clients can hire, fire, and assign and the result broadcasts back to everyone
+- New: **recruitment pool** — a rotating set of candidates with their own level and one-off **signing cost**; hire a specific candidate or reroll the pool
+- New: **cross-mod command + financial API** — `hireWorker` / `fireWorker` / `assignWorker` plus an enriched roster snapshot (per-worker effective rate, severance, and Pro-Staff cost impact) for the Farm Tablet **Personnel** app
+- Change: the **Pro-Staff Panel** (ALT+H) now routes through the same command pipeline, so a host action also syncs to clients and hiring applies the signing cost everywhere
+
 ### v2.0.0.0 — Pro-Staff
 - New: **Pro-Staff roster** — the mod now keeps a real list of hired workers that survives save/reload, instead of nameless one-off helpers
 - New: workers gain **XP from hours worked** and rank up Novice → Experienced → Master (40h / 160h), with a promotion notice

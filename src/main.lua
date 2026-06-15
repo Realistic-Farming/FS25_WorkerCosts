@@ -19,7 +19,7 @@ local modName = g_currentModName
 --   [x] Phase 0 — source WorkerRoster; install roster save hook (FSCareerMissionInfo)
 --   [x] Phase 1 — source WorkerJobTracker (subscribes to AI_JOB_STARTED/STOPPED
 --                 in WorkerManager:onMissionLoaded)
---   [ ] Phase 5 — register network events for MP roster sync
+--   [x] Phase 5 — source WCNetworkEvents (MP roster sync + worker command events)
 -- =========================================================
 
 -- Load all source files in correct order
@@ -33,6 +33,7 @@ source(modDirectory .. "src/WorkerSystem.lua")
 source(modDirectory .. "src/WorkerJobTracker.lua")
 source(modDirectory .. "src/gui/WCRosterPanel.lua") -- created in WorkerManager.new, so load before it
 source(modDirectory .. "src/WorkerManager.lua")
+source(modDirectory .. "src/WCNetworkEvents.lua")   -- Pro-Staff Phase 5: MP roster sync + command events
 
 -- GUI: pause-menu tab + inner tabbed manager
 source(modDirectory .. "src/gui/WCDashboardFrame.lua")

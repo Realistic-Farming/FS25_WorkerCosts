@@ -31,6 +31,10 @@ WorkerSystem.OVERTIME_MULT     = 1.50   -- premium once a vehicle passes the dai
 -- Phase 5 severance: one-off payout when firing. Senior workers cost more to let go.
 WorkerSystem.SEVERANCE_HOURS        = 16
 WorkerSystem.SEVERANCE_LEVEL_FACTOR = { [1] = 1.0, [2] = 1.5, [3] = 2.0 }
+-- Pro-Staff Phase 5: one-off signing cost when hiring a recruit. A more experienced
+-- recruit commands a bigger signing bonus. Expressed in "hours of base wage" so it
+-- scales with the configured wage level, exactly like severance.
+WorkerSystem.HIRE_COST_HOURS        = { [1] = 8, [2] = 24, [3] = 60 }
 
 ---@param settings Settings
 ---@param roster WorkerRoster|nil  Pro-Staff roster for level/fatigue (Phase 3)
@@ -391,13 +395,15 @@ function WorkerSystem:computeSeverance(level)
     return math.floor(rate * WorkerSystem.SEVERANCE_HOURS * factor)
 end
 
---- Charge severance to the player's farm. Returns the amount charged (0 if none).
-function WorkerSystem:chargeSeverance(workerName, level)
+--- Charge severance to a farm. Returns the amount charged (0 if none).
+-- farmId is optional — defaults to the local player's farm (SP/host). In multiplayer
+-- the command pipeline passes the requesting player's farm so the right account pays.
+function WorkerSystem:chargeSeverance(workerName, level, farmId)
     local amount = self:computeSeverance(level)
     if amount <= 0 then
         return 0
     end
-    local farmId = g_currentMission and g_currentMission:getFarmId()
+    farmId = farmId or (g_currentMission and g_currentMission:getFarmId())
     if not farmId or farmId == 0 then
         return 0
     end
@@ -409,6 +415,37 @@ function WorkerSystem:chargeSeverance(workerName, level)
     if ok and self.settings.showNotifications then
         local money = g_i18n and g_i18n:formatMoney(amount, 0, true, true) or ("$" .. amount)
         self:showNotification("Severance", string.format("%s dismissed - severance %s", workerName, money))
+    end
+    return ok and amount or 0
+end
+
+-- Pro-Staff Phase 5: signing cost for hiring a recruit of the given level.
+function WorkerSystem:computeHireCost(level)
+    local rate = self.settings:getWageRate()
+    local hours = WorkerSystem.HIRE_COST_HOURS[level] or WorkerSystem.HIRE_COST_HOURS[1]
+    return math.floor(rate * hours)
+end
+
+--- Charge a hiring/signing cost to a farm. Returns the amount charged (0 if none).
+-- Same farmId contract as chargeSeverance — defaults to the local farm, overridden
+-- by the MP command pipeline so the requesting player's account pays.
+function WorkerSystem:chargeHireCost(workerName, level, farmId)
+    local amount = self:computeHireCost(level)
+    if amount <= 0 then
+        return 0
+    end
+    farmId = farmId or (g_currentMission and g_currentMission:getFarmId())
+    if not farmId or farmId == 0 then
+        return 0
+    end
+    self._isProcessingPayment = true
+    local ok = pcall(function()
+        g_currentMission:addMoney(-amount, farmId, MoneyType.OTHER, false)
+    end)
+    self._isProcessingPayment = false
+    if ok and self.settings.showNotifications then
+        local money = g_i18n and g_i18n:formatMoney(amount, 0, true, true) or ("$" .. amount)
+        self:showNotification("New Hire", string.format("%s hired - signing cost %s", workerName, money))
     end
     return ok and amount or 0
 end

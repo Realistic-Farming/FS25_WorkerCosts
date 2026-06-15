@@ -229,8 +229,6 @@ function WorkerManager:installRosterInput()
             reentrant = false
         end
     end
-
-    Logging.info("[Worker Costs] Roster hotkey (WC_OPEN_ROSTER, default ALT+H) registered")
 end
 
 -- Input callback for the WC_OPEN_ROSTER action.

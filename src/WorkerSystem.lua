@@ -249,6 +249,16 @@ function WorkerSystem:getActiveWorkers()
                         name = vehicleName or "Worker"
                     end
 
+                    -- Pro-Staff: if a roster worker is attributed to this vehicle,
+                    -- show ITS name (e.g. "Dave") everywhere instead of the in-game
+                    -- helper name. Flows to the UI tabs, payments and salary dialog.
+                    if self.roster then
+                        local rw = self.roster:getWorkerByVehicle(tostring(vehicle))
+                        if rw and rw.name then
+                            name = rw.name
+                        end
+                    end
+
                     table.insert(workers, {
                         vehicle     = vehicle,
                         job         = job,

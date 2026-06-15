@@ -22,21 +22,21 @@
 WCRosterPanel = {}
 local WCRosterPanel_mt = Class(WCRosterPanel)
 
--- ── Palette ───────────────────────────────────────────────
+-- ── Palette ── dark grey panel, green text (matches the mod's style) ──
 local C = {
     shadow = { 0, 0, 0 },
-    bg     = { 0.10, 0.11, 0.13 },
-    title  = { 0.16, 0.34, 0.22 },
-    border = { 0.30, 0.62, 0.36 },
-    row    = { 0.17, 0.18, 0.21 },
-    rowAlt = { 0.21, 0.22, 0.26 },
-    text   = { 0.92, 0.93, 0.95, 1 },
-    dim    = { 0.66, 0.68, 0.72, 1 },
-    accent = { 0.50, 0.88, 0.60, 1 },
-    btnHire   = { 0.20, 0.45, 0.27 },
-    btnAssign = { 0.22, 0.38, 0.55 },
-    btnFire   = { 0.52, 0.22, 0.22 },
-    btnTxt    = { 1, 1, 1, 1 },
+    bg     = { 0.15, 0.16, 0.17 },     -- dark grey
+    title  = { 0.13, 0.30, 0.19 },     -- dark green title bar
+    border = { 0.34, 0.70, 0.42 },     -- green border
+    row    = { 0.19, 0.20, 0.22 },     -- grey rows (zebra)
+    rowAlt = { 0.23, 0.24, 0.26 },
+    text   = { 0.64, 0.92, 0.70, 1 },  -- green text
+    dim    = { 0.50, 0.70, 0.55, 1 },  -- muted green
+    accent = { 0.55, 0.95, 0.62, 1 },
+    btnHire   = { 0.20, 0.50, 0.28 },  -- green
+    btnAssign = { 0.24, 0.42, 0.58 },  -- blue (distinct action)
+    btnFire   = { 0.55, 0.24, 0.24 },  -- red (distinct, important)
+    btnTxt    = { 1, 1, 1, 1 },        -- white on coloured buttons stays readable
 }
 
 -- ── Geometry (normalized, Y=0 at bottom) ──────────────────
@@ -198,7 +198,7 @@ function WCRosterPanel:drawTitleBar()
 
     local count = self.roster and self.roster:getCount() or 0
     self:drawText(PX + PAD, ty + TB_H * 0.30, TS_TITLE,
-        string.format("Worker Roster (%d)", count), C.text, RenderText.ALIGN_LEFT, true)
+        string.format("Pro-Staff Panel  (%d)", count), C.text, RenderText.ALIGN_LEFT, true)
 
     -- Close [X]
     local xW = 0.04

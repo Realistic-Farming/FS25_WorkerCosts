@@ -20,7 +20,8 @@
 --   [x] Phase 3 — pass the roster to WorkerSystem for the labor-cost pipeline
 --   [x] Phase 4 — roster reachable via g_WorkerManager.workerRoster; WCWorkerStatsFrame
 --                 shows level/fatigue (dashboard/wage-settings columns still pending)
---   [ ] Phase 5 — expose getRosterSnapshot(); register MP roster-sync events
+--   [~] Phase 5 — getRosterSnapshot() read API DONE (cross-repo contract for the
+--                 Farm Tablet Pro-Staff app); MP roster-sync events still pending
 -- =========================================================
 ---@class WorkerManager
 WorkerManager = {}
@@ -159,6 +160,70 @@ function WorkerManager:loadWorkerData()
     end
     local missionInfo = g_currentMission and g_currentMission.missionInfo
     self.workerRoster:loadIfExists(missionInfo)
+end
+
+-- Pro-Staff Phase 5: read-only roster snapshot — the cross-repo contract from
+-- docs/PRO_STAFF_PLAN.md §5. Other mods (notably the Farm Tablet Pro-Staff app)
+-- read the roster through this method instead of reaching into roster/worker
+-- internals, so the storage layout stays free to change. Returns a fresh plain
+-- table; does no I/O and is safe to call per-frame.
+--
+-- The roster is server-authoritative. On a multiplayer CLIENT it is not synced yet
+-- (MP sync is the remaining Phase 5 sub-batch), so `authoritative` is false and the
+-- worker list is empty — consumers should show a "host-managed" note rather than
+-- presenting an empty roster as the truth.
+function WorkerManager:getRosterSnapshot()
+    local authoritative = (g_currentMission ~= nil
+        and g_currentMission.getIsServer ~= nil
+        and g_currentMission:getIsServer()) and true or false
+
+    local snapshot = {
+        authoritative = authoritative,
+        count   = 0,
+        working = 0,   -- workers currently driving a vehicle on a live AI job
+        pinned  = 0,   -- workers with a persistent vehicle assignment
+        levels  = { novice = 0, experienced = 0, master = 0 },
+        workers = {},
+    }
+
+    if not self.workerRoster then
+        return snapshot
+    end
+
+    for _, w in ipairs(self.workerRoster:getAll()) do
+        local isWorking = w.assignedVehicleId ~= nil
+        local isPinned  = w.assignedVehicleUniqueId ~= nil
+        local status    = isWorking and "working" or "idle"
+        if isPinned then status = status .. ", pinned" end
+
+        snapshot.count = snapshot.count + 1
+        if isWorking then snapshot.working = snapshot.working + 1 end
+        if isPinned  then snapshot.pinned  = snapshot.pinned  + 1 end
+
+        local level = w.level or WorkerRoster.LEVEL_NOVICE
+        if level == WorkerRoster.LEVEL_MASTER then
+            snapshot.levels.master = snapshot.levels.master + 1
+        elseif level == WorkerRoster.LEVEL_EXPERIENCED then
+            snapshot.levels.experienced = snapshot.levels.experienced + 1
+        else
+            snapshot.levels.novice = snapshot.levels.novice + 1
+        end
+
+        table.insert(snapshot.workers, {
+            uuid       = w.uuid,
+            name       = w.name or "Worker",
+            level      = level,
+            levelName  = WorkerRoster.levelName(level),
+            totalHours = w.totalHours or 0,
+            totalJobs  = w.totalJobs or 0,
+            fatigue    = w.fatigue or 0,   -- 0..1
+            working    = isWorking,
+            pinned     = isPinned,
+            status     = status,
+        })
+    end
+
+    return snapshot
 end
 
 -- Phase 5: register the rebindable WC_OPEN_ROSTER action (default ALT+H, shown in

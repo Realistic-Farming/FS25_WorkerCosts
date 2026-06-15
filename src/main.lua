@@ -203,4 +203,4 @@ end
 getfenv(0)["workerCosts"]       = workerCosts
 getfenv(0)["workerCostsStatus"] = workerCostsStatus
 
-Logging.info("[Worker Costs] v1.0.9.5 loaded — type 'workerCosts' in console for help")
+Logging.info("[Worker Costs] v2.0.0.0 loaded — type 'workerCosts' in console for help")

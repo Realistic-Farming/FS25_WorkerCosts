@@ -234,6 +234,16 @@ Search for `[Worker Costs]` — all mod activity (when Debug Mode is on) and any
 
 ## Changelog
 
+### v2.0.0.0 — Pro-Staff
+- New: **Pro-Staff roster** — the mod now keeps a real list of hired workers that survives save/reload, instead of nameless one-off helpers
+- New: workers gain **XP from hours worked** and rank up Novice → Experienced → Master (40h / 160h), with a promotion notice
+- New: **fatigue** builds up as workers run jobs and recovers while they rest, feeding into the wage pipeline
+- New: **advanced wage pipeline** — base retainer plus hourly rate modified by level, fatigue, night, weather, and overtime
+- New: **hire / fire / severance** and **durable vehicle assignment** — pin a worker to a vehicle and the pin survives save/reload
+- New: clickable **Pro-Staff Panel** — open with **ALT+H** (rebindable) or the `WorkerCostsRoster` console command to hire, fire, and assign without the console
+- New: **Farm Tablet integration** — the WorkerCosts app now shows the roster (level, hours, jobs, fatigue) when FS25_FarmTablet is installed
+- Note: roster management is host/single-player for now; multiplayer client sync is coming in a follow-up
+
 ### v1.0.9.5 — Settings Persistence & UI Wording
 - Fixed: Payment Strategy and Compensation Tier reverted to defaults after a save/reload — settings are now reloaded once the savegame is available, so your choices stick
 - Changed: renamed "Cost Mode" to **Payment Strategy** and "Wage Level" to **Compensation Tier** in the Wage Settings tab

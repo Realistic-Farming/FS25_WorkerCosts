@@ -52,7 +52,8 @@ HireHallCore.DIRTY_HALL    = 4   -- 100
 
 HireHallCore.SLICE_SIZE     = 5    -- workers processed per evolution step (FR4)
 HireHallCore.STEP_INTERVAL  = 250  -- ms between evolution steps; keeps cost << 0.05ms/frame
-HireHallCore.SCHEMA_VERSION = 1    -- <hireHallCore version="1"> (FR0 / FR14)
+HireHallCore.HISTORY_CAP    = 20   -- max job-result rows kept per worker (FR5 circular buffer)
+HireHallCore.SCHEMA_VERSION = 2    -- <hireHallCore version="2"> — v2 adds per-worker history (FR5)
 
 -- Lifecycle states (FR1). Pre-defined string constants so transitions never
 -- allocate a temporary (zero-allocation directive).
@@ -222,6 +223,12 @@ function HireHallCore:initialize(missionInfo)
         end
     end)
 
+    -- Arm the FR5 job-termination monitor now the framework + roster are live
+    -- (deferred registration — never bind against nil references).
+    if HireHallCore.integration.JobMonitor then
+        HireHallCore.integration.JobMonitor:install()
+    end
+
     self._initialized = true
     Logging.info("[HireHallCore] Initialized (host) — lifecycle layer active")
 end
@@ -259,6 +266,9 @@ function HireHallCore:shutdown()
     self._stepTimer   = 0
     if HireHallCore.core.Evolution and HireHallCore.core.Evolution.reset then
         HireHallCore.core.Evolution:reset()
+    end
+    if HireHallCore.integration.JobMonitor and HireHallCore.integration.JobMonitor.reset then
+        HireHallCore.integration.JobMonitor:reset()   -- re-armed on next initialize()
     end
     if HireHallCore.Events and HireHallCore.Events.clear then
         HireHallCore.Events:clear()

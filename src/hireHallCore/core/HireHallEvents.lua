@@ -49,6 +49,14 @@ function Events:onLifecycleChanged(workerId, oldState, newState, reason)
     self:emit("lifecycleChanged", workerId, oldState, newState, reason)
 end
 
+--- The job-termination signal (FR5). Fired by WorkerJobTracker when an AI job ends,
+--- carrying the already-resolved facts (workerUuid, hours, startLevel, fatigue, seq,
+--- aiMessage). The Internal Job Termination Monitor is the sole subscriber; this is
+--- the seam that replaces the spec's non-existent WorkerManager.onWorkerEnd hook.
+function Events:onWorkerJobEnded(payload)
+    self:emit("workerJobEnded", payload)
+end
+
 --- Drop all subscribers (called from HireHallCore:shutdown on mission unload so
 --- listeners don't accumulate across reloads — the global is sourced once).
 function Events:clear()

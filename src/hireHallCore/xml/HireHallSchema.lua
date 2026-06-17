@@ -63,6 +63,25 @@ function Schema:save(missionInfo, roster)
             if meta.cooldownEnd ~= nil then
                 xmlFile:setInt(key .. "#cooldownEnd", meta.cooldownEnd)
             end
+
+            -- FR5 (#66): persist the job-history circular buffer (schema v2). Rows are
+            -- numbers/strings only, already capped to HISTORY_CAP at write time.
+            local hist = meta.history
+            if type(hist) == "table" then
+                for j = 1, #hist do
+                    local e = hist[j]
+                    local hk = string.format("%s.h(%d)", key, j - 1)
+                    xmlFile:setInt(hk .. "#day",        e.day or 0)
+                    xmlFile:setFloat(hk .. "#hours",    e.hours or 0)
+                    xmlFile:setString(hk .. "#outcome", e.outcome or "completed")
+                    xmlFile:setString(hk .. "#cause",   e.cause or "")
+                    xmlFile:setInt(hk .. "#startLevel", e.startLevel or 1)
+                    xmlFile:setInt(hk .. "#endLevel",   e.endLevel or 1)
+                    xmlFile:setInt(hk .. "#wage",       e.wage or 0)
+                    xmlFile:setInt(hk .. "#seq",        e.seq or 0)
+                end
+            end
+
             i = i + 1
         end
     end
@@ -108,6 +127,27 @@ function Schema:loadIfExists(missionInfo, roster)
         end
         meta.enteredDay  = xmlFile:getInt(key .. "#enteredDay", meta.enteredDay or 0)
         meta.cooldownEnd = xmlFile:getInt(key .. "#cooldownEnd", nil)
+
+        -- FR5 (#66): restore the job-history buffer (schema v2; absent in v1 saves,
+        -- which simply load an empty resume). Already capped on write, but the cap is
+        -- re-applied defensively on the next record().
+        local hist = {}
+        xmlFile:iterate(key .. ".h", function(_, hk)
+            hist[#hist + 1] = {
+                day        = xmlFile:getInt(hk .. "#day", 0),
+                hours      = xmlFile:getFloat(hk .. "#hours", 0),
+                outcome    = xmlFile:getString(hk .. "#outcome", "completed"),
+                cause      = xmlFile:getString(hk .. "#cause", ""),
+                startLevel = xmlFile:getInt(hk .. "#startLevel", 1),
+                endLevel   = xmlFile:getInt(hk .. "#endLevel", 1),
+                wage       = xmlFile:getInt(hk .. "#wage", 0),
+                seq        = xmlFile:getInt(hk .. "#seq", 0),
+            }
+        end)
+        if #hist > 0 then
+            meta.history = hist
+        end
+
         applied = applied + 1
     end)
 
@@ -117,12 +157,12 @@ function Schema:loadIfExists(missionInfo, roster)
 end
 
 --- FR0 / FR14 — iterative forward migration. Each loop turn upgrades one schema
---- version until current. No-op today (v1 is current); the loop is in place so a
---- future v2 just adds `if version == 1 then ...transform... end`.
+--- version until current. v1 -> v2 is additive (per-worker history, #66): a v1 save
+--- simply has no <h> rows and loads an empty resume, so no transform is required.
 function Schema:migrateLegacy(version)
     local v = version or 1
     while v < HireHallCore.SCHEMA_VERSION do
-        -- if v == 1 then ... migrate v1 -> v2 ... end
+        -- if v == 1 then ... (v1 -> v2: history is additive, nothing to transform) end
         v = v + 1
     end
     return v

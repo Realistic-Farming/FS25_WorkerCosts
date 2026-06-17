@@ -30,12 +30,15 @@ local C = {
     border = { 0.34, 0.70, 0.42 },     -- green border
     row    = { 0.19, 0.20, 0.22 },     -- grey rows (zebra)
     rowAlt = { 0.23, 0.24, 0.26 },
+    rowTrust = { 0.26, 0.24, 0.14 },   -- warm-tinted row bg for Trusted workers (#67)
     text   = { 0.64, 0.92, 0.70, 1 },  -- green text
     dim    = { 0.50, 0.70, 0.55, 1 },  -- muted green
     accent = { 0.55, 0.95, 0.62, 1 },
+    gold   = { 0.96, 0.80, 0.27, 1 },  -- Trusted star (#67)
     btnHire   = { 0.20, 0.50, 0.28 },  -- green
     btnAssign = { 0.24, 0.42, 0.58 },  -- blue (distinct action)
     btnFire   = { 0.55, 0.24, 0.24 },  -- red (distinct, important)
+    btnStar   = { 0.34, 0.32, 0.18 },  -- dim gold seat for the un-trusted star button
     btnTxt    = { 1, 1, 1, 1 },        -- white on coloured buttons stays readable
 }
 
@@ -59,6 +62,7 @@ local TS_INFO  = 0.0120
 -- Button widths
 local BTN_FIRE_W   = 0.052
 local BTN_ASSIGN_W = 0.090
+local BTN_STAR_W   = 0.026   -- #67 Trusted toggle (leftmost column)
 local BTN_GAP      = 0.008
 
 -- Names used when hiring from the panel (no text-input field in an overlay).
@@ -211,13 +215,22 @@ function WCRosterPanel:drawHireBar()
     local bw = 0.16
     self:drawButton("hire", PX + PAD, by, bw, 0.040, "+ Hire Worker", C.btnHire)
 
+    -- #69 Daily-cap usage next to the hire button (turns gold when the cap is hit).
+    local mgr = g_currentMission and g_currentMission.workerCostsManager
+    local limit = (WorkerManager and WorkerManager.DAILY_HIRE_LIMIT) or 5
+    local used = (mgr and mgr.getHiresUsedToday and mgr:getHiresUsedToday()) or 0
+    self:drawText(PX + PAD + bw + 0.016, by + 0.010, TS_INFO,
+        string.format("Hires today: %d/%d", used, limit),
+        (used >= limit) and C.gold or C.dim, RenderText.ALIGN_LEFT)
+
     -- Right-aligned hint about assigning.
     self:drawText(PX + PW - PAD, by + 0.010, TS_INFO,
         "Sit in a vehicle, then Assign", C.dim, RenderText.ALIGN_RIGHT)
 end
 
 function WCRosterPanel:drawRosterList()
-    local workers = self.roster and self.roster:getAll() or {}
+    -- #67 Trusted ("favorite") workers float to the top via the roster's display view.
+    local workers = self.roster and self.roster:getDisplayOrder() or {}
     local total = #workers
 
     local listTop = PY + PH - TB_H - 0.052 - 0.012   -- below hire bar
@@ -247,28 +260,41 @@ function WCRosterPanel:drawRosterList()
         local w = workers[idx]
         local ry = listTop - ROW_H - (i * ROW_H)
 
-        -- Row background (zebra)
-        self:drawRect(rowX, ry, rowW, ROW_H - 0.004, (i % 2 == 0) and C.row or C.rowAlt)
+        -- Row background — Trusted workers get a warm tint, others keep the zebra (#67)
+        local rowBg = (i % 2 == 0) and C.row or C.rowAlt
+        if w.trusted then rowBg = C.rowTrust end
+        self:drawRect(rowX, ry, rowW, ROW_H - 0.004, rowBg)
+
+        local bh = ROW_H - 0.014
+        local byBtn = ry + 0.005
+
+        -- #67 Trusted toggle (leftmost). "*" reads bright gold when trusted, muted
+        -- when not. (ASCII glyph — guaranteed to render in the engine font.)
+        local starX = rowX + 0.006
+        self:drawRect(starX, byBtn, BTN_STAR_W, bh, C.btnStar)
+        self:drawText(starX + BTN_STAR_W * 0.5, byBtn + bh * 0.20, TS_ROW, "*",
+            w.trusted and C.gold or C.dim, RenderText.ALIGN_CENTER, true)
+        self:registerClick("star_" .. w.uuid, starX, byBtn, BTN_STAR_W, bh,
+            { uuid = w.uuid, trusted = w.trusted })
+
+        local textX = rowX + 0.006 + BTN_STAR_W + 0.010
 
         -- Status / level color accent dot via level color
         local levelName = WorkerRoster.levelName(w.level)
         local status = w.assignedVehicleId and "working" or "idle"
         if w.assignedVehicleUniqueId then status = status .. ", pinned" end
+        if w.trusted then status = status .. ", trusted" end
 
         -- Line 1: name + level
-        self:drawText(rowX + 0.008, ry + ROW_H * 0.50, TS_ROW,
+        self:drawText(textX, ry + ROW_H * 0.50, TS_ROW,
             string.format("%s  -  %s", w.name or "Worker", levelName),
             C.text, RenderText.ALIGN_LEFT, true)
         -- Line 2: stats
-        self:drawText(rowX + 0.008, ry + ROW_H * 0.16, TS_INFO,
+        self:drawText(textX, ry + ROW_H * 0.16, TS_INFO,
             string.format("%.1fh  -  %d jobs  -  fat %d%%  -  %s",
                 w.totalHours or 0, w.totalJobs or 0,
                 math.floor((w.fatigue or 0) * 100), status),
             C.dim, RenderText.ALIGN_LEFT)
-
-        -- Buttons
-        local bh = ROW_H - 0.014
-        local byBtn = ry + 0.005
         if w.assignedVehicleUniqueId then
             self:drawButton("unassign_" .. w.uuid, assignX, byBtn, BTN_ASSIGN_W, bh,
                 "Unassign", C.btnAssign, { uuid = w.uuid })
@@ -367,16 +393,31 @@ function WCRosterPanel:handleClick(id, data)
 
     if id == "hire" then
         if mgr then
+            -- #69 Respect the daily cap with immediate panel feedback (the host also
+            -- enforces it server-side, so this is UX, not the security boundary).
+            local limit = WorkerManager and WorkerManager.DAILY_HIRE_LIMIT or 5
+            if mgr.getHiresUsedToday and mgr:getHiresUsedToday() >= limit then
+                self.infoMsg = "Daily hiring limit reached - wait for the next day"
+                return
+            end
             local pool = mgr:getRecruitPool()
             local cand = pool and pool[1]
             mgr:hireWorker(1)
             if cand then
                 local money = g_i18n and g_i18n:formatMoney(cand.hireCost or 0, 0, true, true) or ("$" .. (cand.hireCost or 0))
-                self.infoMsg = string.format("Hired %s  (signing %s)", cand.name, money)
+                local used = (mgr.getHiresUsedToday and mgr:getHiresUsedToday()) or 0
+                self.infoMsg = string.format("Hired %s  (signing %s)  -  %d/%d today",
+                    cand.name, money, used, limit)
             else
                 self.infoMsg = "No recruits available"
             end
         end
+
+    elseif id:sub(1, 5) == "star_" and data then
+        -- #67 Toggle the Trusted/favorite flag (routes through the command API so
+        -- the host broadcasts and the change persists).
+        if mgr then mgr:setTrusted(data.uuid, not data.trusted) end
+        self.infoMsg = data.trusted and "Removed from Trusted" or "Marked as Trusted"
 
     elseif id:sub(1, 5) == "fire_" and data then
         if mgr then

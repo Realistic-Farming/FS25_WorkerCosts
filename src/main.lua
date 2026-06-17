@@ -39,8 +39,10 @@ source(modDirectory .. "src/hireHallCore/HireHallCore.lua")
 source(modDirectory .. "src/hireHallCore/core/HireHallEvents.lua")
 source(modDirectory .. "src/hireHallCore/integration/HireHallProStaff.lua")
 source(modDirectory .. "src/hireHallCore/core/HireHallLifecycle.lua")
+source(modDirectory .. "src/hireHallCore/core/HireHallHistory.lua")     -- FR5 (#66): job-history circular buffer (uses Lifecycle:ensureMeta)
 source(modDirectory .. "src/hireHallCore/core/HireHallEvolution.lua")
 source(modDirectory .. "src/hireHallCore/core/HireHallAPI.lua")
+source(modDirectory .. "src/hireHallCore/integration/HireHallJobMonitor.lua") -- FR5 (#66): Internal Job Termination Monitor (subscribes to workerJobEnded)
 source(modDirectory .. "src/hireHallCore/xml/HireHallSchema.lua")
 
 source(modDirectory .. "src/gui/WCRosterPanel.lua") -- created in WorkerManager.new, so load before it
@@ -216,4 +218,4 @@ end
 getfenv(0)["workerCosts"]       = workerCosts
 getfenv(0)["workerCostsStatus"] = workerCostsStatus
 
-Logging.info("[Worker Costs] v2.0.0.0 loaded — type 'workerCosts' in console for help")
+Logging.info("[Worker Costs] v2.2.0.0 loaded — type 'workerCosts' in console for help")

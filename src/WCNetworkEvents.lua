@@ -22,6 +22,7 @@ WCCommand = {
     ASSIGN       = 3,
     UNASSIGN     = 4,
     REFRESH_POOL = 5,
+    SET_TRUSTED  = 6,   -- #67: toggle a worker's Trusted/favorite flag
 }
 
 -- ---------------------------------------------------------------------------
@@ -53,6 +54,12 @@ local function writeSnapshot(streamId, snap)
     streamWriteInt32(streamId,   finance.estIntervalCost or 0)
     streamWriteFloat32(streamId, finance.proStaffDelta or 0)
 
+    -- Hiring quota block (#69)
+    local hiring = snap.hiring or {}
+    streamWriteInt32(streamId, hiring.limit or 0)
+    streamWriteInt32(streamId, hiring.usedToday or 0)
+    streamWriteInt32(streamId, hiring.remaining or 0)
+
     -- Workers
     streamWriteInt32(streamId, #workers)
     for _, w in ipairs(workers) do
@@ -64,6 +71,7 @@ local function writeSnapshot(streamId, snap)
         streamWriteFloat32(streamId, w.fatigue or 0)
         streamWriteBool(streamId,    w.working == true)
         streamWriteBool(streamId,    w.pinned == true)
+        streamWriteBool(streamId,    w.trusted == true)   -- #67
         streamWriteFloat32(streamId, w.baseRate or 0)
         streamWriteFloat32(streamId, w.effRate or 0)
         streamWriteInt32(streamId,   w.severance or 0)
@@ -103,6 +111,13 @@ local function readSnapshot(streamId)
     snap.finance.estIntervalCost = streamReadInt32(streamId)
     snap.finance.proStaffDelta   = streamReadFloat32(streamId)
 
+    -- Hiring quota block (#69)
+    snap.hiring = {
+        limit     = streamReadInt32(streamId),
+        usedToday = streamReadInt32(streamId),
+        remaining = streamReadInt32(streamId),
+    }
+
     local workerCount = streamReadInt32(streamId)
     for _ = 1, workerCount do
         local w = {}
@@ -114,6 +129,7 @@ local function readSnapshot(streamId)
         w.fatigue    = streamReadFloat32(streamId)
         w.working    = streamReadBool(streamId)
         w.pinned     = streamReadBool(streamId)
+        w.trusted    = streamReadBool(streamId)   -- #67
         w.baseRate   = streamReadFloat32(streamId)
         w.effRate    = streamReadFloat32(streamId)
         w.severance  = streamReadInt32(streamId)

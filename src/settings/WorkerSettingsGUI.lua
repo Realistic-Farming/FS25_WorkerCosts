@@ -36,6 +36,7 @@ function WorkerSettingsGUI:registerConsoleCommands()
     
     addConsoleCommand("WorkerCostsShowSettings", "Show current settings", "consoleCommandShowSettings", self)
     addConsoleCommand("WorkerCostsShowRoster", "Show the Pro-Staff worker roster (id, name, level, hours, jobs, XP)", "consoleCommandShowRoster", self)
+    addConsoleCommand("WorkerCostsHallState", "Show each worker's HireHallCore lifecycle state + dispatch availability", "consoleCommandHallState", self)
     addConsoleCommand("WorkerCostsRoster", "Open/close the clickable roster panel (hire/fire/assign)", "consoleCommandRosterPanel", self)
     addConsoleCommand("WorkerCostsGrantXP", "TESTING: add XP (=hours) to all roster workers; recomputes level (Experienced=40, Master=160)", "consoleCommandGrantXP", self)
     addConsoleCommand("WorkerCostsHire", "Hire a worker by name (Pro-Staff)", "consoleCommandHire", self)
@@ -242,6 +243,45 @@ function WorkerSettingsGUI:consoleCommandShowRoster()
                 w.totalHours or 0, w.totalJobs or 0, w.totalXP or 0,
                 math.floor((w.fatigue or 0) * 100),
                 status
+            ))
+        end
+    end
+    table.insert(lines, "==========================")
+
+    local out = table.concat(lines, "\n")
+    print(out)
+    return out
+end
+
+-- HireHallCore (Phase 1) has no UI until Phase 4, so this is how you SEE it working:
+-- per-worker lifecycle state plus the availability broker's verdict + reason code.
+function WorkerSettingsGUI:consoleCommandHallState()
+    if g_WorkerManager == nil or g_WorkerManager.workerRoster == nil then
+        return "Error: Worker Costs Mod not initialized"
+    end
+    if HireHallCore == nil then
+        return "Error: HireHallCore not loaded"
+    end
+
+    local roster = g_WorkerManager.workerRoster
+    local workers = roster:getAll()
+    local lines = { string.format("=== HireHallCore Lifecycle (%d) %s===",
+        #workers, HireHallCore.isCorrupted and "[CORRUPTED] " or "") }
+
+    if not HireHallCore._isHost() then
+        table.insert(lines, "(client — lifecycle is host-authoritative; run this on the host)")
+    elseif #workers == 0 then
+        table.insert(lines, "(empty — start an AI helper to auto-hire one)")
+    else
+        local API = HireHallCore.core.API
+        for _, w in ipairs(workers) do
+            local state = HireHallCore.core.Lifecycle:getState(w)
+            local available, reason = API:isWorkerAvailable(w.uuid)
+            table.insert(lines, string.format(
+                "#%d  %-16s  state=%-10s  fatigue=%d%%  dispatch=%s (%s)",
+                w.uuid, w.name or "Worker", state,
+                math.floor((w.fatigue or 0) * 100),
+                available and "YES" or "no", reason
             ))
         end
     end

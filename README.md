@@ -234,6 +234,12 @@ Search for `[Worker Costs]` — all mod activity (when Debug Mode is on) and any
 
 ## Changelog
 
+### v2.2.0.0 — Hiring Hall
+- New: **daily hiring limit** — hire at most 5 workers from the Hiring Hall per in-game day; the counter resets each morning, survives reload, and you get a clear notice when you hit the cap (#69)
+- New: **Trusted employees** — star a worker in the Pro-Staff Panel to keep them pinned at the top of the list; the status is saved and shows for everyone in multiplayer (#67)
+- New: **earned mastery** — Master workers no longer turn up in the recruitment pool; Master is now reached only by working and gaining XP, and Experienced recruits unlock as your staff put in the hours (#68)
+- New: **job history** — every worker keeps a short resume of recent jobs (completed, dismissed, or failed, with hours and a cost estimate), recorded the moment a job ends (#66)
+
 ### v2.1.0.0 — Pro-Staff Goes Multiplayer
 - New: **full multiplayer** — the roster is host-authoritative and syncs to every client; clients can hire, fire, and assign and the result broadcasts back to everyone
 - New: **recruitment pool** — a rotating set of candidates with their own level and one-off **signing cost**; hire a specific candidate or reroll the pool

@@ -59,6 +59,12 @@ function WorkerRoster.new()
     self.workers = {}   -- array, insertion order (stable for UI lists)
     self.byId    = {}   -- [uuid] -> worker, O(1) lookup
     self.nextId  = 1    -- monotonic, never reused; persisted so ids survive reload
+    -- Hiring-Hall daily-cap state (#69). Stored in this mod's career file
+    -- (workerData.xml) because it is per-career, server-authoritative hall state;
+    -- the WorkerManager owns the policy (limit + day rollover), the roster just
+    -- persists the two scalars.
+    self.hiredToday  = 0
+    self.lastHireDay = -1
     return self
 end
 
@@ -84,6 +90,9 @@ function WorkerRoster.newWorker(uuid, name)
         -- player pinned this worker to. Saved; survives reload. Re-binds naturally
         -- when a job starts on that vehicle (its uniqueId matches).
         assignedVehicleUniqueId = nil,
+        -- "Trusted Employee" favorite flag (#67). Trusted workers sort to the top of
+        -- the roster lists. Persistent; survives save/reload.
+        trusted = false,
     }
 end
 
@@ -110,6 +119,33 @@ end
 
 function WorkerRoster:getCount()
     return #self.workers
+end
+
+--- O(1) existence check by uuid. FR5's job monitor calls this as a hard guard
+--- before writing history, so an orphaned (fired-in-same-frame) worker is skipped.
+function WorkerRoster:getWorkerExists(uuid)
+    return uuid ~= nil and self.byId[uuid] ~= nil
+end
+
+--- A display-ordered VIEW of the roster (#67): Trusted ("favorite") workers first,
+--- then the rest, each group preserving stable insertion order (uuid is monotonic).
+--- Returns a fresh array — never the live self.workers — so callers can't reorder
+--- the canonical list. Used by the roster panel and the snapshot so every surface
+--- shows trusted staff pinned to the top.
+function WorkerRoster:getDisplayOrder()
+    local list = {}
+    for i = 1, #self.workers do
+        list[i] = self.workers[i]
+    end
+    table.sort(list, function(a, b)
+        local ta = a.trusted and 1 or 0
+        local tb = b.trusted and 1 or 0
+        if ta ~= tb then
+            return ta > tb            -- trusted (1) ahead of untrusted (0)
+        end
+        return (a.uuid or 0) < (b.uuid or 0)   -- stable: insertion/hire order
+    end)
+    return list
 end
 
 --- Fire: remove a worker by id. Returns true if one was removed.
@@ -224,6 +260,8 @@ function WorkerRoster:clear()
     self.workers = {}
     self.byId    = {}
     self.nextId  = 1
+    self.hiredToday  = 0
+    self.lastHireDay = -1
 end
 
 -- ---------------------------------------------------------------------------
@@ -304,6 +342,9 @@ function WorkerRoster:save(missionInfo)
     xmlFile:setString(root .. "#version", WorkerRoster.SCHEMA_VERSION)
     xmlFile:setInt(root .. "#nextId", self.nextId)
     xmlFile:setInt(root .. "#count", #self.workers)
+    -- Hiring-Hall daily-cap state (#69) — per-career hall state in this same file.
+    xmlFile:setInt(root .. "#hiredToday", self.hiredToday or 0)
+    xmlFile:setInt(root .. "#lastHireDay", self.lastHireDay or -1)
 
     for i, w in ipairs(self.workers) do
         local key = string.format("%s.worker(%d)", root, i - 1)
@@ -319,6 +360,10 @@ function WorkerRoster:save(missionInfo)
         -- is still NOT saved (a runtime pointer is meaningless next session).
         if w.assignedVehicleUniqueId then
             xmlFile:setString(key .. "#assignedVehicleUniqueId", w.assignedVehicleUniqueId)
+        end
+        -- Trusted/favorite flag (#67). Only written when set, to keep files small.
+        if w.trusted then
+            xmlFile:setBool(key .. "#trusted", true)
         end
     end
 
@@ -347,6 +392,10 @@ function WorkerRoster:loadIfExists(missionInfo)
 
     local root = WorkerRoster.SAVE_ROOT
     local savedNextId = xmlFile:getInt(root .. "#nextId", 1)
+    -- Hiring-Hall daily-cap state (#69). Defaults keep a pre-#69 save uncapped on
+    -- its first day (lastHireDay = -1 forces a rollover-reset on the next hire).
+    self.hiredToday  = xmlFile:getInt(root .. "#hiredToday", 0)
+    self.lastHireDay = xmlFile:getInt(root .. "#lastHireDay", -1)
     local maxId = 0
 
     xmlFile:iterate(root .. ".worker", function(_, key)
@@ -365,6 +414,7 @@ function WorkerRoster:loadIfExists(missionInfo)
             hiredDay   = xmlFile:getInt(key .. "#hiredDay", 0),
             assignedVehicleId = nil,  -- transient; re-bound at job start
             assignedVehicleUniqueId = xmlFile:getString(key .. "#assignedVehicleUniqueId", nil),
+            trusted = xmlFile:getBool(key .. "#trusted", false),
         }
         table.insert(self.workers, w)
         self.byId[uuid] = w

@@ -61,6 +61,8 @@ function WorkerJobTracker.new(roster, settings)
     -- START and STOP handlers on the server, so this needs no job id lookup.
     self.activeJobs  = {}
     self.subscribed  = false
+    -- Monotonic per-session job sequence ("Task ID" for the FR5 history resume).
+    self.jobSeq      = 0
     return self
 end
 
@@ -136,11 +138,16 @@ function WorkerJobTracker:_onJobStarted(job, startFarmId)
     end
 
     local now = (g_currentMission and g_currentMission.time) or 0
+    self.jobSeq = self.jobSeq + 1
     self.activeJobs[job] = {
         workerUuid = worker.uuid,
         vehicleId  = tostring(vehicle),
         startTime  = now,
         name       = worker.name,
+        -- FR5 history: capture the rank at start so a mid-job promotion is visible
+        -- (StartRank vs EndRank), plus a stable per-session task id.
+        startLevel = worker.level or WorkerRoster.LEVEL_NOVICE,
+        seq        = self.jobSeq,
     }
     self:log("Job started: '%s' (uuid=%d) on %s", worker.name, worker.uuid, tostring(vehicle))
 end
@@ -181,6 +188,22 @@ function WorkerJobTracker:_onJobStopped(job, aiMessage)
 
     if newLevel then
         self:_notifyLevelUp(worker, newLevel)
+    end
+
+    -- FR5 (#66): hand the resolved job-end facts to the Internal Job Termination
+    -- Monitor via the core event bus. We do the resolving (worker, hours, ranks);
+    -- the monitor classifies the outcome and writes the history buffer. Emitting
+    -- here (the AI_JOB_STOPPED handler) keeps the monitor purely event-driven.
+    if HireHallCore ~= nil and HireHallCore.Events ~= nil then
+        HireHallCore.Events:onWorkerJobEnded({
+            workerUuid = worker.uuid,
+            seq        = rec.seq,
+            hours      = hours,
+            startLevel = rec.startLevel or worker.level,
+            endLevel   = worker.level,
+            fatigue    = worker.fatigue or 0,
+            aiMessage  = aiMessage,   -- transient; the monitor stores only a token
+        })
     end
 end
 
@@ -226,6 +249,18 @@ function WorkerJobTracker:_notifyLevelUp(worker, newLevel)
         g_currentMission.hud:showBlinkingWarning(
             string.format("%s promoted to %s", worker.name, WorkerRoster.levelName(newLevel)), 4000)
     end
+end
+
+-- True when no live AI job is currently attributed to this worker. Authoritative
+-- task-occupancy check consumed by HireHallCore's availability broker (FR3 cond.3).
+-- O(active jobs) — the active set is tiny (one entry per in-flight helper).
+function WorkerJobTracker:isWorkerIdle(workerId)
+    for _, rec in pairs(self.activeJobs) do
+        if rec.workerUuid == workerId then
+            return false
+        end
+    end
+    return true
 end
 
 -- ---------------------------------------------------------------------------

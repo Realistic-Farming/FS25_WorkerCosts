@@ -31,6 +31,15 @@ local WorkerManager_mt = Class(WorkerManager)
 -- candidates the player can hire from the Farm Tablet Personnel app. Candidate
 -- names come from this pool (no text-input field on a controller-friendly tablet).
 WorkerManager.RECRUIT_POOL_SIZE = 4
+
+-- #69 Daily hiring limit: at most this many new hires from the Hiring Hall per
+-- in-game day. Server-authoritative; the counter resets on the day rollover.
+WorkerManager.DAILY_HIRE_LIMIT = 5
+
+-- #68 Progression-gated hiring: total accrued roster XP required before the recruit
+-- roller will offer Experienced candidates. "Master" is NEVER offered in the pool —
+-- it is earned exclusively through XP on the job (WorkerRoster.XP_MASTER).
+WorkerManager.EXPERIENCED_UNLOCK_XP = 80
 local RECRUIT_NAME_POOL = {
     "Alex", "Sam", "Jordan", "Casey", "Riley", "Morgan", "Taylor", "Jamie",
     "Drew", "Quinn", "Avery", "Parker", "Reese", "Skyler", "Hayden", "Rowan",
@@ -62,6 +71,15 @@ function WorkerManager.new(mission, modDirectory, modName)
     -- Phase 3: WorkerSystem reads the roster (level/fatigue) for the labor-cost
     -- pipeline and recovers idle workers' fatigue daily.
     self.workerSystem = WorkerSystem.new(self.settings, self.workerRoster)
+
+    -- HireHallCore framework (FR0-FR4): server-authoritative personnel lifecycle
+    -- layered on top of the existing roster. Read-only consumer of Pro-Staff data;
+    -- isolates its own state in worker.hireHallMeta and its own hireHallCore.xml.
+    -- The global IS the singleton; self.hireHall just aliases it for the coordinator.
+    if HireHallCore then
+        self.hireHall = HireHallCore:setup(self.workerRoster, self.settings,
+            self.workerSystem, self.jobTracker)
+    end
 
     -- Phase 5: clickable roster panel (custom-drawn overlay). Client-only — it
     -- renders. Opened via the WorkerCostsRoster console command.
@@ -120,6 +138,12 @@ function WorkerManager:onMissionLoaded()
         if self.jobTracker then
             self.jobTracker:initialize()
         end
+
+        -- HireHallCore: give each loaded worker a lifecycle meta block and apply
+        -- any persisted states. Host-only (the broker reads the real roster).
+        if self.hireHall then
+            self.hireHall:initialize(g_currentMission.missionInfo)
+        end
     end
 
     if self.workerSystem then
@@ -140,6 +164,9 @@ end
 function WorkerManager:update(dt)
     if self.workerSystem then
         self.workerSystem:update(dt)
+    end
+    if self.hireHall then
+        self.hireHall:update(dt)   -- host-only; drives the time-sliced evolution engine
     end
     if self.rosterPanel then
         self.rosterPanel:update()
@@ -176,6 +203,12 @@ function WorkerManager:saveWorkerData(missionInfo)
     end
     missionInfo = missionInfo or (g_currentMission and g_currentMission.missionInfo)
     self.workerRoster:save(missionInfo)
+
+    -- HireHallCore lifecycle state persists alongside the roster, into its own
+    -- isolated hireHallCore.xml (a bad write here can never corrupt the roster file).
+    if self.hireHall then
+        self.hireHall:save(missionInfo)
+    end
 end
 
 function WorkerManager:loadWorkerData()
@@ -190,17 +223,38 @@ end
 -- Pro-Staff Phase 5: recruitment pool (server-authoritative)
 -- =========================================================
 
--- Roll a single recruit. Level is weighted toward Novice; the occasional
--- Experienced/Master recruit costs more to sign (computeHireCost scales by level).
+-- #68 Total XP across the whole roster — the "farm progression" signal that gates
+-- which tiers the Hiring Hall will offer. Rises as the player's staff put in hours.
+function WorkerManager:_totalRosterXP()
+    local sum = 0
+    if self.workerRoster then
+        for _, w in ipairs(self.workerRoster:getAll()) do
+            sum = sum + (w.totalXP or 0)
+        end
+    end
+    return sum
+end
+
+-- #68 The highest tier the recruit roller may currently offer. Master is never
+-- recruitable (earned via XP only); Experienced unlocks once the farm has invested
+-- enough total staff XP. Novice is always available.
+function WorkerManager:_maxRecruitTier()
+    if self:_totalRosterXP() >= WorkerManager.EXPERIENCED_UNLOCK_XP then
+        return WorkerRoster.LEVEL_EXPERIENCED
+    end
+    return WorkerRoster.LEVEL_NOVICE
+end
+
+-- Roll a single recruit. Level is weighted toward Novice; an Experienced recruit
+-- costs more to sign (computeHireCost scales by level). Master is intentionally
+-- excluded from the pool entirely (#68 — it is an earned milestone, not a hire).
 function WorkerManager:_generateRecruit()
-    local r = math.random()
-    local level
-    if r < 0.70 then
-        level = WorkerRoster.LEVEL_NOVICE
-    elseif r < 0.93 then
-        level = WorkerRoster.LEVEL_EXPERIENCED
-    else
-        level = WorkerRoster.LEVEL_MASTER
+    local level = WorkerRoster.LEVEL_NOVICE
+    if self:_maxRecruitTier() >= WorkerRoster.LEVEL_EXPERIENCED then
+        -- ~20% Experienced once unlocked; the rest stay Novice.
+        if math.random() < 0.20 then
+            level = WorkerRoster.LEVEL_EXPERIENCED
+        end
     end
 
     local name = RECRUIT_NAME_POOL[math.random(1, #RECRUIT_NAME_POOL)]
@@ -262,10 +316,18 @@ function WorkerManager:getServerSnapshot()
             estIntervalCost = (workerSys and workerSys.getEstimatedIntervalCost and workerSys:getEstimatedIntervalCost()) or 0,
             proStaffDelta   = 0,   -- summed below
         },
+        -- #69 Daily hiring quota, so the FarmTablet/clients can show "x of 5 today".
+        hiring = {
+            limit     = WorkerManager.DAILY_HIRE_LIMIT,
+            usedToday = self:getHiresUsedToday(),
+            remaining = math.max(0, WorkerManager.DAILY_HIRE_LIMIT - self:getHiresUsedToday()),
+        },
     }
 
     if self.workerRoster then
-        for _, w in ipairs(self.workerRoster:getAll()) do
+        -- #67 Trusted workers sort to the top here too, so every consumer (panel,
+        -- tablet, MP client) shows the same favorite-first ordering.
+        for _, w in ipairs(self.workerRoster:getDisplayOrder()) do
             local isWorking = w.assignedVehicleId ~= nil
             local isPinned  = w.assignedVehicleUniqueId ~= nil
             local status    = isWorking and "working" or "idle"
@@ -305,6 +367,7 @@ function WorkerManager:getServerSnapshot()
                 fatigue    = fatigue,   -- 0..1
                 working    = isWorking,
                 pinned     = isPinned,
+                trusted    = w.trusted == true,
                 status     = status,
                 baseRate   = baseRate,
                 effRate    = effRate,
@@ -349,6 +412,7 @@ function WorkerManager:getRosterSnapshot()
         workers = {},
         recruits = {},
         finance = {},
+        hiring  = { limit = WorkerManager.DAILY_HIRE_LIMIT, usedToday = 0, remaining = WorkerManager.DAILY_HIRE_LIMIT },
     }
 end
 
@@ -384,6 +448,12 @@ function WorkerManager:unassignWorker(uuid)
     WCNetwork_SendCommand(WCCommand.UNASSIGN, uuid or 0, 0, "", 0)
 end
 
+-- #67 Mark/unmark a worker as a Trusted ("favorite") employee. The desired state
+-- rides in the slot field (1 = trusted, 0 = not) — no new wire field needed.
+function WorkerManager:setTrusted(uuid, trusted)
+    WCNetwork_SendCommand(WCCommand.SET_TRUSTED, uuid or 0, trusted and 1 or 0, "", 0)
+end
+
 function WorkerManager:refreshRecruits()
     WCNetwork_SendCommand(WCCommand.REFRESH_POOL, 0, 0, "", 0)
 end
@@ -393,17 +463,27 @@ end
 function WorkerManager:_applyCommandFromNetwork(action, uuid, slot, vehicleUniqueId, farmId)
     if not self.workerRoster then return end
 
+    -- Each _doX returns false when nothing actually changed (e.g. a hire blocked by
+    -- the daily cap, or a missing worker), so we skip the save + client broadcast for
+    -- a no-op. nil/true both count as "changed" to keep the existing actions simple.
+    local changed
     if action == WCCommand.HIRE then
-        self:_doHire(slot, farmId)
+        changed = self:_doHire(slot, farmId)
     elseif action == WCCommand.FIRE then
-        self:_doFire(uuid, farmId)
+        changed = self:_doFire(uuid, farmId)
     elseif action == WCCommand.ASSIGN then
-        self:_doAssign(uuid, vehicleUniqueId)
+        changed = self:_doAssign(uuid, vehicleUniqueId)
     elseif action == WCCommand.UNASSIGN then
-        self:_doUnassign(uuid)
+        changed = self:_doUnassign(uuid)
+    elseif action == WCCommand.SET_TRUSTED then
+        changed = self:_doSetTrusted(uuid, slot)
     elseif action == WCCommand.REFRESH_POOL then
         self:refreshRecruitPool()
     else
+        return
+    end
+
+    if changed == false then
         return
     end
 
@@ -411,12 +491,48 @@ function WorkerManager:_applyCommandFromNetwork(action, uuid, slot, vehicleUniqu
     self:_broadcastRosterSync()
 end
 
+-- Current in-game day (FS25 sandbox: no os.time). -1 default forces a rollover.
+function WorkerManager:_currentDay()
+    return (g_currentMission and g_currentMission.environment
+        and g_currentMission.environment.currentDay) or 0
+end
+
+-- #69 Roll the daily-hire counter over to today if a new in-game day has started.
+function WorkerManager:_rolloverHireDay()
+    local roster = self.workerRoster
+    local today = self:_currentDay()
+    if roster.lastHireDay ~= today then
+        roster.hiredToday  = 0
+        roster.lastHireDay = today
+    end
+end
+
+-- #69 Hires already used today (0 if the stored day is stale / a new day began).
+function WorkerManager:getHiresUsedToday()
+    local roster = self.workerRoster
+    if not roster then return 0 end
+    if roster.lastHireDay ~= self:_currentDay() then
+        return 0
+    end
+    return roster.hiredToday or 0
+end
+
 function WorkerManager:_doHire(slot, farmId)
     local pool = self:getRecruitPool()
     slot = slot or 1
     local cand = pool[slot]
     if not cand then
-        return
+        return false
+    end
+
+    -- #69 Daily hiring cap (server-authoritative). Reset on the day rollover, then
+    -- reject once the limit is reached so the save can't be bypassed by reloading.
+    self:_rolloverHireDay()
+    if (self.workerRoster.hiredToday or 0) >= WorkerManager.DAILY_HIRE_LIMIT then
+        self:_notifyHireLimit()
+        Logging.info("[Worker Costs] Hire blocked — daily limit (%d) reached",
+            WorkerManager.DAILY_HIRE_LIMIT)
+        return false
     end
 
     if self.workerSystem then
@@ -425,6 +541,7 @@ function WorkerManager:_doHire(slot, farmId)
 
     local w = self.workerRoster:createWorker(cand.name)
     -- Seed XP so the recruit's advertised level holds after recomputeLevel().
+    -- (Master is never offered by the roller — #68 — so that branch is defensive.)
     if cand.level == WorkerRoster.LEVEL_EXPERIENCED then
         w.totalXP = WorkerRoster.XP_EXPERIENCED
     elseif cand.level == WorkerRoster.LEVEL_MASTER then
@@ -432,34 +549,65 @@ function WorkerManager:_doHire(slot, farmId)
     end
     self.workerRoster:recomputeLevel(w)
 
+    -- Count this hire against today's quota (#69).
+    self.workerRoster.hiredToday = (self.workerRoster.hiredToday or 0) + 1
+
     -- Consume the slot and refill so the pool always offers a full set.
     table.remove(pool, slot)
     table.insert(pool, self:_generateRecruit())
 
-    Logging.info("[Worker Costs] Hired %s (level %d, id=%d)", cand.name, cand.level, w.uuid)
+    Logging.info("[Worker Costs] Hired %s (level %d, id=%d) — %d/%d today",
+        cand.name, cand.level, w.uuid, self.workerRoster.hiredToday, WorkerManager.DAILY_HIRE_LIMIT)
+    return true
+end
+
+-- #69 Player feedback when the daily hire limit is hit (host/SP HUD toast; MP
+-- clients see the remaining count in the synced snapshot).
+function WorkerManager:_notifyHireLimit()
+    if g_currentMission and g_currentMission.hud and g_currentMission.hud.showBlinkingWarning then
+        g_currentMission.hud:showBlinkingWarning(
+            "Daily hiring limit reached. Please wait for the next day.", 4000)
+    end
 end
 
 function WorkerManager:_doFire(uuid, farmId)
     local w = self.workerRoster:getWorker(uuid)
     if not w then
-        return
+        return false
     end
     if self.workerSystem then
         self.workerSystem:chargeSeverance(w.name or "Worker", w.level, farmId)
     end
     self.workerRoster:removeWorker(uuid)
     Logging.info("[Worker Costs] Fired worker id=%d", uuid)
+    return true
 end
 
 function WorkerManager:_doAssign(uuid, vehicleUniqueId)
     if not vehicleUniqueId or vehicleUniqueId == "" then
-        return
+        return false
     end
-    self.workerRoster:assignVehiclePersistent(uuid, vehicleUniqueId)
+    return self.workerRoster:assignVehiclePersistent(uuid, vehicleUniqueId)
 end
 
 function WorkerManager:_doUnassign(uuid)
-    self.workerRoster:unassignPersistent(uuid)
+    return self.workerRoster:unassignPersistent(uuid)
+end
+
+-- #67 Toggle a worker's Trusted/favorite flag. slot carries the desired state (1/0)
+-- so the existing command channel needs no new wire field.
+function WorkerManager:_doSetTrusted(uuid, slot)
+    local w = self.workerRoster:getWorker(uuid)
+    if not w then
+        return false
+    end
+    local wantTrusted = (slot == 1)
+    if w.trusted == wantTrusted then
+        return false   -- no change, no broadcast
+    end
+    w.trusted = wantTrusted
+    Logging.info("[Worker Costs] Worker id=%d trusted=%s", uuid, tostring(wantTrusted))
+    return true
 end
 
 -- Push the fresh snapshot to all clients after a mutation (no-op in SP).
@@ -566,6 +714,13 @@ function WorkerManager:delete()
     -- accumulate across mission reloads.
     if self.jobTracker then
         self.jobTracker:delete()
+    end
+
+    -- HireHallCore is a sourced-once global singleton: reset its per-mission state
+    -- (corruption flag, event listeners, evolution cursor) so the next career
+    -- starts clean.
+    if self.hireHall and self.hireHall.shutdown then
+        self.hireHall:shutdown()
     end
 
     if self.rosterPanel then

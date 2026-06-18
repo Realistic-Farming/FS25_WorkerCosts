@@ -13,8 +13,15 @@
 -- Open/close: console command `WorkerCostsRoster` (toggle). Draw is driven from an
 -- appended FSBaseMission.draw; mouse from addModEventListener (see main.lua).
 --
+-- LAYOUT: master-detail "dossier". Left = a narrow selectable roster column; right
+-- = the selected worker's file (skill + fatigue gauges, lifetime stats, job-history
+-- resume, base->effective wage, actions). The whole panel is driven from one cached
+-- WorkerManager:getRosterSnapshot() so the wage math is single-sourced, and the
+-- HireHallCore reads (lifecycle state, history) are guarded + host-only.
+--
 -- PRO-STAFF CHECKLIST (full plan: docs/PRO_STAFF_PLAN.md):
 --   [x] Phase 5 — clickable hire / fire / assign / unassign UI (server/SP)
+--   [x] Phase 5+ — master-detail worker dossier (skill/fatigue/history/wage)
 --   [ ] Phase 5 — MP-aware actions (route through sync events once the MP layer lands)
 -- =========================================================
 
@@ -40,30 +47,59 @@ local C = {
     btnFire   = { 0.55, 0.24, 0.24 },  -- red (distinct, important)
     btnStar   = { 0.34, 0.32, 0.18 },  -- dim gold seat for the un-trusted star button
     btnTxt    = { 1, 1, 1, 1 },        -- white on coloured buttons stays readable
+    -- Dossier additions
+    sel       = { 0.20, 0.40, 0.26 },  -- selected roster row (brighter green seat)
+    detailBg  = { 0.12, 0.13, 0.14 },  -- right-pane backdrop, a touch darker than bg
+    barTrack  = { 0.10, 0.11, 0.12 },  -- empty gauge track
+    xpFill    = { 0.40, 0.78, 0.50 },  -- XP progress fill (green)
+    fatLow    = { 0.42, 0.80, 0.46 },  -- fatigue gauge: rested
+    fatMid    = { 0.92, 0.74, 0.30 },  -- fatigue gauge: tiring
+    fatHigh   = { 0.86, 0.34, 0.32 },  -- fatigue gauge: exhausted
+    dotWork   = { 0.46, 0.86, 0.54, 1 },  -- working (green)
+    dotIdle   = { 0.55, 0.62, 0.58, 1 },  -- idle (grey-green)
+    dotLeave  = { 0.92, 0.74, 0.30, 1 },  -- on leave (amber)
+    dotHurt   = { 0.86, 0.40, 0.36, 1 },  -- injured (red)
+    ok        = { 0.55, 0.90, 0.60, 1 },  -- job-history success glyph
+    bad       = { 0.88, 0.46, 0.42, 1 },  -- job-history failure glyph
 }
 
 -- ── Geometry (normalized, Y=0 at bottom) ──────────────────
-local PW   = 0.50
+-- Master-detail layout: a narrow selectable roster column on the left, a rich
+-- "dossier" for the selected worker on the right.
+local PW   = 0.58
 local PH   = 0.60
 local PX   = (1 - PW) / 2
 local PY   = (1 - PH) / 2
 local TB_H = 0.050
 local IB_H = 0.040
 local PAD  = 0.015
-local ROW_H = 0.050
-local ROWS_PER_PAGE = 7
+
+-- Left (roster) column.
+local LEFT_W        = 0.185   -- content width of the roster list column
+local LIST_ROW_H    = 0.045
+local ROWS_PER_PAGE = 8
+local HIRE_H        = 0.040   -- "+ Hire" button height in the left header
+
+-- Right (dossier) column derives its width from what's left.
+local COL_GAP = 0.014
 
 -- Text sizes
 local TS_TITLE = 0.018
-local TS_ROW   = 0.0135
+local TS_NAME  = 0.020   -- dossier worker name
+local TS_ROW   = 0.0130
 local TS_BTN   = 0.0125
-local TS_INFO  = 0.0120
+local TS_INFO  = 0.0118
+local TS_SMALL = 0.0105
 
--- Button widths
-local BTN_FIRE_W   = 0.052
+-- Button widths (detail-pane actions)
+local BTN_FIRE_W   = 0.075
 local BTN_ASSIGN_W = 0.090
-local BTN_STAR_W   = 0.026   -- #67 Trusted toggle (leftmost column)
-local BTN_GAP      = 0.008
+local BTN_TRUST_W  = 0.095
+local BTN_STAR_W   = 0.022   -- #67 Trusted toggle in the list rows
+local BTN_GAP      = 0.010
+
+-- Bar (XP / fatigue gauge) height.
+local BAR_H = 0.016
 
 -- Names used when hiring from the panel (no text-input field in an overlay).
 local NAME_POOL = {
@@ -83,6 +119,9 @@ function WCRosterPanel.new(roster, workerSystem)
     self.mouseY       = 0
     self.infoMsg      = nil     -- transient status line shown in the info bar
     self._clickRects  = {}
+    self.selectedUuid = nil    -- worker shown in the dossier (right pane)
+    self._snapshot    = nil    -- cached getRosterSnapshot result (throttled rebuild)
+    self._snapshotAt  = -100000 -- g_currentMission.time of the last snapshot build
     return self
 end
 
@@ -108,6 +147,7 @@ function WCRosterPanel:open()
     self.isVisible = true
     self.page      = 0
     self.infoMsg   = nil
+    self._snapshotAt = -100000   -- force a fresh snapshot on the first frame
     if g_inputBinding and g_inputBinding.setShowMouseCursor then
         g_inputBinding:setShowMouseCursor(true, true)
     end
@@ -171,6 +211,109 @@ function WCRosterPanel:drawButton(id, x, y, w, h, label, col, data)
     self:registerClick(id, x, y, w, h, data)
 end
 
+-- A labelled gauge: dark track with a proportional coloured fill. frac is 0..1.
+function WCRosterPanel:drawBar(x, y, w, frac, fillCol)
+    frac = math.max(0, math.min(1, frac or 0))
+    self:drawRect(x, y, w, BAR_H, C.barTrack)
+    if frac > 0 then
+        self:drawRect(x, y, w * frac, BAR_H, fillCol)
+    end
+end
+
+-- ── Data helpers ──────────────────────────────────────────
+-- One cached snapshot drives both the list and the dossier so the wage math lives
+-- in exactly one place (WorkerManager:getServerSnapshot). Rebuilt at most ~3x/sec.
+function WCRosterPanel:_getSnapshot()
+    local now = (g_currentMission and g_currentMission.time) or 0
+    if self._snapshot == nil or (now - self._snapshotAt) > 350 then
+        local mgr = g_currentMission and g_currentMission.workerCostsManager
+        if mgr and mgr.getRosterSnapshot then
+            -- Runs in the draw loop; a throw here would spam every frame. Keep the
+            -- last good snapshot on failure rather than crashing the panel.
+            local ok, snap = pcall(function() return mgr:getRosterSnapshot() end)
+            if ok then
+                self._snapshot = snap
+            end
+        end
+        self._snapshotAt = now
+    end
+    return self._snapshot
+end
+
+-- The selected worker's enriched row from the snapshot (nil if none / fired).
+function WCRosterPanel:_selectedData(snap)
+    if not snap or not snap.workers or self.selectedUuid == nil then
+        return nil
+    end
+    for _, w in ipairs(snap.workers) do
+        if w.uuid == self.selectedUuid then
+            return w
+        end
+    end
+    return nil
+end
+
+-- A bit of flavour over the bare level name for the dossier header.
+local LEVEL_TITLE = { Novice = "Field Hand", Experienced = "Seasoned Operator", Master = "Master Operator" }
+function WCRosterPanel:_levelTitle(levelName)
+    return LEVEL_TITLE[levelName or ""] or (levelName or "Worker")
+end
+
+-- Status dot colour + label. Prefers a notable HireHallCore lifecycle state
+-- (on leave / injured / training) over the plain working/idle from the snapshot.
+function WCRosterPanel:_status(workerData)
+    local note = self:_lifecycleNote(workerData.uuid)
+    if note then
+        return note.col, note.label
+    end
+    if workerData.working then
+        return C.dotWork, "Working"
+    end
+    return C.dotIdle, "Idle"
+end
+
+-- Guarded read of HireHallCore's lifecycle state. Returns a {col,label} for the
+-- non-routine states only, or nil when HireHallCore is absent/normal/host-only.
+local LIFE_LABEL = {
+    onLeave  = { label = "On leave", c = "dotLeave" },
+    injured  = { label = "Injured",  c = "dotHurt"  },
+    training = { label = "Training",  c = "dotLeave" },
+    retired  = { label = "Retired",   c = "dotIdle"  },
+}
+function WCRosterPanel:_lifecycleNote(uuid)
+    if uuid == nil or HireHallCore == nil or HireHallCore.core == nil
+        or HireHallCore.core.API == nil then
+        return nil
+    end
+    local ok, state = pcall(function() return HireHallCore.core.API:getLifecycleState(uuid) end)
+    if not ok or state == nil then
+        return nil
+    end
+    local m = LIFE_LABEL[state]
+    if m == nil then
+        return nil
+    end
+    return { col = C[m.c], label = m.label }
+end
+
+-- Guarded read of a worker's job-history resume (#66). Returns a summary table
+-- { jobs, completed, failed, dismissed } or nil when history is unavailable.
+function WCRosterPanel:_historySummary(uuid)
+    if uuid == nil or HireHallCore == nil or HireHallCore.core == nil
+        or HireHallCore.core.History == nil or self.roster == nil then
+        return nil
+    end
+    local worker = self.roster:getWorker(uuid)
+    if worker == nil then
+        return nil
+    end
+    local ok, summary = pcall(function() return HireHallCore.core.History:summarize(worker) end)
+    if not ok or summary == nil or (summary.jobs or 0) == 0 then
+        return nil
+    end
+    return summary
+end
+
 -- ── Main draw ─────────────────────────────────────────────
 function WCRosterPanel:draw()
     if not self.isVisible or not self.initialized or not g_currentMission then
@@ -190,139 +333,252 @@ function WCRosterPanel:draw()
     self:drawRect(PX,           PY,            bw, PH, C.border)
     self:drawRect(PX + PW - bw, PY,            bw, PH, C.border)
 
-    self:drawTitleBar()
-    self:drawHireBar()
-    self:drawRosterList()
+    local snap = self:_getSnapshot()
+    self:drawTitleBar(snap)
+    self:drawLeftPane(snap)
+    self:drawDetailPane(snap)
     self:drawInfoBar()
 end
 
-function WCRosterPanel:drawTitleBar()
+function WCRosterPanel:drawTitleBar(snap)
     local ty = PY + PH - TB_H
     self:drawRect(PX, ty, PW, TB_H, C.title)
 
-    local count = self.roster and self.roster:getCount() or 0
+    local count = (snap and snap.count) or (self.roster and self.roster:getCount()) or 0
     self:drawText(PX + PAD, ty + TB_H * 0.30, TS_TITLE,
-        string.format("Pro-Staff Panel  (%d)", count), C.text, RenderText.ALIGN_LEFT, true)
+        "STAFF MANAGEMENT", C.text, RenderText.ALIGN_LEFT, true)
 
     -- Close [X]
     local xW = 0.04
     local xX = PX + PW - PAD - xW
     self:drawButton("close", xX, ty + (TB_H - 0.034) * 0.5, xW, 0.034, "X", C.btnFire)
+
+    -- KPI strip on the right: head-count + working now + monthly payroll.
+    local working = (snap and snap.working) or 0
+    local payroll = (snap and snap.finance and snap.finance.monthAccrued) or 0
+    local money = (g_i18n and g_i18n:formatMoney(payroll, 0, true, true)) or ("$" .. payroll)
+    local kpi = string.format("%d staff  -  %d working  -  %s/mo", count, working, money)
+    self:drawText(xX - 0.014, ty + TB_H * 0.34, TS_INFO, kpi, C.dim, RenderText.ALIGN_RIGHT)
 end
 
-function WCRosterPanel:drawHireBar()
-    local by = PY + PH - TB_H - 0.052
-    local bw = 0.16
-    self:drawButton("hire", PX + PAD, by, bw, 0.040, "+ Hire Worker", C.btnHire)
+-- ── Left pane: hire button, daily quota, selectable roster list ──
+function WCRosterPanel:drawLeftPane(snap)
+    local bodyTop = PY + PH - TB_H
+    local bodyBot = PY + IB_H
+    local leftX   = PX + PAD
+    local leftW   = LEFT_W
 
-    -- #69 Daily-cap usage next to the hire button (turns gold when the cap is hit).
-    local mgr = g_currentMission and g_currentMission.workerCostsManager
-    local limit = (WorkerManager and WorkerManager.DAILY_HIRE_LIMIT) or 5
-    local used = (mgr and mgr.getHiresUsedToday and mgr:getHiresUsedToday()) or 0
-    self:drawText(PX + PAD + bw + 0.016, by + 0.010, TS_INFO,
-        string.format("Hires today: %d/%d", used, limit),
-        (used >= limit) and C.gold or C.dim, RenderText.ALIGN_LEFT)
+    -- "+ Hire" hires slot 1 of the daily pool. The hall now rotates once per day,
+    -- so the quota + next candidate ride right under the button.
+    local hireY  = bodyTop - PAD - HIRE_H
+    local hiring = snap and snap.hiring or nil
+    local limit  = (hiring and hiring.limit) or (WorkerManager and WorkerManager.DAILY_HIRE_LIMIT) or 5
+    local used   = (hiring and hiring.usedToday) or 0
+    local capped = used >= limit
+    self:drawButton("hire", leftX, hireY, leftW, HIRE_H,
+        capped and "Hire (cap)" or "+ Hire", capped and C.btnStar or C.btnHire)
 
-    -- Right-aligned hint about assigning.
-    self:drawText(PX + PW - PAD, by + 0.010, TS_INFO,
-        "Sit in a vehicle, then Assign", C.dim, RenderText.ALIGN_RIGHT)
-end
+    local quotaY = hireY - 0.016
+    self:drawText(leftX, quotaY, TS_SMALL, string.format("%d/%d today", used, limit),
+        capped and C.gold or C.dim, RenderText.ALIGN_LEFT)
+    local nextCand = snap and snap.recruits and snap.recruits[1] or nil
+    if nextCand then
+        local cost = (g_i18n and g_i18n:formatMoney(nextCand.hireCost or 0, 0, true, true))
+            or ("$" .. (nextCand.hireCost or 0))
+        self:drawText(leftX + leftW, quotaY, TS_SMALL,
+            string.format("%s %s", nextCand.name or "?", cost), C.dim, RenderText.ALIGN_RIGHT)
+    end
 
-function WCRosterPanel:drawRosterList()
-    -- #67 Trusted ("favorite") workers float to the top via the roster's display view.
-    local workers = self.roster and self.roster:getDisplayOrder() or {}
-    local total = #workers
+    -- Roster list (already trusted-first, display-ordered, from the snapshot).
+    local workers = (snap and snap.workers) or {}
+    local total   = #workers
 
-    local listTop = PY + PH - TB_H - 0.052 - 0.012   -- below hire bar
-    local rowX = PX + PAD
-    local rowW = PW - 2 * PAD
+    -- Keep a valid selection: re-home a stale uuid, auto-select the first worker.
+    if total > 0 then
+        local found = false
+        for _, w in ipairs(workers) do
+            if w.uuid == self.selectedUuid then found = true; break end
+        end
+        if not found then self.selectedUuid = workers[1].uuid end
+    else
+        self.selectedUuid = nil
+    end
 
+    local listTop = quotaY - 0.014
     if total == 0 then
-        self:drawText(PX + PW * 0.5, listTop - 0.10, TS_ROW,
-            "No workers yet. Click '+ Hire Worker', or start an AI helper.",
-            C.dim, RenderText.ALIGN_CENTER)
+        self:drawText(leftX + leftW * 0.5, listTop - 0.06, TS_SMALL,
+            "No staff yet", C.dim, RenderText.ALIGN_CENTER)
         return
     end
 
-    -- Clamp page
     local maxPage = math.floor((total - 1) / ROWS_PER_PAGE)
     if self.page > maxPage then self.page = maxPage end
     if self.page < 0 then self.page = 0 end
-
     local startIdx = self.page * ROWS_PER_PAGE + 1
     local endIdx   = math.min(startIdx + ROWS_PER_PAGE - 1, total)
 
-    local fireX   = PX + PW - PAD - BTN_FIRE_W
-    local assignX = fireX - BTN_GAP - BTN_ASSIGN_W
-
     local i = 0
     for idx = startIdx, endIdx do
-        local w = workers[idx]
-        local ry = listTop - ROW_H - (i * ROW_H)
+        local w  = workers[idx]
+        local ry = listTop - LIST_ROW_H - (i * LIST_ROW_H)
+        local rh = LIST_ROW_H - 0.004
 
-        -- Row background — Trusted workers get a warm tint, others keep the zebra (#67)
+        -- Seat colour: selected = green, trusted = warm, else zebra.
         local rowBg = (i % 2 == 0) and C.row or C.rowAlt
         if w.trusted then rowBg = C.rowTrust end
-        self:drawRect(rowX, ry, rowW, ROW_H - 0.004, rowBg)
+        if w.uuid == self.selectedUuid then rowBg = C.sel end
+        self:drawRect(leftX, ry, leftW, rh, rowBg)
 
-        local bh = ROW_H - 0.014
-        local byBtn = ry + 0.005
-
-        -- #67 Trusted toggle (leftmost). "*" reads bright gold when trusted, muted
-        -- when not. (ASCII glyph — guaranteed to render in the engine font.)
-        local starX = rowX + 0.006
-        self:drawRect(starX, byBtn, BTN_STAR_W, bh, C.btnStar)
-        self:drawText(starX + BTN_STAR_W * 0.5, byBtn + bh * 0.20, TS_ROW, "*",
+        -- Trusted star toggle (registered FIRST so it wins the row-select overlap).
+        local starX = leftX + 0.004
+        self:drawText(starX + BTN_STAR_W * 0.5, ry + rh * 0.28, TS_ROW, "*",
             w.trusted and C.gold or C.dim, RenderText.ALIGN_CENTER, true)
-        self:registerClick("star_" .. w.uuid, starX, byBtn, BTN_STAR_W, bh,
+        self:registerClick("star_" .. w.uuid, starX, ry, BTN_STAR_W, rh,
             { uuid = w.uuid, trusted = w.trusted })
 
-        local textX = rowX + 0.006 + BTN_STAR_W + 0.010
+        -- Status dot.
+        local dotCol = self:_status(w)
+        local dotX = starX + BTN_STAR_W + 0.004
+        self:drawRect(dotX, ry + rh * 0.5 - 0.004, 0.008, 0.008, dotCol)
 
-        -- Status / level color accent dot via level color
-        local levelName = WorkerRoster.levelName(w.level)
-        local status = w.assignedVehicleId and "working" or "idle"
-        if w.assignedVehicleUniqueId then status = status .. ", pinned" end
-        if w.trusted then status = status .. ", trusted" end
-
-        -- Line 1: name + level
-        self:drawText(textX, ry + ROW_H * 0.50, TS_ROW,
-            string.format("%s  -  %s", w.name or "Worker", levelName),
+        -- Name (top) + level (under).
+        local txtX = dotX + 0.014
+        self:drawText(txtX, ry + rh * 0.52, TS_ROW, w.name or "Worker",
             C.text, RenderText.ALIGN_LEFT, true)
-        -- Line 2: stats
-        self:drawText(textX, ry + ROW_H * 0.16, TS_INFO,
-            string.format("%.1fh  -  %d jobs  -  fat %d%%  -  %s",
-                w.totalHours or 0, w.totalJobs or 0,
-                math.floor((w.fatigue or 0) * 100), status),
+        self:drawText(txtX, ry + rh * 0.14, TS_SMALL, w.levelName or "Novice",
             C.dim, RenderText.ALIGN_LEFT)
-        if w.assignedVehicleUniqueId then
-            self:drawButton("unassign_" .. w.uuid, assignX, byBtn, BTN_ASSIGN_W, bh,
-                "Unassign", C.btnAssign, { uuid = w.uuid })
-        else
-            self:drawButton("assign_" .. w.uuid, assignX, byBtn, BTN_ASSIGN_W, bh,
-                "Assign", C.btnAssign, { uuid = w.uuid })
-        end
-        self:drawButton("fire_" .. w.uuid, fireX, byBtn, BTN_FIRE_W, bh,
-            "Fire", C.btnFire, { uuid = w.uuid, name = w.name, level = w.level })
+
+        -- Whole-row select (registered after the star).
+        self:registerClick("select_" .. w.uuid, leftX, ry, leftW, rh, { uuid = w.uuid })
 
         i = i + 1
     end
 
-    -- Paging controls
+    -- Paging.
     if total > ROWS_PER_PAGE then
-        local py = PY + IB_H + 0.006
-        local pw = 0.05
-        self:drawButton("page_prev", PX + PAD, py, pw, 0.030, "<", C.row, nil)
-        self:drawButton("page_next", PX + PAD + pw + 0.01, py, pw, 0.030, ">", C.row, nil)
-        self:drawText(PX + PAD + 2 * pw + 0.03, py + 0.006, TS_INFO,
-            string.format("Page %d / %d", self.page + 1, maxPage + 1), C.dim, RenderText.ALIGN_LEFT)
+        local pageY = bodyBot + 0.006
+        local pw = 0.040
+        self:drawButton("page_prev", leftX, pageY, pw, 0.028, "<", C.row)
+        self:drawButton("page_next", leftX + pw + 0.008, pageY, pw, 0.028, ">", C.row)
+        self:drawText(leftX + leftW, pageY + 0.005, TS_SMALL,
+            string.format("%d/%d", self.page + 1, maxPage + 1), C.dim, RenderText.ALIGN_RIGHT)
     end
+end
+
+-- ── Right pane: the selected worker's dossier ──
+function WCRosterPanel:drawDetailPane(snap)
+    local bodyTop = PY + PH - TB_H
+    local bodyBot = PY + IB_H
+    local rx = PX + PAD + LEFT_W + COL_GAP
+    local rw = (PX + PW - PAD) - rx
+
+    -- Pane backdrop + a thin divider on its left edge.
+    self:drawRect(rx, bodyBot, rw, bodyTop - bodyBot, C.detailBg)
+    self:drawRect(rx - COL_GAP * 0.5, bodyBot, 0.0012, bodyTop - bodyBot, C.border)
+
+    local d = self:_selectedData(snap)
+    if d == nil then
+        local msg = (snap and (snap.count or 0) > 0)
+            and "Select a worker to view their file."
+            or  "No staff yet. Hire from the left,\nor start an AI helper."
+        self:drawText(rx + rw * 0.5, (bodyTop + bodyBot) * 0.5, TS_ROW, msg,
+            C.dim, RenderText.ALIGN_CENTER)
+        return
+    end
+
+    local dx = rx + 0.016
+    local dw = rw - 0.032
+    local fmt = function(v) return (g_i18n and g_i18n:formatMoney(v, 0, true, true)) or ("$" .. math.floor(v or 0)) end
+    local labelW, valueW = 0.070, 0.085
+    local barX = dx + labelW
+    local barW = dw - labelW - valueW
+
+    -- Header: name + a trusted toggle on the right.
+    local nameY = bodyTop - 0.036
+    self:drawText(dx, nameY, TS_NAME, d.name or "Worker", C.text, RenderText.ALIGN_LEFT, true)
+    local starW = BTN_TRUST_W
+    self:drawButton("star_" .. d.uuid, dx + dw - starW, nameY - 0.002, starW, 0.030,
+        d.trusted and "* Trusted" or "* Mark", d.trusted and C.btnHire or C.btnStar,
+        { uuid = d.uuid, trusted = d.trusted })
+
+    -- Subtitle: level title (left) + status (right, in its status colour).
+    local subY = nameY - 0.028
+    self:drawText(dx, subY, TS_ROW, self:_levelTitle(d.levelName), C.accent, RenderText.ALIGN_LEFT)
+    local stCol, stLabel = self:_status(d)
+    self:drawText(dx + dw, subY, TS_INFO, stLabel, stCol, RenderText.ALIGN_RIGHT)
+
+    -- SKILL gauge (XP proxied by hours worked; tiers at 40 / 160).
+    local hours = d.totalHours or 0
+    local skillFrac, nextLabel
+    if (d.level or 1) >= WorkerRoster.LEVEL_MASTER then
+        skillFrac, nextLabel = 1, "max"
+    elseif hours >= WorkerRoster.XP_EXPERIENCED then
+        skillFrac = (hours - WorkerRoster.XP_EXPERIENCED) / (WorkerRoster.XP_MASTER - WorkerRoster.XP_EXPERIENCED)
+        nextLabel = string.format("next %dh", WorkerRoster.XP_MASTER)
+    else
+        skillFrac = hours / WorkerRoster.XP_EXPERIENCED
+        nextLabel = string.format("next %dh", WorkerRoster.XP_EXPERIENCED)
+    end
+    local y = subY - 0.036
+    self:drawText(dx, y + 0.002, TS_SMALL, "SKILL", C.dim, RenderText.ALIGN_LEFT)
+    self:drawBar(barX, y, barW, skillFrac, C.xpFill)
+    self:drawText(dx + dw, y + 0.001, TS_SMALL,
+        string.format("%.0fh  %s", hours, nextLabel), C.dim, RenderText.ALIGN_RIGHT)
+
+    -- FATIGUE gauge.
+    local fat = d.fatigue or 0
+    local fatCol = (fat < 0.5) and C.fatLow or (fat < 0.85 and C.fatMid or C.fatHigh)
+    y = y - 0.032
+    self:drawText(dx, y + 0.002, TS_SMALL, "FATIGUE", C.dim, RenderText.ALIGN_LEFT)
+    self:drawBar(barX, y, barW, fat, fatCol)
+    self:drawText(dx + dw, y + 0.001, TS_SMALL,
+        string.format("%d%%", math.floor(fat * 100 + 0.5)), C.dim, RenderText.ALIGN_RIGHT)
+
+    -- Lifetime line.
+    y = y - 0.036
+    self:drawText(dx, y, TS_INFO, string.format("Lifetime   %.0f h   -   %d jobs",
+        hours, d.totalJobs or 0), C.text, RenderText.ALIGN_LEFT)
+
+    -- Wage line: base -> effective, with the skill delta called out.
+    y = y - 0.026
+    local base, eff = d.baseRate or 0, d.effRate or (d.baseRate or 0)
+    local unit = (snap and snap.finance and snap.finance.isHourly == false) and "/ha" or "/h"
+    local wageStr = string.format("Wage   %s -> %s %s", fmt(base), fmt(eff), unit)
+    if (eff - base) >= 0.5 then
+        wageStr = wageStr .. string.format("  (+%s skill)", fmt(eff - base))
+    end
+    self:drawText(dx, y, TS_INFO, wageStr, C.text, RenderText.ALIGN_LEFT)
+
+    -- Recent jobs (job-history resume, #66) — only when history is available.
+    local hist = self:_historySummary(d.uuid)
+    if hist then
+        y = y - 0.026
+        self:drawText(dx, y, TS_INFO, string.format(
+            "Recent   %d jobs   -   %d done   %d failed",
+            hist.jobs or 0, hist.completed or 0, (hist.failed or 0) + (hist.dismissed or 0)),
+            C.dim, RenderText.ALIGN_LEFT)
+    end
+
+    -- Action buttons along the bottom.
+    local btnY = bodyBot + 0.012
+    local bh = 0.034
+    if d.pinned then
+        self:drawButton("unassign_" .. d.uuid, dx, btnY, BTN_ASSIGN_W, bh, "Unassign",
+            C.btnAssign, { uuid = d.uuid })
+    else
+        self:drawButton("assign_" .. d.uuid, dx, btnY, BTN_ASSIGN_W, bh, "Assign",
+            C.btnAssign, { uuid = d.uuid })
+    end
+    local sev = d.severance or 0
+    self:drawButton("fire_" .. d.uuid, dx + BTN_ASSIGN_W + BTN_GAP, btnY, BTN_FIRE_W + 0.02, bh,
+        sev > 0 and ("Fire " .. fmt(sev)) or "Fire", C.btnFire,
+        { uuid = d.uuid, name = d.name, level = d.level })
 end
 
 function WCRosterPanel:drawInfoBar()
     local iy = PY
     self:drawRect(PX, iy, PW, IB_H, C.title, 0.85)
-    local msg = self.infoMsg or "Hire, fire, and pin workers to vehicles. Pins survive save/reload."
+    local msg = self.infoMsg or "Click a worker to open their file. The hiring hall refreshes each day."
     self:drawText(PX + PW - PAD, iy + IB_H * 0.30, TS_INFO, msg, C.text, RenderText.ALIGN_RIGHT)
 end
 
@@ -375,6 +631,13 @@ function WCRosterPanel:handleClick(id, data)
         return
     elseif id == "page_next" then
         self.page = self.page + 1   -- clamped on next draw
+        return
+    end
+
+    -- Row selection drives the dossier. View-only, so it is allowed before the
+    -- host-only mutation guard below (clients can browse the synced snapshot).
+    if id:sub(1, 7) == "select_" and data then
+        self.selectedUuid = data.uuid
         return
     end
 

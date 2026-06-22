@@ -33,8 +33,9 @@ HireHallCore.core.Evolution = HireHallCore.core.Evolution or {
 local Evolution = HireHallCore.core.Evolution
 
 --- Push a workerId to the front-of-line (FR4 urgent queue). Used when a worker is
---- being viewed in the FarmTablet (EdgeTabContext; Phase 4) so the UI always sees
---- fresh state. Small set, deduped in place — no allocation churn.
+--- being viewed in the FarmTablet personnel app so the UI always sees fresh state
+--- (the tablet's active app is known via the #84 focus API). Small set, deduped in
+--- place — no allocation churn.
 function Evolution:pushUrgent(workerId)
     if workerId == nil then
         return

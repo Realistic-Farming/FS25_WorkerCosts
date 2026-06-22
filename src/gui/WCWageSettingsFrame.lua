@@ -48,6 +48,7 @@ function WCWageSettingsFrame:bindCallbacks()
                 g_WorkerManager.settings:save()
                 self:refreshRatePreview()
                 self:refreshHelpText()
+                self:refreshWageLevelOptions()   -- #83 re-unit the tier labels for the new strategy
             end
         end
     end
@@ -128,18 +129,8 @@ function WCWageSettingsFrame:refresh()
         end
     end
 
-    if self.optWageLevel then
-        if self.optWageLevel.setTexts then
-            self.optWageLevel:setTexts({
-                g_i18n:getText("wc_diff_1"),
-                g_i18n:getText("wc_diff_2"),
-                g_i18n:getText("wc_diff_3"),
-            })
-        end
-        if self.optWageLevel.setState then
-            self.optWageLevel:setState(settings.wageLevel)
-        end
-    end
+    -- #83 Wage-level (Compensation Tier) labels are built with a mode-aware unit.
+    self:refreshWageLevelOptions()
 
     if self.optNotifications and self.optNotifications.setState then
         self.optNotifications:setState(settings.showNotifications and 2 or 1)
@@ -157,6 +148,34 @@ function WCWageSettingsFrame:refresh()
 
     self:refreshRatePreview()
     self:refreshHelpText()
+end
+
+-- #83 Build the Compensation Tier option labels with a unit that tracks the active
+-- Payment Strategy ($/h vs $/ha). The localized tier name is kept (the "(rate)" part
+-- is stripped and rebuilt), and the unit matches the English format the big rate
+-- display already uses — so the option no longer shows "/h" while in Per-Hectare mode.
+function WCWageSettingsFrame:refreshWageLevelOptions()
+    if self.optWageLevel == nil or self.optWageLevel.setTexts == nil then return end
+    local settings = g_WorkerManager and g_WorkerManager.settings
+    if settings == nil then return end
+
+    local unit  = (settings.costMode == Settings.COST_MODE_PER_HECTARE) and "ha" or "h"
+    local rates = { 15, 25, 40 }   -- Settings:getWageRate() per level (Low / Medium / High)
+    local texts = {}
+    for i = 1, 3 do
+        local base = g_i18n:getText("wc_diff_" .. i) or ""
+        local name = base:gsub("%s*%b()%s*$", "")   -- drop "($15/h)", keep the localized tier name
+        texts[i] = string.format("%s ($%d/%s)", name, rates[i], unit)
+    end
+
+    -- Guard so setState() doesn't re-fire the wage-level callback mid-update.
+    local wasRefreshing = self._refreshing
+    self._refreshing = true
+    self.optWageLevel:setTexts(texts)
+    if self.optWageLevel.setState then
+        self.optWageLevel:setState(settings.wageLevel)
+    end
+    self._refreshing = wasRefreshing
 end
 
 -- Update the live "effective rate" preview text

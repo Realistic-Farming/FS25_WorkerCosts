@@ -21,20 +21,20 @@
                     <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="280px"/>
 
                     <!-- Rows individually positioned — no ColBoxV wrapper -->
-                    <BoxLayout profile="WC_RowBoxH" position="5px -52px" width="290px">
-                        <Text profile="WC_RowLabel" text="$l10n_wc_label_mod_enabled" width="130px"/>
+                    <BoxLayout profile="WC_RowBoxH" position="5px -52px" width="330px">
+                        <Text profile="WC_RowLabel" text="$l10n_wc_label_mod_enabled" width="170px"/>
                         <Text profile="WC_RowValue" id="txtModEnabled" width="150px"/>
                     </BoxLayout>
-                    <BoxLayout profile="WC_RowBoxH" position="5px -80px" width="290px">
-                        <Text profile="WC_RowLabel" text="$l10n_wc_label_cost_mode" width="130px"/>
+                    <BoxLayout profile="WC_RowBoxH" position="5px -80px" width="330px">
+                        <Text profile="WC_RowLabel" text="$l10n_wc_label_cost_mode" width="170px"/>
                         <Text profile="WC_RowValue" id="txtCostMode" width="150px"/>
                     </BoxLayout>
-                    <BoxLayout profile="WC_RowBoxH" position="5px -108px" width="290px">
-                        <Text profile="WC_RowLabel" text="$l10n_wc_label_wage_level" width="130px"/>
+                    <BoxLayout profile="WC_RowBoxH" position="5px -108px" width="330px">
+                        <Text profile="WC_RowLabel" text="$l10n_wc_label_wage_level" width="170px"/>
                         <Text profile="WC_RowValue" id="txtWageLevel" width="150px"/>
                     </BoxLayout>
-                    <BoxLayout profile="WC_RowBoxH" position="5px -136px" width="290px">
-                        <Text profile="WC_RowLabel" text="$l10n_wc_label_current_rate" width="130px"/>
+                    <BoxLayout profile="WC_RowBoxH" position="5px -136px" width="330px">
+                        <Text profile="WC_RowLabel" text="$l10n_wc_label_current_rate" width="170px"/>
                         <Text profile="WC_RowValueGreen" id="txtCurrentRate" width="150px"/>
                     </BoxLayout>
 

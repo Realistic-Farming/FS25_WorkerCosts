@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.2.0.0</version>
+    <version>2.2.1.0</version>
     <modName>FS25_WorkerCostsMod</modName>
     <title>
         <en>Realistic Worker Costs</en>
@@ -531,32 +531,32 @@
             <da>Mod-status</da>
         </text>
         <text name="wc_label_cost_mode">
-            <en>Cost Mode:</en>
-        
-            <de>[EN] Cost Mode:</de>
-            <fr>[EN] Cost Mode:</fr>
-            <pl>[EN] Cost Mode:</pl>
-            <es>[EN] Cost Mode:</es>
-            <it>[EN] Cost Mode:</it>
-            <cz>[EN] Cost Mode:</cz>
-            <br>[EN] Cost Mode:</br>
-            <uk>[EN] Cost Mode:</uk>
-            <ru>[EN] Cost Mode:</ru>
-            <da>Omkostningstilstand</da>
+            <en>Payment Strategy:</en>
+
+            <de>[EN] Payment Strategy:</de>
+            <fr>[EN] Payment Strategy:</fr>
+            <pl>[EN] Payment Strategy:</pl>
+            <es>[EN] Payment Strategy:</es>
+            <it>[EN] Payment Strategy:</it>
+            <cz>[EN] Payment Strategy:</cz>
+            <br>[EN] Payment Strategy:</br>
+            <uk>[EN] Payment Strategy:</uk>
+            <ru>[EN] Payment Strategy:</ru>
+            <da>[EN] Payment Strategy:</da>
         </text>
         <text name="wc_label_wage_level">
-            <en>Wage Level:</en>
-        
-            <de>[EN] Wage Level:</de>
-            <fr>[EN] Wage Level:</fr>
-            <pl>[EN] Wage Level:</pl>
-            <es>[EN] Wage Level:</es>
-            <it>[EN] Wage Level:</it>
-            <cz>[EN] Wage Level:</cz>
-            <br>[EN] Wage Level:</br>
-            <uk>[EN] Wage Level:</uk>
-            <ru>[EN] Wage Level:</ru>
-            <da>Løn Niveau</da>
+            <en>Compensation Tier:</en>
+
+            <de>[EN] Compensation Tier:</de>
+            <fr>[EN] Compensation Tier:</fr>
+            <pl>[EN] Compensation Tier:</pl>
+            <es>[EN] Compensation Tier:</es>
+            <it>[EN] Compensation Tier:</it>
+            <cz>[EN] Compensation Tier:</cz>
+            <br>[EN] Compensation Tier:</br>
+            <uk>[EN] Compensation Tier:</uk>
+            <ru>[EN] Compensation Tier:</ru>
+            <da>[EN] Compensation Tier:</da>
         </text>
         <text name="wc_label_current_rate">
             <en>Current Rate:</en>

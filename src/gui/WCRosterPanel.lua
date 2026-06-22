@@ -144,6 +144,12 @@ end
 -- ── Visibility ────────────────────────────────────────────
 function WCRosterPanel:open()
     if not self.initialized then self:initialize() end
+    -- #84 Don't open underneath the Farm Tablet — they are mutually-exclusive
+    -- overlays. The player closes the tablet first (focus API; absent = nil = allow).
+    local ft = g_currentMission and g_currentMission.farmTablet
+    if ft and ft.isVisible then
+        return
+    end
     self.isVisible = true
     self.page      = 0
     self.infoMsg   = nil
@@ -176,6 +182,14 @@ function WCRosterPanel:update()
     end
     -- Auto-close if a real GUI (menu/dialog) opens on top.
     if g_gui and (g_gui:getIsGuiVisible() or g_gui:getIsDialogVisible()) then
+        self:close()
+        return
+    end
+    -- #84 The Farm Tablet is a custom overlay g_gui cannot see, so use its focus API
+    -- (g_currentMission.farmTablet) to step aside when the tablet is showing — two
+    -- full-screen overlays must never fight. No-ops cleanly when FarmTablet is absent.
+    local ft = g_currentMission and g_currentMission.farmTablet
+    if ft and ft.isVisible then
         self:close()
     end
 end

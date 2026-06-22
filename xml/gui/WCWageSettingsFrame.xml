@@ -64,9 +64,10 @@
                 <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_section_effective"/>
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>
 
-                <Text profile="WC_BigStatLabel" position="0px -58px" text="$l10n_wc_label_effective_rate"/>
-                <Text profile="WC_BigStat" id="txtBigRate" position="0px -78px"/>
-                <Text profile="WC_BigStatLabel" id="txtRateLabel" position="0px -124px"/>
+                <!-- #82 Redundant "Effective Rate" label removed; the section title above
+                     already names this. Big stat shifts up under the separator. -->
+                <Text profile="WC_BigStat" id="txtBigRate" position="0px -58px"/>
+                <Text profile="WC_BigStatLabel" id="txtRateLabel" position="0px -104px"/>
 
                 <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -152px" width="400px"/>
 

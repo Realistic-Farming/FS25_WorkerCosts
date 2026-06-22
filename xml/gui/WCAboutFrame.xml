@@ -12,48 +12,141 @@
 
         <GuiElement profile="fs25_subCategorySelectorTabbedContainer" position="0px -80px">
 
-            <!-- LEFT: How it works body text -->
-            <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="560px" position="0px 20px">
-                <Bitmap profile="fs25_menuContainerArrow"/>
-                <GuiElement profile="fs25_subCategoryContainer" width="540px">
+            <!-- ============================================================ -->
+            <!-- Sub-tab selector (#80): three buttons toggle the panels below -->
+            <!-- ============================================================ -->
+            <Bitmap profile="WC_BtnBgGreen" id="btnTabCoreBg" position="0px 24px" size="336px 44px"/>
+            <Button profile="WC_BtnHit" position="0px 24px" size="336px 44px"
+                    onClick="onClickTabCore" onFocus="onTabCoreFocus" onLeave="onTabCoreLeave"/>
+            <Text profile="WC_BtnText" position="0px 24px" size="336px 44px" text="$l10n_wc_about_tab_core"/>
 
-                    <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_section_how_it_works"/>
-                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
+            <Bitmap profile="WC_BtnBgGreen" id="btnTabFormulasBg" position="352px 24px" size="336px 44px"/>
+            <Button profile="WC_BtnHit" position="352px 24px" size="336px 44px"
+                    onClick="onClickTabFormulas" onFocus="onTabFormulasFocus" onLeave="onTabFormulasLeave"/>
+            <Text profile="WC_BtnText" position="352px 24px" size="336px 44px" text="$l10n_wc_about_tab_formulas"/>
 
-                    <Text profile="WC_BodyText" position="10px -54px" size="520px 500px" textMaxNumLines="24" text="$l10n_wc_about_body"/>
+            <Bitmap profile="WC_BtnBgGreen" id="btnTabStaffBg" position="704px 24px" size="336px 44px"/>
+            <Button profile="WC_BtnHit" position="704px 24px" size="336px 44px"
+                    onClick="onClickTabStaff" onFocus="onTabStaffFocus" onLeave="onTabStaffLeave"/>
+            <Text profile="WC_BtnText" position="704px 24px" size="336px 44px" text="$l10n_wc_about_tab_staff"/>
 
+            <!-- ============================================================ -->
+            <!-- PANEL 1 — CORE: billing strategy, timing, save persistence    -->
+            <!-- ============================================================ -->
+            <GuiElement id="paneCore" position="0px -40px" size="1040px 520px">
+
+                <!-- LEFT: sectioned "how it works" -->
+                <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="500px" position="0px 0px">
+                    <Bitmap profile="fs25_menuContainerArrow"/>
+                    <GuiElement profile="fs25_subCategoryContainer" width="540px">
+                        <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_section_how_it_works"/>
+                        <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
+                        <Text profile="WC_BodyText" position="10px -54px" size="520px 180px" textMaxNumLines="9" text="$l10n_wc_about_core_intro"/>
+
+                        <Text profile="WC_SectionTitle" position="10px -250px" text="$l10n_wc_about_h_save"/>
+                        <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -274px" width="520px"/>
+                        <Text profile="WC_BodyText" position="10px -294px" size="520px 150px" textMaxNumLines="7" text="$l10n_wc_about_save_body"/>
+                    </GuiElement>
+                </ThreePartBitmap>
+
+                <Bitmap profile="fs25_settingsTooltipSeparator" position="596px -20px"/>
+
+                <!-- RIGHT: payment timing + version -->
+                <GuiElement position="614px 10px" width="420px" height="500px">
+                    <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_section_payment"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>
+
+                    <BoxLayout profile="WC_RowBoxH" position="0px -54px" width="400px">
+                        <Text profile="WC_RowLabel" text="$l10n_wc_label_pay_interval" width="200px"/>
+                        <Text profile="WC_RowValue" id="txtPayInterval" width="190px"/>
+                    </BoxLayout>
+
+                    <Text profile="WC_BodyText" position="0px -90px" size="400px 160px" textMaxNumLines="6" text="$l10n_wc_about_payment_note"/>
+
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -260px" width="400px"/>
+                    <Text profile="WC_BigStatLabel" position="0px -280px" text="$l10n_wc_label_version"/>
+                    <Text profile="WC_RowValue" id="txtVersion" position="0px -300px" width="400px"/>
                 </GuiElement>
-            </ThreePartBitmap>
 
-            <!-- Vertical separator -->
-            <Bitmap profile="fs25_settingsTooltipSeparator" position="596px 0px"/>
+            </GuiElement>
 
-            <!-- RIGHT: Quick reference — wage table + payment info -->
-            <GuiElement position="614px 30px" width="420px" height="560px">
+            <!-- ============================================================ -->
+            <!-- PANEL 2 — FORMULAS: Hourly vs Hectare + live configuration    -->
+            <!-- ============================================================ -->
+            <GuiElement id="paneFormulas" position="0px -40px" size="1040px 520px">
 
-                <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_section_wage_level"/>
-                <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>
+                <!-- LEFT: how wages are calculated, one section per mode -->
+                <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="500px" position="0px 0px">
+                    <Bitmap profile="fs25_menuContainerArrow"/>
+                    <GuiElement profile="fs25_subCategoryContainer" width="540px">
+                        <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_cost_mode_hourly"/>
+                        <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
+                        <Text profile="WC_BodyText" position="10px -54px" size="520px 150px" textMaxNumLines="6" text="$l10n_wc_about_hourly_body"/>
 
-                <!-- wc_diff_N already includes the price: "Low ($15/h)" etc. -->
-                <Text profile="WC_RowLabel" position="0px -54px" width="400px" text="$l10n_wc_diff_1"/>
-                <Text profile="WC_RowLabel" position="0px -82px" width="400px" text="$l10n_wc_diff_2"/>
-                <Text profile="WC_RowLabel" position="0px -110px" width="400px" text="$l10n_wc_diff_3"/>
+                        <Text profile="WC_SectionTitle" position="10px -220px" text="$l10n_wc_cost_mode_hectare"/>
+                        <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -244px" width="520px"/>
+                        <Text profile="WC_BodyText" position="10px -264px" size="520px 180px" textMaxNumLines="8" text="$l10n_wc_about_hectare_body"/>
+                    </GuiElement>
+                </ThreePartBitmap>
 
-                <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -144px" width="400px"/>
-                <Text profile="WC_SectionTitle" position="0px -164px" text="$l10n_wc_section_payment"/>
-                <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -188px" width="400px"/>
+                <Bitmap profile="fs25_settingsTooltipSeparator" position="596px -20px"/>
 
-                <BoxLayout profile="WC_RowBoxH" position="0px -206px" width="400px">
-                    <Text profile="WC_RowLabel" text="$l10n_wc_label_pay_interval" width="200px"/>
-                    <Text profile="WC_RowValue" id="txtPayInterval" width="190px"/>
-                </BoxLayout>
+                <!-- RIGHT: live configuration (bound to Settings) + wage tiers -->
+                <GuiElement position="614px 10px" width="420px" height="500px">
+                    <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_section_effective"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>
 
-                <Text profile="WC_BodyText" position="0px -240px" size="400px 120px" textMaxNumLines="5" text="$l10n_wc_about_payment_note"/>
+                    <Text profile="WC_BigStat" id="txtEffRate" position="0px -58px"/>
+                    <Text profile="WC_BigStatLabel" id="txtRateLabel" position="0px -104px"/>
 
-                <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -370px" width="400px"/>
+                    <BoxLayout profile="WC_RowBoxH" position="0px -150px" width="400px">
+                        <Text profile="WC_RowLabel" text="$l10n_wc_section_cost_mode" width="200px"/>
+                        <Text profile="WC_RowValue" id="txtCostMode" width="190px"/>
+                    </BoxLayout>
 
-                <Text profile="WC_BigStatLabel" position="0px -390px" text="$l10n_wc_label_version"/>
-                <Text profile="WC_RowValue" id="txtVersion" position="0px -410px" width="400px"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -190px" width="400px"/>
+                    <Text profile="WC_SectionTitle" position="0px -210px" text="$l10n_wc_section_wage_level"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -234px" width="400px"/>
+
+                    <Text profile="WC_RowLabel" position="0px -254px" width="400px" text="$l10n_wc_diff_1"/>
+                    <Text profile="WC_RowLabel" position="0px -282px" width="400px" text="$l10n_wc_diff_2"/>
+                    <Text profile="WC_RowLabel" position="0px -310px" width="400px" text="$l10n_wc_diff_3"/>
+                </GuiElement>
+
+            </GuiElement>
+
+            <!-- ============================================================ -->
+            <!-- PANEL 3 — PRO-STAFF: two columns, XP/Mastery | Fatigue        -->
+            <!-- ============================================================ -->
+            <GuiElement id="paneStaff" position="0px -40px" size="1040px 520px">
+
+                <!-- LEFT: experience & mastery -->
+                <ThreePartBitmap profile="fs25_primaryMenuContainerBg" width="580px" height="500px" position="0px 0px">
+                    <Bitmap profile="fs25_menuContainerArrow"/>
+                    <GuiElement profile="fs25_subCategoryContainer" width="540px">
+                        <Text profile="WC_SectionTitle" position="10px -10px" text="$l10n_wc_about_h_xp"/>
+                        <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -34px" width="520px"/>
+                        <Text profile="WC_BodyText" position="10px -54px" size="520px 150px" textMaxNumLines="6" text="$l10n_wc_about_xp_body"/>
+
+                        <Text profile="WC_SectionTitle" position="10px -220px" text="$l10n_wc_about_h_mastery"/>
+                        <ThreePartBitmap profile="fs25_lineSeparatorTop" position="5px -244px" width="520px"/>
+                        <Text profile="WC_BodyText" position="10px -264px" size="520px 180px" textMaxNumLines="8" text="$l10n_wc_about_mastery_body"/>
+                    </GuiElement>
+                </ThreePartBitmap>
+
+                <Bitmap profile="fs25_settingsTooltipSeparator" position="596px -20px"/>
+
+                <!-- RIGHT: fatigue -->
+                <GuiElement position="614px 10px" width="420px" height="500px">
+                    <Text profile="WC_SectionTitle" position="0px -10px" text="$l10n_wc_about_h_fatigue"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -34px" width="400px"/>
+                    <Text profile="WC_BodyText" position="0px -54px" size="400px 200px" textMaxNumLines="9" text="$l10n_wc_about_fatigue_body"/>
+
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -270px" width="400px"/>
+                    <Text profile="WC_SectionTitle" position="0px -290px" text="$l10n_wc_about_h_tips"/>
+                    <ThreePartBitmap profile="fs25_lineSeparatorTop" position="0px -314px" width="400px"/>
+                    <Text profile="WC_BodyText" position="0px -334px" size="400px 150px" textMaxNumLines="7" text="$l10n_wc_about_tips_body"/>
+                </GuiElement>
 
             </GuiElement>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.2.1.0</version>
+    <version>2.2.2.0</version>
     <modName>FS25_WorkerCostsMod</modName>
     <title>
         <en>Realistic Worker Costs</en>
@@ -864,6 +864,246 @@
         </text>
 
         <!-- About frame -->
+        <!-- #80: sub-tab labels (Core / Formulas / Pro-Staff) -->
+        <text name="wc_about_tab_core">
+            <en>Core</en>
+            <de>[EN] Core</de>
+            <fr>[EN] Core</fr>
+            <es>[EN] Core</es>
+            <pl>[EN] Core</pl>
+            <it>[EN] Core</it>
+            <cz>[EN] Core</cz>
+            <br>[EN] Core</br>
+            <uk>[EN] Core</uk>
+            <ru>[EN] Core</ru>
+            <da>[EN] Core</da>
+        </text>
+        <text name="wc_about_tab_formulas">
+            <en>Formulas</en>
+            <de>[EN] Formulas</de>
+            <fr>[EN] Formulas</fr>
+            <es>[EN] Formulas</es>
+            <pl>[EN] Formulas</pl>
+            <it>[EN] Formulas</it>
+            <cz>[EN] Formulas</cz>
+            <br>[EN] Formulas</br>
+            <uk>[EN] Formulas</uk>
+            <ru>[EN] Formulas</ru>
+            <da>[EN] Formulas</da>
+        </text>
+        <text name="wc_about_tab_staff">
+            <en>Pro-Staff</en>
+            <de>[EN] Pro-Staff</de>
+            <fr>[EN] Pro-Staff</fr>
+            <es>[EN] Pro-Staff</es>
+            <pl>[EN] Pro-Staff</pl>
+            <it>[EN] Pro-Staff</it>
+            <cz>[EN] Pro-Staff</cz>
+            <br>[EN] Pro-Staff</br>
+            <uk>[EN] Pro-Staff</uk>
+            <ru>[EN] Pro-Staff</ru>
+            <da>[EN] Pro-Staff</da>
+        </text>
+
+        <!-- #80: cost-mode value labels for the Formulas tab config block -->
+        <text name="wc_cost_mode_hourly">
+            <en>Hourly</en>
+            <de>[EN] Hourly</de>
+            <fr>[EN] Hourly</fr>
+            <es>[EN] Hourly</es>
+            <pl>[EN] Hourly</pl>
+            <it>[EN] Hourly</it>
+            <cz>[EN] Hourly</cz>
+            <br>[EN] Hourly</br>
+            <uk>[EN] Hourly</uk>
+            <ru>[EN] Hourly</ru>
+            <da>[EN] Hourly</da>
+        </text>
+        <text name="wc_cost_mode_hectare">
+            <en>Per Hectare</en>
+            <de>[EN] Per Hectare</de>
+            <fr>[EN] Per Hectare</fr>
+            <es>[EN] Per Hectare</es>
+            <pl>[EN] Per Hectare</pl>
+            <it>[EN] Per Hectare</it>
+            <cz>[EN] Per Hectare</cz>
+            <br>[EN] Per Hectare</br>
+            <uk>[EN] Per Hectare</uk>
+            <ru>[EN] Per Hectare</ru>
+            <da>[EN] Per Hectare</da>
+        </text>
+
+        <!-- #80: per-tab sectioned content (headers + short bodies; English-first, [EN] stubs) -->
+        <text name="wc_about_core_intro">
+            <en>Realistic Worker Costs replaces the default pay system with a billing model based on real time. Each active AI worker is charged on a fixed schedule, no matter the game speed, with deductions happening quietly every payment interval. Tying wages to real minutes keeps your costs predictable whether you play at 1x or 120x.</en>
+            <de>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</de>
+            <fr>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</fr>
+            <es>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</es>
+            <pl>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</pl>
+            <it>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</it>
+            <cz>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</cz>
+            <br>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</br>
+            <uk>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</uk>
+            <ru>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</ru>
+            <da>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</da>
+        </text>
+        <text name="wc_about_h_save">
+            <en>Saved Per Game</en>
+            <de>[EN] Saved Per Game</de>
+            <fr>[EN] Saved Per Game</fr>
+            <es>[EN] Saved Per Game</es>
+            <pl>[EN] Saved Per Game</pl>
+            <it>[EN] Saved Per Game</it>
+            <cz>[EN] Saved Per Game</cz>
+            <br>[EN] Saved Per Game</br>
+            <uk>[EN] Saved Per Game</uk>
+            <ru>[EN] Saved Per Game</ru>
+            <da>[EN] Saved Per Game</da>
+        </text>
+        <text name="wc_about_save_body">
+            <en>Your cost mode, wage level and notification settings are stored per save game and restored on load. In multiplayer, clients stay in sync with the host.</en>
+            <de>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</de>
+            <fr>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</fr>
+            <es>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</es>
+            <pl>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</pl>
+            <it>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</it>
+            <cz>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</cz>
+            <br>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</br>
+            <uk>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</uk>
+            <ru>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</ru>
+            <da>[EN] Cost mode, wage level and notifications are saved per game and restored on load. MP clients stay in sync with the host.</da>
+        </text>
+        <text name="wc_about_hourly_body">
+            <en>A fixed rate per worker for every hour they stay active. The more workers you run and the longer they work, the bigger the bill.</en>
+            <de>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</de>
+            <fr>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</fr>
+            <es>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</es>
+            <pl>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</pl>
+            <it>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</it>
+            <cz>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</cz>
+            <br>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</br>
+            <uk>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</uk>
+            <ru>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</ru>
+            <da>[EN] A fixed rate per worker per active hour. More workers and longer shifts mean a bigger bill.</da>
+        </text>
+        <text name="wc_about_hectare_body">
+            <en>You pay for the area each worker actually covers. Light jobs cost little, large fields cost more. Both modes scale with your Wage Level; the panel on the right shows your live rate, mode and tiers.</en>
+            <de>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</de>
+            <fr>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</fr>
+            <es>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</es>
+            <pl>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</pl>
+            <it>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</it>
+            <cz>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</cz>
+            <br>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</br>
+            <uk>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</uk>
+            <ru>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</ru>
+            <da>[EN] You pay for the area each worker covers. Both modes scale with your Wage Level; the right panel shows your live rate, mode and tiers.</da>
+        </text>
+        <text name="wc_about_h_xp">
+            <en>Experience &amp; Levels</en>
+            <de>[EN] Experience &amp; Levels</de>
+            <fr>[EN] Experience &amp; Levels</fr>
+            <es>[EN] Experience &amp; Levels</es>
+            <pl>[EN] Experience &amp; Levels</pl>
+            <it>[EN] Experience &amp; Levels</it>
+            <cz>[EN] Experience &amp; Levels</cz>
+            <br>[EN] Experience &amp; Levels</br>
+            <uk>[EN] Experience &amp; Levels</uk>
+            <ru>[EN] Experience &amp; Levels</ru>
+            <da>[EN] Experience &amp; Levels</da>
+        </text>
+        <text name="wc_about_xp_body">
+            <en>Workers earn XP as they finish jobs and level up over time. A higher level means a more capable, more valuable hand.</en>
+            <de>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</de>
+            <fr>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</fr>
+            <es>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</es>
+            <pl>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</pl>
+            <it>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</it>
+            <cz>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</cz>
+            <br>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</br>
+            <uk>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</uk>
+            <ru>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</ru>
+            <da>[EN] Workers earn XP as they finish jobs and level up. Higher levels mean a more capable, more valuable hand.</da>
+        </text>
+        <text name="wc_about_h_mastery">
+            <en>Mastery</en>
+            <de>[EN] Mastery</de>
+            <fr>[EN] Mastery</fr>
+            <es>[EN] Mastery</es>
+            <pl>[EN] Mastery</pl>
+            <it>[EN] Mastery</it>
+            <cz>[EN] Mastery</cz>
+            <br>[EN] Mastery</br>
+            <uk>[EN] Mastery</uk>
+            <ru>[EN] Mastery</ru>
+            <da>[EN] Mastery</da>
+        </text>
+        <text name="wc_about_mastery_body">
+            <en>Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</en>
+            <de>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</de>
+            <fr>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</fr>
+            <es>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</es>
+            <pl>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</pl>
+            <it>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</it>
+            <cz>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</cz>
+            <br>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</br>
+            <uk>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</uk>
+            <ru>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</ru>
+            <da>[EN] Repeating a kind of work builds mastery in it, improving how efficiently that worker handles those tasks.</da>
+        </text>
+        <text name="wc_about_h_fatigue">
+            <en>Fatigue</en>
+            <de>[EN] Fatigue</de>
+            <fr>[EN] Fatigue</fr>
+            <es>[EN] Fatigue</es>
+            <pl>[EN] Fatigue</pl>
+            <it>[EN] Fatigue</it>
+            <cz>[EN] Fatigue</cz>
+            <br>[EN] Fatigue</br>
+            <uk>[EN] Fatigue</uk>
+            <ru>[EN] Fatigue</ru>
+            <da>[EN] Fatigue</da>
+        </text>
+        <text name="wc_about_fatigue_body">
+            <en>Long shifts build fatigue, and a tired worker is less effective. Rotate your staff and give them lighter days to keep the whole roster sharp.</en>
+            <de>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</de>
+            <fr>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</fr>
+            <es>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</es>
+            <pl>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</pl>
+            <it>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</it>
+            <cz>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</cz>
+            <br>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</br>
+            <uk>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</uk>
+            <ru>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</ru>
+            <da>[EN] Long shifts build fatigue and a tired worker is less effective. Rotate staff and give lighter days to keep the roster sharp.</da>
+        </text>
+        <text name="wc_about_h_tips">
+            <en>Tips</en>
+            <de>[EN] Tips</de>
+            <fr>[EN] Tips</fr>
+            <es>[EN] Tips</es>
+            <pl>[EN] Tips</pl>
+            <it>[EN] Tips</it>
+            <cz>[EN] Tips</cz>
+            <br>[EN] Tips</br>
+            <uk>[EN] Tips</uk>
+            <ru>[EN] Tips</ru>
+            <da>[EN] Tips</da>
+        </text>
+        <text name="wc_about_tips_body">
+            <en>Check the Dashboard for a live per-worker cost breakdown, and use the Wage Settings tab to switch cost mode or wage level.</en>
+            <de>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</de>
+            <fr>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</fr>
+            <es>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</es>
+            <pl>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</pl>
+            <it>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</it>
+            <cz>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</cz>
+            <br>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</br>
+            <uk>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</uk>
+            <ru>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</ru>
+            <da>[EN] Check the Dashboard for a live per-worker cost breakdown, and the Wage Settings tab to switch cost mode or wage level.</da>
+        </text>
+
         <text name="wc_label_version">
             <en>VERSION</en>
             <de>VERSION</de>

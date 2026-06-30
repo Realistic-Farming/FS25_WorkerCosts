@@ -2011,5 +2011,37 @@
       "count": 1,
       "uniques": 1
     }
+  ],
+  "2026-06-30": [
+    {
+      "referrer": "github.com",
+      "count": 307,
+      "uniques": 49
+    },
+    {
+      "referrer": "Google",
+      "count": 45,
+      "uniques": 26
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 18,
+      "uniques": 9
+    },
+    {
+      "referrer": "Yahoo",
+      "count": 2,
+      "uniques": 2
+    },
+    {
+      "referrer": "Bing",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "search.brave.com",
+      "count": 1,
+      "uniques": 1
+    }
   ]
 }

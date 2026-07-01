@@ -162,7 +162,16 @@ function WorkerManager:onMissionLoaded()
 end
 
 function WorkerManager:update(dt)
-    if self.workerSystem then
+    -- Wage billing is server-authoritative. workerSystem:update runs the payment
+    -- tick that calls g_currentMission:addMoney, so a pure MP client must never
+    -- enter it. (Clients being spared today only because aiSystem:getActiveJobs()
+    -- returns empty is incidental cover, not a gate.) SP is a server, so this is
+    -- a no-op there. The client roster-sync pull below stays OUTSIDE this gate.
+    local isServer = g_currentMission ~= nil
+        and g_currentMission.getIsServer ~= nil
+        and g_currentMission:getIsServer()
+
+    if isServer and self.workerSystem then
         self.workerSystem:update(dt)
     end
     if self.hireHall then

@@ -147,24 +147,33 @@ function WorkerSystem:installGameHook()
         end
 
         if capturedSelf.settings.enabled and amount < 0 then
-            -- Primary: MoneyType.AI is what AIJob uses for helper wages.
-            local isHelperWage = (capturedAIType ~= nil and moneyType == capturedAIType)
+            -- Re-read the wage MoneyTypes at call time. The hook installs early in
+            -- load, when the enum may still be nil (that is why capturedAIType can be
+            -- nil); by the time a wage is actually charged the enum is populated. This
+            -- keeps us on the reliable type match and off the magnitude heuristic.
+            local aiType   = (MoneyType and MoneyType.AI) or capturedAIType
+            local wageType = MoneyType and MoneyType.WORKER_WAGES
 
-            -- Also catch MoneyType.WORKER_WAGES in case some FS25 builds use it.
-            if not isHelperWage and MoneyType and MoneyType.WORKER_WAGES ~= nil then
-                isHelperWage = (moneyType == MoneyType.WORKER_WAGES)
-            end
+            local isHelperWage = (aiType ~= nil and moneyType == aiType)
+                              or (wageType ~= nil and moneyType == wageType)
 
-            -- Fallback when MoneyType enum is unavailable: intercept small negative
-            -- charges that coincide with active AI jobs (AIJob flushes at >25§ chunks).
-            if not isHelperWage and capturedAIType == nil then
+            -- Last-resort heuristic ONLY when this build exposes NEITHER wage
+            -- MoneyType. Previously it fired whenever MoneyType.AI was nil even if
+            -- WORKER_WAGES existed, so it could eat any unrelated negative <=500
+            -- (e.g. a small purchase) during a job. Now gated on both being absent,
+            -- and it warns visibly since suppression here is an informed guess.
+            if not isHelperWage and aiType == nil and wageType == nil then
                 local hasActiveJobs = false
                 local aiSystem = g_currentMission and g_currentMission.aiSystem
                 if aiSystem and aiSystem.getActiveJobs then
                     local jobs = aiSystem:getActiveJobs()
                     hasActiveJobs = (jobs ~= nil and #jobs > 0)
                 end
-                isHelperWage = hasActiveJobs and math.abs(amount) <= 500
+                if hasActiveJobs and math.abs(amount) <= 500 then
+                    isHelperWage = true
+                    Logging.warning("[Worker Costs] No wage MoneyType in this build; "
+                        .. "suppressing suspected helper wage by heuristic: %d", amount)
+                end
             end
 
             if isHelperWage then

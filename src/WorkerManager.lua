@@ -127,6 +127,10 @@ function WorkerManager:onMissionLoaded()
         self.settings:load()
     end
 
+    -- Register with SettingsHub (if installed) so FarmTablet's System Settings
+    -- app can list Worker Costs' settings. No-ops safely if SettingsHub is absent.
+    WorkerSettingsHubBridge.register(self)
+
     -- Pro-Staff Phase 0: load the roster now that savegameDirectory is populated.
     -- The roster lives server-side; in multiplayer, clients receive it via sync
     -- (Phase 5), so only the server/SP host reads it from disk.

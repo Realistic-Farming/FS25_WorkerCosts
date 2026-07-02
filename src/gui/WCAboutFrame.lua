@@ -90,9 +90,9 @@ function WCAboutFrame:refresh()
     local settings = wm and wm.settings
 
     -- Core panel: payment interval
+    -- Rule 10: one settlement per in-game day (24 in-game hours, at midnight).
     if self.txtPayInterval and wm and wm.workerSystem then
-        local min = math.floor(wm.workerSystem.paymentInterval / 60000)
-        self.txtPayInterval:setText(string.format("%d min", min))
+        self.txtPayInterval:setText("24 h")
     end
 
     -- Core panel: live mod version (modName captured at load, folder-name fallback)

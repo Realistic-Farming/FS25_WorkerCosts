@@ -190,9 +190,9 @@ XML layouts live in `xml/gui/`. Custom GUI profiles are loaded from `xml/gui/gui
 **Key design decisions:**
 
 - The game's built-in `MoneyType.WORKER_WAGES` deductions are suppressed by patching `mission.addMoney` in `WorkerSystem:installGameHook()`. The `_isProcessingPayment` flag lets the mod's own charges pass through.
-- All timing uses real-time `dt` (milliseconds), not `environment.dayTime`, to avoid ~20x overcharge at high game speeds.
-- Wages are accumulated per-vehicle ID every frame and settled every 5 real minutes (`paymentInterval = 300000`).
-- Workers dismissed mid-interval are paid out at the next settlement tick using `workerNames` / `workerHours` / `workerHectares` tables keyed by `tostring(vehicle)`.
+- All billing timing follows the in-game calendar (ecosystem rule 10). Wages accrue from the in-game clock (`environment.currentMonotonicDay * DAY_MS + environment.dayTime`) and are settled once per in-game day at the day change (midnight).
+- Wage magnitudes match the old real-time schedule at 1x speed via the conversion identity: one full in-game day of work bills `WorkerSystem.BILLED_HOURS_PER_DAY` (0.5) hours, exactly what the old 30-real-minute interval billed per in-game day at 1x.
+- Workers dismissed mid-day are paid out at the next daily settlement using `workerNames` / `workerHours` / `workerHectares` tables keyed by `tostring(vehicle)`.
 - Settings persist per-savegame as `<savegameDirectory>/FS25_WorkerCostsMod.xml`.
 - The global `g_WorkerManager` exposes the manager to other mods and console commands.
 

@@ -53,8 +53,8 @@ function WCWorkerStatsFrame:refresh()
     end
 
     if self.txtPayInterval and g_WorkerManager.workerSystem then
-        local min = math.floor(g_WorkerManager.workerSystem.paymentInterval / 60000)
-        self.txtPayInterval:setText(string.format("%d min", min))
+        -- Rule 10: one settlement per in-game day (24 in-game hours, at midnight).
+        self.txtPayInterval:setText("24 h")
     end
 
     self:refreshLive()
@@ -69,7 +69,9 @@ function WCWorkerStatsFrame:refreshLive()
     local workers     = ws:getActiveWorkers()
     local workerCount = #workers
     local rate        = settings:getWageRate()
-    local intervalHrs = ws.paymentInterval / 3600000
+    -- Rule 10: one settlement period = one in-game day = 0.5 billed hours,
+    -- the same magnitude the old 30-real-minute interval showed here.
+    local intervalHrs = WorkerSystem.BILLED_HOURS_PER_DAY
     local isHourly    = (settings.costMode == Settings.COST_MODE_HOURLY)
 
     -- Active worker count (big)

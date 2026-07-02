@@ -935,17 +935,17 @@
 
         <!-- #80: per-tab sectioned content (headers + short bodies; English-first, [EN] stubs) -->
         <text name="wc_about_core_intro">
-            <en>Realistic Worker Costs replaces the default pay system with a billing model based on real time. Each active AI worker is charged on a fixed schedule, no matter the game speed, with deductions happening quietly every payment interval. Tying wages to real minutes keeps your costs predictable whether you play at 1x or 120x.</en>
-            <de>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</de>
-            <fr>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</fr>
-            <es>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</es>
-            <pl>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</pl>
-            <it>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</it>
-            <cz>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</cz>
-            <br>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</br>
-            <uk>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</uk>
-            <ru>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</ru>
-            <da>[EN] Replaces the default pay with real-time billing. Each active AI worker is charged on a fixed schedule regardless of game speed.</da>
+            <en>Realistic Worker Costs replaces the default pay system with a billing model that follows the in-game calendar. Each active AI worker accrues wages for the in-game time worked, and the total is deducted quietly once per in-game day at midnight. Tying wages to the in-game clock keeps your costs fair whether you play at 1x or 120x.</en>
+            <de>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</de>
+            <fr>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</fr>
+            <es>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</es>
+            <pl>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</pl>
+            <it>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</it>
+            <cz>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</cz>
+            <br>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</br>
+            <uk>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</uk>
+            <ru>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</ru>
+            <da>[EN] Replaces the default pay with in-game calendar billing. Each active AI worker accrues wages for time worked and is charged once per in-game day at midnight.</da>
         </text>
         <text name="wc_about_h_save">
             <en>Saved Per Game</en>
@@ -1119,18 +1119,18 @@
             <da>VERSION</da>
         </text>
         <text name="wc_about_payment_note">
-            <en>Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</en>
-            <de>Zahlungen laufen in Echtzeit — die Spielgeschwindigkeit hat keinen Einfluss auf die Abrechnung.</de>
-            <fr>Les paiements s'effectuent en temps réel — la vitesse du jeu n'affecte pas la facturation.</fr>
-            <es>Los pagos se ejecutan en tiempo real — la velocidad del juego no afecta la facturación.</es>
+            <en>Payments follow the in-game calendar. Wages accrue while workers are active and are deducted silently once per in-game day at midnight.</en>
+            <de>Zahlungen folgen dem Spielkalender. Löhne laufen auf, während Arbeiter aktiv sind, und werden einmal pro Spieltag um Mitternacht abgezogen.</de>
+            <fr>Les paiements suivent le calendrier du jeu. Les salaires s'accumulent pendant que les ouvriers travaillent et sont déduits une fois par jour de jeu, à minuit.</fr>
+            <es>Los pagos siguen el calendario del juego. Los salarios se acumulan mientras los trabajadores están activos y se deducen una vez por día de juego, a medianoche.</es>
         
-            <pl>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</pl>
-            <it>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</it>
-            <cz>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</cz>
-            <br>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</br>
-            <uk>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</uk>
-            <ru>[EN] Payments run on real time — game speed does not affect billing. Deductions happen silently in the background every interval.</ru>
-            <da>Betalinger sker i realtid — spilhastigheden påvirker ikke opkrævningen. Fradrag foretages automatisk i baggrunden ved hvert interval.</da>
+            <pl>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</pl>
+            <it>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</it>
+            <cz>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</cz>
+            <br>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</br>
+            <uk>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</uk>
+            <ru>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</ru>
+            <da>Betalinger følger spillets kalender. Lønnen optjenes, mens medarbejderne er aktive, og trækkes automatisk en gang pr. spildag ved midnat.</da>
         </text>
         <text name="wc_about_body">
             <en>Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
@@ -1308,8 +1308,8 @@ Denne mod er kompatibel med multiplayer. Indstillinger gemmes pr. savegame.</da>
         </text>
         <text name="wc_help_body">
             <en>PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1317,13 +1317,13 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</en>
         
             <de>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1331,12 +1331,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</de>
             <fr>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1344,12 +1344,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</fr>
             <pl>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1357,12 +1357,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</pl>
             <es>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1370,12 +1370,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</es>
             <it>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1383,12 +1383,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</it>
             <cz>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1396,12 +1396,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</cz>
             <br>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1409,12 +1409,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</br>
             <uk>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1422,12 +1422,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</uk>
             <ru>[EN] PAYMENT STRATEGY
-Hourly — pay a fixed rate per worker per real-time hour.
-Per Hectare — pay based on area worked.
+Hourly - pay a fixed rate per worker per hour worked.
+Per Hectare - pay based on area worked.
 
 COMPENSATION TIER
 Low    = $15 per worker per hour
@@ -1435,12 +1435,12 @@ Medium = $25 per worker per hour
 High   = $40 per worker per hour
 
 PAYMENTS
-Deducted every 30 real-time minutes, independent of game speed.
+Settled once per in-game day at midnight, based on the in-game time worked.
 
 Use Reset to restore all settings to their defaults.</ru>
             <da>BETALINGSSTRATEGI
-Timebaseret — betal en fast sats pr. medarbejder pr. realtidstime.
-Pr. hektar — betal baseret på det bearbejdede areal.
+Timebaseret - betal en fast sats pr. medarbejder pr. arbejdstime.
+Pr. hektar - betal baseret på det bearbejdede areal.
 
 KOMPENSATIONSNIVEAU
 Lav = $15 pr. medarbejder pr. time
@@ -1448,13 +1448,13 @@ Mellem = $25 pr. medarbejder pr. time
 Høj = $40 pr. medarbejder pr. time
 
 BETALINGER
-Fratrækkes hvert 5. realtidsminut, uafhængigt af spillets hastighed. Satsforhåndsvisningen på denne side viser den præcise opkrævning pr. betalingsinterval.
+Afregnes en gang pr. spildag ved midnat, baseret på den arbejdede tid i spillet.
 
 Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
         </text>
         <text name="wc_help_body_ha">
             <en>PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1462,12 +1462,12 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</en>
 
             <de>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1475,11 +1475,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</de>
             <fr>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1487,11 +1487,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</fr>
             <pl>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1499,11 +1499,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</pl>
             <es>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1511,11 +1511,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</es>
             <it>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1523,11 +1523,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</it>
             <cz>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1535,11 +1535,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</cz>
             <br>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1547,11 +1547,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</br>
             <uk>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1559,11 +1559,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</uk>
             <ru>[EN] PAYMENT STRATEGY
-Per Hectare — workers are billed per hectare of field worked during each payment interval.
+Per Hectare - workers are billed per hectare of field worked since the last settlement.
 
 COMPENSATION TIER (per hectare)
 Low    = $15 per hectare worked
@@ -1571,11 +1571,11 @@ Medium = $25 per hectare worked
 High   = $40 per hectare worked
 
 PAYMENTS
-Deducted every 30 real-time minutes based on area worked. Workers not currently active have no charge for that interval.
+Settled once per in-game day at midnight, based on area worked. Workers not currently active have no charge for that day.
 
 Use Reset to restore all settings to their defaults.</ru>
             <da>BETALINGSSTRATEGI
-Pr. hektar — medarbejdere opkræves pr. hektar bearbejdet mark i hvert betalingsinterval.
+Pr. hektar - medarbejdere opkræves pr. hektar bearbejdet mark siden sidste afregning.
 
 KOMPENSATIONSNIVEAU (pr. hektar)
 Lav = $15 pr. hektar bearbejdet
@@ -1583,7 +1583,7 @@ Mellem = $25 pr. hektar bearbejdet
 Høj = $40 pr. hektar bearbejdet
 
 BETALINGER
-Fratrækkes hvert 5. realtidsminut baseret på bearbejdet areal. Medarbejdere, der ikke er aktive, opkræves ikke for det pågældende interval.
+Afregnes en gang pr. spildag ved midnat, baseret på det bearbejdede areal. Medarbejdere, der ikke er aktive, opkræves ikke for den pågældende dag.
 
 Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
         </text>

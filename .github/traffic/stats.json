@@ -18992,7 +18992,7 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-07-03T06:55:24Z",
+    "timestamp": "2026-07-03T12:03:04Z",
     "date": "2026-07-03",
     "views": {
       "count": 423,
@@ -19092,6 +19092,15 @@
       }
     ],
     "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 0,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.2.2.1"
+      },
       {
         "assets": [
           {

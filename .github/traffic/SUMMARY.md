@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-07-03T12:03:20Z
-**Days tracked:** 83 | **Download snapshots:** 318 (hourly)
+**Last updated:** 2026-07-04T06:13:38Z
+**Days tracked:** 84 | **Download snapshots:** 322 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 423 | 114 |
-| Git Clones | 975 | 319 |
+| Page Views | 372 | 109 |
+| Git Clones | 895 | 296 |
 
-> **Engagement:** 3.7 pages per visitor (14-day avg)
+> **Engagement:** 3.4 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 788 of 114 visitors cloned or downloaded (**691.2%**)
+> **14-day conversion:** 768 of 109 visitors cloned or downloaded (**704.5%**)
 >
-> Unique cloners: 319 | Release downloads: 469
+> Unique cloners: 296 | Release downloads: 472
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 469 |
-| Git Clones (14-day) | 975 |
-| **Total Acquisitions** | **1444** |
+| Zip Downloads | 472 |
+| Git Clones (14-day) | 895 |
+| **Total Acquisitions** | **1367** |
 
 ---
 
@@ -54,9 +54,9 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 158 | 44 |
-| Google | 39 | 25 |
-| kingmods.net | 15 | 8 |
+| github.com | 152 | 43 |
+| Google | 35 | 24 |
+| kingmods.net | 10 | 6 |
 | Bing | 1 | 1 |
 | Yahoo | 1 | 1 |
 
@@ -78,16 +78,16 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 157 | 88 |
-| `/TheCodingDad-TisonK/FS25_WorkerCosts` | 55 | 32 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.1.0` | 40 | 27 |
-| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v2.2.0.0` | 27 | 16 |
-| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases` | 12 | 8 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 162 | 90 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.1.0` | 42 | 27 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts` | 22 | 18 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases/tag/v2.2.0.0` | 13 | 8 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.0.0` | 10 | 8 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases` | 10 | 6 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues` | 7 | 5 |
-| `/TheCodingDad-TisonK/FS25_WorkerCosts/issues` | 7 | 5 |
+| `/TheCodingDad-TisonK/FS25_WorkerCosts/releases` | 6 | 6 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.0` | 5 | 4 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues/80` | 5 | 3 |
 
 ---
 

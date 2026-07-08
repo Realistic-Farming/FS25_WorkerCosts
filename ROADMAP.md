@@ -1,7 +1,7 @@
 # Roadmap: FS25_WorkerCosts
 
 > Ecosystem role: **Labor** · Part of the Realistic Farming connected suite
-> Status: TEMPLATE (complete after the ecosystem audit/baseline).
+> Status: FILLED from the ecosystem audit/baseline.
 > Forward-looking only. Shipped history lives in CHANGELOG.md and the releases.
 
 ## How to use this file
@@ -10,23 +10,26 @@
 - Keep it honest: near-term is committed, mid-term is intended, long-term is aspirational.
 
 ## Current baseline
-- Version at baseline: _modDesc version_
-- Audit reference: _link to audit doc / CLAUDE-LOG entry_
-- Baseline date: _..._
+- Version at baseline: v2.2.2.0
+- Audit reference: ecosystem-dev-tracking Point 1-7 (FS25_WorkerCosts, 2026-06-30 / 2026-07-01)
+- Baseline date: 2026-07-01
 
 ## Near-term (next release cycle)
-- [ ] _item_
+- [ ] Server-authoritative wage path (Point 7): gate `workerSystem:update` and `hireHall:update` at the call site with `getIsServer()`; leave rosterPanel:update and the client roster-sync retry outside.
+- [ ] Legendary tier (fast-track F1): add the 4th tier with the LOCKED values XP_LEGENDARY=400, LEVEL_WAGE_FACTOR[4]=0.85, HIRE_COST_HOURS[4]=120, SEVERANCE_LEVEL_FACTOR[4]=2.5 (no design latitude).
+- [ ] ProStaff modifiers (Point 5): read getWageModifier / getFatigueRecoveryBonus / getFatigueMitigation in calculateLaborCost and fatigue recovery; neutral 1.0 when ProStaff absent.
 
 ## Mid-term (this season)
-- [ ] _item_
+- [ ] Bedrock migration: StateLedger (workerData + hireHallCore), NetworkSync (3 event classes), MasterHUD (roster panel), SettingsHub (remove ESC WorkerSettingsUI). Keep the addMoney hook intact.
+- [ ] Companion read API: 6 functions on `workerCostsManager` (DairyCore worker tier, TaxMod wage totals).
 
 ## Long-term / aspirational
-- [ ] _item_
+- [ ] Billing-model change: real-time to flat daily rate on onDayChange (pending the design decision below), for ecosystem coherence.
 
 ## Cross-mod / ecosystem dependencies
-_Roadmap items that depend on a peer mod or a core-API bedrock mod._
-- [ ] _item (blocks on: which mod / which bedrock engine)_
+- [ ] Reads ProStaff (`proStaffManager`): getLevel, getWageModifier, getFatigueRecoveryBonus, getFatigueMitigation.
+- [ ] Read by DairyCore (worker tier), TaxMod (wage totals), WorkplaceTriggers.
+- [ ] All four bedrock migrations (blocks on: StateLedger, NetworkSync, MasterHUD, SettingsHub).
 
 ## Deferred / parked
-_Ideas intentionally not scheduled, each with a one-line reason._
-- _..._
+- Real-time billing model: flagged as wrong for the ecosystem, but the change is a design decision (TysonK/Arissani) that must land before companions wire in.

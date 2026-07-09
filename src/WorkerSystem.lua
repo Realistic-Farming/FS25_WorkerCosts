@@ -22,8 +22,8 @@ local WorkerSystem_mt = Class(WorkerSystem)
 
 -- Pro-Staff Phase 3 wage modifiers (multiplicative pipeline, applied in order).
 -- Defined once here so the additive-vs-multiplicative order can't drift.
-WorkerSystem.LEVEL_WAGE_FACTOR = { [1] = 1.00, [2] = 0.95, [3] = 0.90 } -- higher level = efficiency discount (perk)
-WorkerSystem.FATIGUE_SURCHARGE = 0.50   -- up to +50% at full fatigue (Master is immune)
+WorkerSystem.LEVEL_WAGE_FACTOR = { [1] = 1.00, [2] = 0.95, [3] = 0.90, [4] = 0.85 } -- higher level = efficiency discount (perk); [4] Legendary (locked)
+WorkerSystem.FATIGUE_SURCHARGE = 0.50   -- up to +50% at full fatigue (Master and Legendary are immune)
 WorkerSystem.NIGHT_MULT        = 1.25   -- night-shift / after-hours premium
 WorkerSystem.WEATHER_MULT      = 1.15   -- bad-weather (rain) premium
 WorkerSystem.OVERTIME_HOURS    = 8      -- billed hours accrued in one in-game day before overtime (same threshold as the old real-time schedule)
@@ -40,11 +40,11 @@ WorkerSystem.DAY_MS = 24 * 60 * 60 * 1000  -- in-game milliseconds in one in-gam
 WorkerSystem.BILLED_HOURS_PER_DAY = 0.5
 -- Phase 5 severance: one-off payout when firing. Senior workers cost more to let go.
 WorkerSystem.SEVERANCE_HOURS        = 16
-WorkerSystem.SEVERANCE_LEVEL_FACTOR = { [1] = 1.0, [2] = 1.5, [3] = 2.0 }
+WorkerSystem.SEVERANCE_LEVEL_FACTOR = { [1] = 1.0, [2] = 1.5, [3] = 2.0, [4] = 2.5 }  -- [4] Legendary (locked)
 -- Pro-Staff Phase 5: one-off signing cost when hiring a recruit. A more experienced
 -- recruit commands a bigger signing bonus. Expressed in "hours of base wage" so it
 -- scales with the configured wage level, exactly like severance.
-WorkerSystem.HIRE_COST_HOURS        = { [1] = 8, [2] = 24, [3] = 60 }
+WorkerSystem.HIRE_COST_HOURS        = { [1] = 8, [2] = 24, [3] = 60, [4] = 120 }  -- [4] Legendary premium signing (locked)
 
 ---@param settings Settings
 ---@param roster WorkerRoster|nil  Pro-Staff roster for level/fatigue (Phase 3)
@@ -372,8 +372,9 @@ function WorkerSystem:calculateLaborCost(worker, hoursWorked, hectaresWorked, ro
     -- 1. Level efficiency discount (perk: higher level => cheaper per unit).
     cost = cost * (WorkerSystem.LEVEL_WAGE_FACTOR[level] or 1.0)
 
-    -- 2. Fatigue surcharge — Master workers are immune (Phase 2 perk).
-    if level ~= WorkerRoster.LEVEL_MASTER and fatigue > 0 then
+    -- 2. Fatigue surcharge. Master and above are immune (Phase 2 perk); a Legendary
+    --    worker is never treated worse than a Master.
+    if level < WorkerRoster.LEVEL_MASTER and fatigue > 0 then
         cost = cost * (1 + fatigue * WorkerSystem.FATIGUE_SURCHARGE)
     end
 

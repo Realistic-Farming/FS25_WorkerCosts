@@ -33,7 +33,7 @@ WCCommand = {
 -- ---------------------------------------------------------------------------
 local function writeSnapshot(streamId, snap)
     snap = snap or {}
-    local levels   = snap.levels   or { novice = 0, experienced = 0, master = 0 }
+    local levels   = snap.levels   or { novice = 0, experienced = 0, master = 0, legendary = 0 }
     local finance  = snap.finance  or {}
     local workers  = snap.workers  or {}
     local recruits = snap.recruits or {}
@@ -44,6 +44,7 @@ local function writeSnapshot(streamId, snap)
     streamWriteInt32(streamId, levels.novice or 0)
     streamWriteInt32(streamId, levels.experienced or 0)
     streamWriteInt32(streamId, levels.master or 0)
+    streamWriteInt32(streamId, levels.legendary or 0)
 
     -- Finance block
     streamWriteFloat32(streamId, finance.baseRate or 0)
@@ -107,6 +108,7 @@ local function readSnapshot(streamId)
     snap.levels.novice      = streamReadInt32(streamId)
     snap.levels.experienced = streamReadInt32(streamId)
     snap.levels.master      = streamReadInt32(streamId)
+    snap.levels.legendary   = streamReadInt32(streamId)
 
     snap.finance.baseRate        = streamReadFloat32(streamId)
     snap.finance.isHourly        = streamReadBool(streamId)

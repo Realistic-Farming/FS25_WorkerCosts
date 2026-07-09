@@ -268,7 +268,7 @@ function WCRosterPanel:_selectedData(snap)
 end
 
 -- A bit of flavour over the bare level name for the dossier header.
-local LEVEL_TITLE = { Novice = "Field Hand", Experienced = "Seasoned Operator", Master = "Master Operator" }
+local LEVEL_TITLE = { Novice = "Field Hand", Experienced = "Seasoned Operator", Master = "Master Operator", Legendary = "Legendary Hand" }
 function WCRosterPanel:_levelTitle(levelName)
     return LEVEL_TITLE[levelName or ""] or (levelName or "Worker")
 end

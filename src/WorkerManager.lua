@@ -370,7 +370,7 @@ function WorkerManager:getServerSnapshot()
         count   = 0,
         working = 0,   -- workers currently driving a vehicle on a live AI job
         pinned  = 0,   -- workers with a persistent vehicle assignment
-        levels  = { novice = 0, experienced = 0, master = 0 },
+        levels  = { novice = 0, experienced = 0, master = 0, legendary = 0 },
         workers = {},
         recruits = {},
         finance = {
@@ -404,7 +404,9 @@ function WorkerManager:getServerSnapshot()
             if isPinned  then snapshot.pinned  = snapshot.pinned  + 1 end
 
             local level = w.level or WorkerRoster.LEVEL_NOVICE
-            if level == WorkerRoster.LEVEL_MASTER then
+            if level == WorkerRoster.LEVEL_LEGENDARY then
+                snapshot.levels.legendary = snapshot.levels.legendary + 1
+            elseif level == WorkerRoster.LEVEL_MASTER then
                 snapshot.levels.master = snapshot.levels.master + 1
             elseif level == WorkerRoster.LEVEL_EXPERIENCED then
                 snapshot.levels.experienced = snapshot.levels.experienced + 1
@@ -483,7 +485,7 @@ function WorkerManager:getRosterSnapshot()
         count   = 0,
         working = 0,
         pinned  = 0,
-        levels  = { novice = 0, experienced = 0, master = 0 },
+        levels  = { novice = 0, experienced = 0, master = 0, legendary = 0 },
         workers = {},
         recruits = {},
         finance = {},

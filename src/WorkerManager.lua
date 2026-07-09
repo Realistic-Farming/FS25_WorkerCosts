@@ -148,6 +148,15 @@ function WorkerManager:onMissionLoaded()
         WorkerMasterHUDBridge.register(self)
     end
 
+    -- NetworkSync v2 (bedrock, delegate-when-present): when installed, the roster
+    -- snapshot syncs through NS's 1Hz delta batch and the six worker commands route
+    -- through NS's client-to-server action channel; WorkerCosts' own event classes
+    -- stand down. No-ops when NetworkSync is absent. Registered on both server and
+    -- client (server writes, client reads).
+    if WorkerNetworkSyncBridge then
+        WorkerNetworkSyncBridge.register(self)
+    end
+
     -- Pro-Staff Phase 0: load the roster now that savegameDirectory is populated.
     -- The roster lives server-side; in multiplayer, clients receive it via sync
     -- (Phase 5), so only the server/SP host reads it from disk.
@@ -204,8 +213,11 @@ function WorkerManager:update(dt)
 
     -- Pro-Staff Phase 5: a pure MP client pulls the roster mirror from the host.
     -- Retry a handful of times in case our first request beats the host's mod init
-    -- on join; stop as soon as the first snapshot lands.
-    if g_currentMission and not g_currentMission:getIsServer() then
+    -- on join; stop as soon as the first snapshot lands. Stands down when NetworkSync
+    -- is active: NS auto-requests a full snapshot on join and delivers it through the
+    -- bridge's onReadState, so this own-event pull would be redundant.
+    local nsActive = WorkerNetworkSyncBridge and WorkerNetworkSyncBridge.active
+    if not nsActive and g_currentMission and not g_currentMission:getIsServer() then
         if self.clientRosterSnapshot == nil and (self._syncRetries or 0) < 6 then
             self._syncRetryTimer = (self._syncRetryTimer or 2500) + dt
             if self._syncRetryTimer >= 2500 then
@@ -716,6 +728,11 @@ end
 
 -- Push the fresh snapshot to all clients after a mutation (no-op in SP).
 function WorkerManager:_broadcastRosterSync()
+    -- NetworkSync delegate-when-present: flag the roster module dirty so NS carries
+    -- the change on its next 1Hz (delta) batch, and stand our own broadcast down.
+    if WorkerNetworkSyncBridge and WorkerNetworkSyncBridge.markRosterDirty() then
+        return
+    end
     if g_server ~= nil then
         g_server:broadcastEvent(WCRosterSyncEvent.new(self:getServerSnapshot()))
     end

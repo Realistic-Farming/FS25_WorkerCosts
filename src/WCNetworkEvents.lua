@@ -310,6 +310,14 @@ end
 --- the server/SP. Every caller (tablet, roster panel) goes through here so the
 --- SP and MP paths can never drift.
 function WCNetwork_SendCommand(action, uuid, slot, vehicleUniqueId, farmId)
+    -- NetworkSync delegate-when-present: route through NS's validated client-to-server
+    -- action channel (which applies directly on the host and sends to the server on a
+    -- pure client). Returns true when handled; falls through to the own path otherwise.
+    if WorkerNetworkSyncBridge
+        and WorkerNetworkSyncBridge.sendCommand(action, uuid, slot, vehicleUniqueId, farmId) then
+        return
+    end
+
     if g_client ~= nil and g_server == nil then
         -- Pure client: ask the server.
         g_client:getServerConnection():sendEvent(

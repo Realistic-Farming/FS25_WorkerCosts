@@ -31,6 +31,7 @@ source(modDirectory .. "src/settings/WorkerSettingsUI.lua")
 source(modDirectory .. "src/settings/SettingsHubBridge.lua")
 source(modDirectory .. "src/integrations/WorkerStateLedgerBridge.lua")  -- bedrock: optional StateLedger persistence bridge
 source(modDirectory .. "src/integrations/WorkerMasterHUDBridge.lua")    -- bedrock: optional MasterHUD draw bridge
+source(modDirectory .. "src/integrations/WorkerNetworkSyncBridge.lua")  -- bedrock: optional NetworkSync v2 MP bridge (references WCCommand/WCNetworkEvents only at runtime)
 source(modDirectory .. "src/WorkerRoster.lua")
 source(modDirectory .. "src/WorkerSystem.lua")
 source(modDirectory .. "src/WorkerJobTracker.lua")

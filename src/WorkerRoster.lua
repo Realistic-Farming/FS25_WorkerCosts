@@ -524,3 +524,125 @@ function WorkerRoster:loadIfExists(missionInfo)
         #self.workers, self.nextId))
     return true
 end
+
+-- ---------------------------------------------------------------------------
+-- StateLedger mirror (bedrock, delegate-when-present)
+-- toTable / applyTable are the in-memory twins of save / loadIfExists: the exact
+-- same field set, to and from a plain Lua table instead of the XML file. The
+-- StateLedger bridge (src/integrations/WorkerStateLedgerBridge.lua) uses these so
+-- the shared master save file can carry the roster when the ledger is installed,
+-- while workerData.xml stays the standalone safety copy. Keep the field lists
+-- here in lockstep with save()/loadIfExists() above — a drift here silently
+-- drops fields only in the bedrock path.
+-- ---------------------------------------------------------------------------
+
+--- Serialize the roster to a plain table (StateLedger serialize hook). Mirrors
+--- save(): the transient assignedVehicleId is intentionally omitted, and trusted
+--- is only carried when set, exactly as the XML writer does.
+function WorkerRoster:toTable()
+    local workers = {}
+    for i, w in ipairs(self.workers) do
+        workers[i] = {
+            uuid       = w.uuid,
+            name       = w.name or "Worker",
+            level      = w.level or WorkerRoster.LEVEL_NOVICE,
+            totalXP    = w.totalXP or 0,
+            totalHours = w.totalHours or 0,
+            totalJobs  = w.totalJobs or 0,
+            fatigue    = w.fatigue or 0,
+            hiredDay   = w.hiredDay or 0,
+            assignedVehicleUniqueId = w.assignedVehicleUniqueId,   -- nil stays nil
+            resumeVehicleUniqueId   = w.resumeVehicleUniqueId,
+            trusted    = w.trusted and true or nil,                -- carried only when set
+        }
+    end
+
+    local recruitPool = nil
+    if self.recruitPool then
+        recruitPool = {}
+        for i, c in ipairs(self.recruitPool) do
+            recruitPool[i] = {
+                name     = c.name or "Worker",
+                level    = c.level or WorkerRoster.LEVEL_NOVICE,
+                hireCost = c.hireCost or 0,
+            }
+        end
+    end
+
+    return {
+        version         = WorkerRoster.SCHEMA_VERSION,
+        nextId          = self.nextId,
+        count           = #self.workers,
+        hiredToday      = self.hiredToday or 0,
+        lastHireDay     = self.lastHireDay or -1,
+        poolRotationDay = self.poolRotationDay or -1,
+        workers         = workers,
+        recruitPool     = recruitPool,
+    }
+end
+
+--- Load the roster from a plain table (StateLedger deserialize path). Mirrors
+--- loadIfExists: clears first, restores the daily-cap + pool-rotation scalars,
+--- rebuilds workers + byId, keeps nextId ahead of any loaded id, and restores the
+--- recruit pool only when non-empty. Returns true when a real block was applied.
+function WorkerRoster:applyTable(t)
+    if type(t) ~= "table" then
+        return false
+    end
+
+    self:clear()
+
+    local savedNextId = t.nextId or 1
+    self.hiredToday      = t.hiredToday or 0
+    self.lastHireDay     = t.lastHireDay or -1
+    self.poolRotationDay = t.poolRotationDay or -1
+
+    local maxId = 0
+    if type(t.workers) == "table" then
+        for _, row in ipairs(t.workers) do
+            local uuid = row.uuid
+            if uuid ~= nil then
+                local w = {
+                    uuid       = uuid,
+                    name       = row.name or "Worker",
+                    level      = row.level or WorkerRoster.LEVEL_NOVICE,
+                    totalXP    = row.totalXP or 0,
+                    totalHours = row.totalHours or 0,
+                    totalJobs  = row.totalJobs or 0,
+                    fatigue    = row.fatigue or 0,
+                    hiredDay   = row.hiredDay or 0,
+                    assignedVehicleId = nil,  -- transient; re-bound at job start
+                    assignedVehicleUniqueId = row.assignedVehicleUniqueId,
+                    resumeVehicleUniqueId   = row.resumeVehicleUniqueId,
+                    trusted    = row.trusted and true or false,
+                }
+                table.insert(self.workers, w)
+                self.byId[uuid] = w
+                if uuid > maxId then
+                    maxId = uuid
+                end
+            end
+        end
+    end
+
+    if type(t.recruitPool) == "table" and #t.recruitPool > 0 then
+        local pool = {}
+        for _, c in ipairs(t.recruitPool) do
+            if c.name ~= nil then
+                pool[#pool + 1] = {
+                    name     = c.name,
+                    level    = c.level or WorkerRoster.LEVEL_NOVICE,
+                    hireCost = c.hireCost or 0,
+                }
+            end
+        end
+        if #pool > 0 then
+            self.recruitPool = pool
+        end
+    end
+
+    self.nextId = math.max(savedNextId, maxId + 1)
+    Logging.info(string.format("[Worker Costs] Roster loaded from StateLedger (%d workers, nextId=%d)",
+        #self.workers, self.nextId))
+    return true
+end

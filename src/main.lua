@@ -29,6 +29,7 @@ source(modDirectory .. "src/settings/WorkerSettingsGUI.lua")
 source(modDirectory .. "src/utils/UIHelper.lua")
 source(modDirectory .. "src/settings/WorkerSettingsUI.lua")
 source(modDirectory .. "src/settings/SettingsHubBridge.lua")
+source(modDirectory .. "src/integrations/WorkerStateLedgerBridge.lua")  -- bedrock: optional StateLedger persistence bridge
 source(modDirectory .. "src/WorkerRoster.lua")
 source(modDirectory .. "src/WorkerSystem.lua")
 source(modDirectory .. "src/WorkerJobTracker.lua")

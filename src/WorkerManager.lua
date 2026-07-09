@@ -131,6 +131,16 @@ function WorkerManager:onMissionLoaded()
     -- app can list Worker Costs' settings. No-ops safely if SettingsHub is absent.
     WorkerSettingsHubBridge.register(self)
 
+    -- StateLedger (bedrock, delegate-when-present): when installed, the shared master
+    -- save file becomes the load source of truth for the roster + hire-hall lifecycle;
+    -- workerData.xml / hireHallCore.xml stay the standalone safety copies. No-ops when
+    -- StateLedger is absent. Registered BEFORE loadWorkerData / hireHall:initialize
+    -- below so the ledger's deserialize has already delivered when we read (register()
+    -- forces the parse, since WorkerCosts loads in the same phase StateLedger parses).
+    if WorkerStateLedgerBridge then
+        WorkerStateLedgerBridge.register(self)
+    end
+
     -- Pro-Staff Phase 0: load the roster now that savegameDirectory is populated.
     -- The roster lives server-side; in multiplayer, clients receive it via sync
     -- (Phase 5), so only the server/SP host reads it from disk.
@@ -229,6 +239,14 @@ end
 
 function WorkerManager:loadWorkerData()
     if not self.workerRoster then
+        return
+    end
+    -- StateLedger is the load source of truth when present and it delivered a roster
+    -- block; otherwise import the standalone workerData.xml (also the first-load path
+    -- right after installing the ledger onto an existing save, where the ledger has
+    -- no block yet). workerData.xml is written every save regardless, as a safety copy.
+    if WorkerStateLedgerBridge and WorkerStateLedgerBridge.hasRosterState() then
+        WorkerStateLedgerBridge.applyRosterState(self.workerRoster)
         return
     end
     local missionInfo = g_currentMission and g_currentMission.missionInfo

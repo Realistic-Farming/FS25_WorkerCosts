@@ -119,6 +119,26 @@ function WorkerSystem:delete()
     self:log("Worker System shut down")
 end
 
+--- Is farmId a real, chargeable farm? The spectator farm (and the invalid/no-farm
+-- id) reject money changes in the engine, which logs "Can't change money of spectator
+-- farm" every time. Modded AI vehicles (e.g. NPC helper tractors) run on the spectator
+-- farm, so the base game's per-frame running-cost charge (Motorized.updateConsumers)
+-- targets that farm continuously and spams the log. Treat those ids as non-payable so
+-- our addMoney hook can drop the charge cleanly (it would fail in the engine anyway).
+-- @param farmId  the farm id a charge is aimed at
+-- @return boolean  true if the farm can actually be charged
+function WorkerSystem.isPayableFarm(farmId)
+    if farmId == nil then return false end
+    local fm = FarmManager
+    if fm ~= nil then
+        if fm.SPECTATOR_FARM_ID ~= nil and farmId == fm.SPECTATOR_FARM_ID then return false end
+        if fm.INVALID_FARM_ID  ~= nil and farmId == fm.INVALID_FARM_ID  then return false end
+    end
+    -- 0 is the conventional "no farm" id (also the spectator fallback used by mods).
+    if farmId == 0 then return false end
+    return true
+end
+
 --- Patch mission.addMoney to zero out the game's own worker-wage deductions.
 -- We use _isProcessingPayment as a flag so that OUR payments still pass through.
 --
@@ -159,6 +179,16 @@ function WorkerSystem:installGameHook()
         -- Let OUR charges pass through unconditionally.
         if capturedSelf._isProcessingPayment then
             return originalAddMoney(missionObj, amount, farmId, moneyType, ...)
+        end
+
+        -- Never forward a charge to a non-payable farm (spectator / invalid). The
+        -- engine rejects it ("Can't change money of spectator farm") and spams the log;
+        -- modded AI vehicles (e.g. NPC helper tractors) run on the spectator farm and
+        -- the base game charges their running cost every frame the engine is on.
+        -- Dropping it is money-neutral (the engine would refuse anyway) and applies
+        -- regardless of our wage-suppression setting.
+        if not WorkerSystem.isPayableFarm(farmId) then
+            return
         end
 
         if capturedSelf.settings.enabled and amount < 0 then

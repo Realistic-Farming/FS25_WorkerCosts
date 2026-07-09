@@ -141,6 +141,13 @@ function WorkerManager:onMissionLoaded()
         WorkerStateLedgerBridge.register(self)
     end
 
+    -- MasterHUD (bedrock, delegate-when-present): when installed, the roster panel's
+    -- draw folds into MasterHUD's single suspend-aware loop and our own FSBaseMission
+    -- .draw hook stands down. No-ops when MasterHUD is absent (own hook draws it).
+    if WorkerMasterHUDBridge then
+        WorkerMasterHUDBridge.register(self)
+    end
+
     -- Pro-Staff Phase 0: load the roster now that savegameDirectory is populated.
     -- The roster lives server-side; in multiplayer, clients receive it via sync
     -- (Phase 5), so only the server/SP host reads it from disk.

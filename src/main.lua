@@ -30,6 +30,7 @@ source(modDirectory .. "src/utils/UIHelper.lua")
 source(modDirectory .. "src/settings/WorkerSettingsUI.lua")
 source(modDirectory .. "src/settings/SettingsHubBridge.lua")
 source(modDirectory .. "src/integrations/WorkerStateLedgerBridge.lua")  -- bedrock: optional StateLedger persistence bridge
+source(modDirectory .. "src/integrations/WorkerMasterHUDBridge.lua")    -- bedrock: optional MasterHUD draw bridge
 source(modDirectory .. "src/WorkerRoster.lua")
 source(modDirectory .. "src/WorkerSystem.lua")
 source(modDirectory .. "src/WorkerJobTracker.lua")
@@ -117,9 +118,14 @@ FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function(mis
 end)
 
 -- Phase 5: draw the custom roster panel (overlay) each frame, like SoilFertilizer.
+-- When FS25_MasterHUD is installed it owns our draw (its single suspend-aware loop
+-- calls WorkerMasterHUDBridge.drawStack), so this hook stands down to avoid double
+-- drawing. When MasterHUD is absent this hook runs the exact same body. The draw
+-- body lives in WorkerMasterHUDBridge.drawStack so the two paths can never diverge.
 FSBaseMission.draw = Utils.appendedFunction(FSBaseMission.draw, function(mission)
-    if wm and wm.rosterPanel then
-        wm.rosterPanel:draw()
+    if WorkerMasterHUDBridge and WorkerMasterHUDBridge.active then return end
+    if WorkerMasterHUDBridge then
+        WorkerMasterHUDBridge.drawStack()
     end
 end)
 

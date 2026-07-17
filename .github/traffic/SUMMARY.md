@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-07-16T12:15:46Z
-**Days tracked:** 95 | **Download snapshots:** 370 (hourly)
+**Last updated:** 2026-07-17T18:57:04Z
+**Days tracked:** 96 | **Download snapshots:** 378 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 175 | 80 |
-| Git Clones | 521 | 131 |
+| Page Views | 174 | 81 |
+| Git Clones | 536 | 133 |
 
 > **Engagement:** 2.1 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 636 of 80 visitors cloned or downloaded (**795.0%**)
+> **14-day conversion:** 649 of 81 visitors cloned or downloaded (**801.2%**)
 >
-> Unique cloners: 131 | Release downloads: 505
+> Unique cloners: 133 | Release downloads: 516
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 505 |
-| Git Clones (14-day) | 521 |
-| **Total Acquisitions** | **1026** |
+| Zip Downloads | 516 |
+| Git Clones (14-day) | 536 |
+| **Total Acquisitions** | **1052** |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 97 | 47 |
-| Google | 17 | 14 |
+| github.com | 94 | 48 |
+| Google | 15 | 12 |
 | Bing | 6 | 5 |
 | kingmods.net | 5 | 2 |
 | ntp.msn.com | 3 | 2 |
@@ -81,11 +81,11 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 98 | 72 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 95 | 71 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.1.0` | 40 | 24 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 11 | 9 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 12 | 10 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.1` | 5 | 5 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v1.0.7.0` | 5 | 3 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.1` | 4 | 4 |
 | `/Realistic-Farming/FS25_WorkerCosts/tree/development` | 3 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/tree/main/tools` | 2 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/WorkerCostsSlice.dds` | 1 | 1 |

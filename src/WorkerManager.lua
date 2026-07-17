@@ -452,12 +452,14 @@ function WorkerManager:getServerSnapshot()
             end
 
             -- Indicative per-worker rate: base * level-efficiency, then fatigue
-            -- surcharge (Master is immune). Situational night/weather/overtime
-            -- multipliers are deliberately excluded — this is the steady-state rate.
+            -- surcharge (Master and above are immune; a Legendary worker is never
+            -- treated worse than a Master, matching the authoritative charge in
+            -- WorkerSystem:calculateLaborCost). Situational night/weather/overtime
+            -- multipliers are deliberately excluded, this is the steady-state rate.
             local fatigue     = w.fatigue or 0
             local levelFactor = WorkerSystem.LEVEL_WAGE_FACTOR[level] or 1.0
             local effRate     = baseRate * levelFactor
-            if level ~= WorkerRoster.LEVEL_MASTER and fatigue > 0 then
+            if level < WorkerRoster.LEVEL_MASTER and fatigue > 0 then
                 effRate = effRate * (1 + fatigue * WorkerSystem.FATIGUE_SURCHARGE)
             end
             snapshot.finance.proStaffDelta = snapshot.finance.proStaffDelta + (effRate - baseRate)

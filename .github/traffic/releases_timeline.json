@@ -123,5 +123,10 @@
     "published_at": "2026-07-03T07:01:28Z",
     "tag": "v2.2.2.1",
     "peak_downloads": 12
+  },
+  "v2.2.2.2": {
+    "published_at": "2026-07-17T12:33:33Z",
+    "tag": "v2.2.2.2",
+    "peak_downloads": 1
   }
 }

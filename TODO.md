@@ -5,22 +5,23 @@
 > Convention: `[ ]` open · `[~]` in progress · `[x]` done · `[!]` blocked. Newest at the top of each section.
 
 ## From the ecosystem audit (Arissani)
-- [ ] Fast-track F1: add the Legendary (Level 4) tier with the locked values (XP 400, wage factor 0.85, hire 120h, severance factor 2.5). Decided, no latitude.
-- [ ] Point 7: gate the wage-charge chain to the server (`getIsServer()` on workerSystem:update + hireHall:update at the call site).
-- [ ] Point 5: wire ProStaff modifiers into calculateLaborCost + fatigue recovery.
-- [ ] Decide the billing model (real-time vs flat daily on onDayChange) before companions wire in.
+- [x] Fast-track F1: Legendary (Level 4) tier with locked values (XP 400, wage factor 0.85, hire 120h, severance factor 2.5). DONE (d20da2f), shipped in v2.2.2.2.
+- [x] Point 7: wage-charge chain gated to the server. DONE (8c70f45), shipped in v2.2.2.2.
+- [!] Point 5: wire ProStaff modifiers into calculateLaborCost + fatigue recovery. Blocked on ProStaff (brief pulled, under re-review).
+- [x] Billing model decided + built: per-in-game-day billing (middle path), replacing the real-time interval. DONE (0c808d1), shipped in v2.2.2.2.
 
 ## Bugs
-- [!] CRITICAL (MP): the wage-charge chain (getActiveWorkers -> processWorkerPayments -> chargeWage -> addMoney) runs ungated on every peer; WorkerSystem.lua has zero getIsServer references. Balances can desync. (Point 7 / review F15-F19 class.)
-- [!] Design flag: real-time billing (30 real-min interval) makes wages depend on game speed, breaking coherence with the onDayChange cost systems.
-- [ ] G2: the addMoney fallback heuristic suppresses any negative addMoney <= 500 during an AI job when MoneyType.AI is unavailable; can eat a legit small fee. Tighten or log.
+- [x] CRITICAL (MP): the wage-charge chain ran ungated on every peer; now server-gated. FIXED (8c70f45), shipped in v2.2.2.2. (Point 7 / F15-F19 class.)
+- [x] Design flag resolved: real-time billing replaced by per-in-game-day billing, coherent with the onDayChange cost systems. DONE (0c808d1).
+- [x] G2: the addMoney fallback heuristic tightened. DONE (8c70f45).
+- [x] Legendary surcharge-DISPLAY fix: the roster estimate no longer surcharges Legendary workers (matches the authoritative charge). DONE (b84728f), shipped in v2.2.2.2.
 
 ## Features / enhancements
-- [ ] Legendary tier (F1) + the 6-function companion read API.
+- [~] Legendary tier DONE (d20da2f). The 6-function companion read API is partial: getWorkersForFarm shipped (90ce2e1); the rest pending the DairyCore/ProStaff builds.
 
 ## Cross-mod integration
-- [ ] StateLedger: workerData + hireHallCore modules. NetworkSync: WCWorkerCommandEvent / WCRosterSyncEvent / WCRequestRosterSyncEvent. MasterHUD: roster panel. SettingsHub: remove ESC WorkerSettingsUI.
-- [ ] Reads ProStaff `proStaffManager`. Read by DairyCore, TaxMod, WorkplaceTriggers.
+- [x] Bedrock bridges built, delegate-when-present: StateLedger workerData + hireHallCore (4328920), MasterHUD roster panel (4b10bd5), NetworkSync v2 first dual-consumer (c179141), SettingsHub (ff35ed0). Shipped in v2.2.2.2. (Removing the ESC WorkerSettingsUI is still open.)
+- [ ] Reads ProStaff `proStaffManager` (pending ProStaff). Read by DairyCore, TaxMod, WorkplaceTriggers.
 - [x] KEEP the addMoney MoneyType.AI suppression hook (permanent; must survive any restructuring).
 
 ## Docs / localization
@@ -28,4 +29,5 @@
 - [ ] Update README/version on each release.
 
 ## Blocked / waiting on
-- [!] Billing-model decision (waits on: TysonK/Arissani; blocks ProStaff and DairyCore wiring).
+- [x] Billing-model decision RESOLVED: per-in-game-day (middle path), built (0c808d1).
+- [!] ProStaff modifier wiring (Point 5) waits on the ProStaff build (brief pulled, under re-review).

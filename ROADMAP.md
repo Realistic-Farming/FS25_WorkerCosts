@@ -15,21 +15,21 @@
 - Baseline date: 2026-07-01
 
 ## Near-term (next release cycle)
-- [ ] Server-authoritative wage path (Point 7): gate `workerSystem:update` and `hireHall:update` at the call site with `getIsServer()`; leave rosterPanel:update and the client roster-sync retry outside.
-- [ ] Legendary tier (fast-track F1): add the 4th tier with the LOCKED values XP_LEGENDARY=400, LEVEL_WAGE_FACTOR[4]=0.85, HIRE_COST_HOURS[4]=120, SEVERANCE_LEVEL_FACTOR[4]=2.5 (no design latitude).
-- [ ] ProStaff modifiers (Point 5): read getWageModifier / getFatigueRecoveryBonus / getFatigueMitigation in calculateLaborCost and fatigue recovery; neutral 1.0 when ProStaff absent.
+- [x] Server-authoritative wage path (Point 7): wage-charge chain gated with `getIsServer()`. DONE (8c70f45), shipped v2.2.2.2.
+- [x] Legendary tier (fast-track F1): 4th tier with the LOCKED values. DONE (d20da2f), shipped v2.2.2.2.
+- [!] ProStaff modifiers (Point 5): read getWageModifier / getFatigueRecoveryBonus / getFatigueMitigation in calculateLaborCost and fatigue recovery; neutral 1.0 when ProStaff absent. Blocked on the ProStaff build (brief pulled, under re-review).
 
 ## Mid-term (this season)
-- [ ] Bedrock migration: StateLedger (workerData + hireHallCore), NetworkSync (3 event classes), MasterHUD (roster panel), SettingsHub (remove ESC WorkerSettingsUI). Keep the addMoney hook intact.
-- [ ] Companion read API: 6 functions on `workerCostsManager` (DairyCore worker tier, TaxMod wage totals).
+- [x] Bedrock migration: StateLedger (4328920), NetworkSync v2 (c179141), MasterHUD roster panel (4b10bd5), SettingsHub (ff35ed0). DONE, shipped v2.2.2.2, addMoney hook intact. (ESC WorkerSettingsUI removal still open.)
+- [~] Companion read API: 6 functions on `workerCostsManager`. Partial: getWorkersForFarm shipped (90ce2e1); the rest pending DairyCore/ProStaff.
 
 ## Long-term / aspirational
-- [ ] Billing-model change: real-time to flat daily rate on onDayChange (pending the design decision below), for ecosystem coherence.
+- [x] Billing-model change: real-time to per-in-game-day billing on the day tick. DONE (0c808d1), shipped v2.2.2.2.
 
 ## Cross-mod / ecosystem dependencies
-- [ ] Reads ProStaff (`proStaffManager`): getLevel, getWageModifier, getFatigueRecoveryBonus, getFatigueMitigation.
+- [!] Reads ProStaff (`proStaffManager`): getLevel, getWageModifier, getFatigueRecoveryBonus, getFatigueMitigation. Pending the ProStaff build.
 - [ ] Read by DairyCore (worker tier), TaxMod (wage totals), WorkplaceTriggers.
-- [ ] All four bedrock migrations (blocks on: StateLedger, NetworkSync, MasterHUD, SettingsHub).
+- [x] All four bedrock migrations DONE (StateLedger / NetworkSync / MasterHUD / SettingsHub), shipped v2.2.2.2.
 
 ## Deferred / parked
-- Real-time billing model: flagged as wrong for the ecosystem, but the change is a design decision (TysonK/Arissani) that must land before companions wire in.
+- Billing-model decision RESOLVED (per-in-game-day, middle path) and built; no longer parked.

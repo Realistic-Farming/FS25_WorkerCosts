@@ -167,3 +167,106 @@ function Schema:migrateLegacy(version)
     end
     return v
 end
+
+-- ---------------------------------------------------------------------------
+-- StateLedger mirror (bedrock, delegate-when-present)
+-- toTable / applyTable are the in-memory twins of save / loadIfExists. The
+-- StateLedger bridge stores this block under WorkerCosts_HireHall in the shared
+-- master file when the ledger is installed; hireHallCore.xml stays the isolated
+-- safety copy. Same isolation guarantee as the file: a bad history block here
+-- cannot touch the roster block (they are separate ledger modules). Keep the
+-- field set in lockstep with save()/loadIfExists() above.
+-- ---------------------------------------------------------------------------
+
+--- Serialize lifecycle state for every worker that has a meta block (mirrors save).
+function Schema:toTable(roster)
+    local workers = {}
+    if roster ~= nil then
+        for _, w in ipairs(roster:getAll()) do
+            local meta = w.hireHallMeta
+            if meta then
+                local row = {
+                    uuid           = w.uuid,
+                    lifecycleState = meta.lifecycleState or HireHallCore.STATE.AVAILABLE,
+                    enteredDay     = meta.enteredDay or 0,
+                    cooldownEnd    = meta.cooldownEnd,   -- nil stays nil
+                }
+                local hist = meta.history
+                if type(hist) == "table" and #hist > 0 then
+                    local h = {}
+                    for j = 1, #hist do
+                        local e = hist[j]
+                        h[j] = {
+                            day        = e.day or 0,
+                            hours      = e.hours or 0,
+                            outcome    = e.outcome or "completed",
+                            cause      = e.cause or "",
+                            startLevel = e.startLevel or 1,
+                            endLevel   = e.endLevel or 1,
+                            wage       = e.wage or 0,
+                            seq        = e.seq or 0,
+                        }
+                    end
+                    row.history = h
+                end
+                workers[#workers + 1] = row
+            end
+        end
+    end
+    return {
+        version = HireHallCore.SCHEMA_VERSION,
+        workers = workers,
+    }
+end
+
+--- Re-attach lifecycle state to roster workers by uuid (mirrors loadIfExists).
+--- The roster must already be loaded so uuids resolve; rows for workers no longer
+--- on the roster are dropped, same as the XML path.
+function Schema:applyTable(t, roster)
+    if type(t) ~= "table" or roster == nil then
+        return false
+    end
+
+    local version = t.version or 1
+    version = Schema:migrateLegacy(version)
+
+    local applied = 0
+    if type(t.workers) == "table" then
+        for _, row in ipairs(t.workers) do
+            local uuid = row.uuid
+            local w = uuid ~= nil and roster:getWorker(uuid) or nil
+            if w ~= nil then
+                local meta  = HireHallCore.core.Lifecycle:ensureMeta(w)
+                local state = row.lifecycleState or HireHallCore.STATE.AVAILABLE
+                if HireHallCore.VALID_STATE[state] then
+                    meta.lifecycleState = state
+                end
+                meta.enteredDay  = row.enteredDay or meta.enteredDay or 0
+                meta.cooldownEnd = row.cooldownEnd   -- nil clears, matches getInt(...,nil)
+
+                if type(row.history) == "table" and #row.history > 0 then
+                    local hist = {}
+                    for j = 1, #row.history do
+                        local e = row.history[j]
+                        hist[j] = {
+                            day        = e.day or 0,
+                            hours      = e.hours or 0,
+                            outcome    = e.outcome or "completed",
+                            cause      = e.cause or "",
+                            startLevel = e.startLevel or 1,
+                            endLevel   = e.endLevel or 1,
+                            wage       = e.wage or 0,
+                            seq        = e.seq or 0,
+                        }
+                    end
+                    meta.history = hist
+                end
+
+                applied = applied + 1
+            end
+        end
+    end
+
+    Logging.info("[HireHallCore] Loaded lifecycle state from StateLedger (%d workers, schema v%d)", applied, version)
+    return true
+end

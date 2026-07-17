@@ -128,8 +128,8 @@ function JobMonitor:_estimateWage(hours, level, fatigue)
         lf = WorkerSystem.LEVEL_WAGE_FACTOR[level] or 1.0
     end
     local eff = rate * lf
-    local isMaster = (WorkerRoster ~= nil and level == WorkerRoster.LEVEL_MASTER)
-    if not isMaster and fatigue and fatigue > 0 and WorkerSystem then
+    local isFatigueImmune = (WorkerRoster ~= nil and level >= WorkerRoster.LEVEL_MASTER)
+    if not isFatigueImmune and fatigue and fatigue > 0 and WorkerSystem then
         eff = eff * (1 + fatigue * (WorkerSystem.FATIGUE_SURCHARGE or 0))
     end
     return eff * math.max(0, hours or 0)

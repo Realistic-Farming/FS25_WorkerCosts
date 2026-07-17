@@ -22,19 +22,29 @@ local WorkerSystem_mt = Class(WorkerSystem)
 
 -- Pro-Staff Phase 3 wage modifiers (multiplicative pipeline, applied in order).
 -- Defined once here so the additive-vs-multiplicative order can't drift.
-WorkerSystem.LEVEL_WAGE_FACTOR = { [1] = 1.00, [2] = 0.95, [3] = 0.90 } -- higher level = efficiency discount (perk)
-WorkerSystem.FATIGUE_SURCHARGE = 0.50   -- up to +50% at full fatigue (Master is immune)
+WorkerSystem.LEVEL_WAGE_FACTOR = { [1] = 1.00, [2] = 0.95, [3] = 0.90, [4] = 0.85 } -- higher level = efficiency discount (perk); [4] Legendary (locked)
+WorkerSystem.FATIGUE_SURCHARGE = 0.50   -- up to +50% at full fatigue (Master and Legendary are immune)
 WorkerSystem.NIGHT_MULT        = 1.25   -- night-shift / after-hours premium
 WorkerSystem.WEATHER_MULT      = 1.15   -- bad-weather (rain) premium
-WorkerSystem.OVERTIME_HOURS    = 8      -- real hours worked in one in-game day before overtime
+WorkerSystem.OVERTIME_HOURS    = 8      -- billed hours accrued in one in-game day before overtime (same threshold as the old real-time schedule)
 WorkerSystem.OVERTIME_MULT     = 1.50   -- premium once a vehicle passes the daily overtime threshold
+
+-- Rule 10 (one time reference across the ecosystem): all billing runs on the
+-- in-game calendar. Wages accrue from in-game time worked and settle once per
+-- in-game day at midnight.
+WorkerSystem.DAY_MS = 24 * 60 * 60 * 1000  -- in-game milliseconds in one in-game day
+-- Conversion identity: at 1x speed one in-game day took 30 real minutes, and the
+-- old schedule billed one 30-real-minute interval (0.5 hours of wages) per
+-- in-game day. One full in-game day of work therefore bills exactly 0.5 hours,
+-- keeping every rate setting and 1x wage magnitude identical to the old system.
+WorkerSystem.BILLED_HOURS_PER_DAY = 0.5
 -- Phase 5 severance: one-off payout when firing. Senior workers cost more to let go.
 WorkerSystem.SEVERANCE_HOURS        = 16
-WorkerSystem.SEVERANCE_LEVEL_FACTOR = { [1] = 1.0, [2] = 1.5, [3] = 2.0 }
+WorkerSystem.SEVERANCE_LEVEL_FACTOR = { [1] = 1.0, [2] = 1.5, [3] = 2.0, [4] = 2.5 }  -- [4] Legendary (locked)
 -- Pro-Staff Phase 5: one-off signing cost when hiring a recruit. A more experienced
 -- recruit commands a bigger signing bonus. Expressed in "hours of base wage" so it
 -- scales with the configured wage level, exactly like severance.
-WorkerSystem.HIRE_COST_HOURS        = { [1] = 8, [2] = 24, [3] = 60 }
+WorkerSystem.HIRE_COST_HOURS        = { [1] = 8, [2] = 24, [3] = 60, [4] = 120 }  -- [4] Legendary premium signing (locked)
 
 ---@param settings Settings
 ---@param roster WorkerRoster|nil  Pro-Staff roster for level/fatigue (Phase 3)
@@ -44,16 +54,17 @@ function WorkerSystem.new(settings, roster)
     self.settings = settings
     self.roster = roster       -- Phase 3: source of level/fatigue for the wage pipeline
     self.activeWorkers = {}
-    self.workerHours = {}      -- accumulated real hours per vehicleId since last payment
-    self.workerHectares = {}   -- accumulated hectares per vehicleId since last payment
+    self.workerHours = {}      -- accumulated billed hours per vehicleId since last settlement (in-game derived, see BILLED_HOURS_PER_DAY)
+    self.workerHectares = {}   -- accumulated hectares per vehicleId since last settlement
     self.workerNames = {}      -- last-known display name per vehicleId (for dismissed workers)
     self.workerRosterUuid = {} -- vehicleId -> roster worker uuid (captured while bound; survives unbind at settlement)
-    self.workerDailyHours = {} -- vehicleId -> hours worked this in-game day (Phase 3 overtime); reset on day change
-    -- Use real-time dt for ALL timing, NOT environment.dayTime.
-    -- dayTime advances ~48x faster than real time at speed x1, which caused
-    -- wages to be ~20x too high before this fix.
-    self.realTimeAccumulator = 0   -- real ms accumulated since last payment
-    self.paymentInterval = 1800000 -- 30 real-world minutes in real milliseconds
+    self.workerDailyHours = {} -- vehicleId -> billed hours worked this in-game day (Phase 3 overtime); reset on day change
+    -- Rule 10: billing follows the in-game calendar. Wages accrue from the
+    -- environment clock (currentMonotonicDay * DAY_MS + dayTime) and are settled
+    -- once per in-game day at the day change (midnight).
+    self.lastSettledDay = -1           -- environment.currentDay marker (change detection only)
+    self.lastSettledMonotonicDay = -1  -- environment.currentMonotonicDay marker (day arithmetic)
+    self.lastAbsoluteGameTimeMs = nil  -- absolute in-game clock at the previous update (nil = no baseline yet)
     self.workerJobTotal  = {}      -- cumulative amount charged per vehicle since job start
     self.isInitialized = false
     self._isProcessingPayment = false
@@ -81,7 +92,11 @@ function WorkerSystem:initialize()
     end
 
     if g_currentMission then
-        self.realTimeAccumulator = 0
+        -- Reset the in-game clock trackers so the first update after (re)init
+        -- only records a baseline instead of billing a stale span.
+        self.lastAbsoluteGameTimeMs = nil
+        self.lastSettledDay = -1
+        self.lastSettledMonotonicDay = -1
 
         -- Disable the game's built-in worker cost deductions to prevent double-charging
         self:installGameHook()
@@ -102,6 +117,26 @@ function WorkerSystem:delete()
     self._hookedAddMoney = false
     self.isInitialized = false
     self:log("Worker System shut down")
+end
+
+--- Is farmId a real, chargeable farm? The spectator farm (and the invalid/no-farm
+-- id) reject money changes in the engine, which logs "Can't change money of spectator
+-- farm" every time. Modded AI vehicles (e.g. NPC helper tractors) run on the spectator
+-- farm, so the base game's per-frame running-cost charge (Motorized.updateConsumers)
+-- targets that farm continuously and spams the log. Treat those ids as non-payable so
+-- our addMoney hook can drop the charge cleanly (it would fail in the engine anyway).
+-- @param farmId  the farm id a charge is aimed at
+-- @return boolean  true if the farm can actually be charged
+function WorkerSystem.isPayableFarm(farmId)
+    if farmId == nil then return false end
+    local fm = FarmManager
+    if fm ~= nil then
+        if fm.SPECTATOR_FARM_ID ~= nil and farmId == fm.SPECTATOR_FARM_ID then return false end
+        if fm.INVALID_FARM_ID  ~= nil and farmId == fm.INVALID_FARM_ID  then return false end
+    end
+    -- 0 is the conventional "no farm" id (also the spectator fallback used by mods).
+    if farmId == 0 then return false end
+    return true
 end
 
 --- Patch mission.addMoney to zero out the game's own worker-wage deductions.
@@ -146,25 +181,44 @@ function WorkerSystem:installGameHook()
             return originalAddMoney(missionObj, amount, farmId, moneyType, ...)
         end
 
+        -- Never forward a charge to a non-payable farm (spectator / invalid). The
+        -- engine rejects it ("Can't change money of spectator farm") and spams the log;
+        -- modded AI vehicles (e.g. NPC helper tractors) run on the spectator farm and
+        -- the base game charges their running cost every frame the engine is on.
+        -- Dropping it is money-neutral (the engine would refuse anyway) and applies
+        -- regardless of our wage-suppression setting.
+        if not WorkerSystem.isPayableFarm(farmId) then
+            return
+        end
+
         if capturedSelf.settings.enabled and amount < 0 then
-            -- Primary: MoneyType.AI is what AIJob uses for helper wages.
-            local isHelperWage = (capturedAIType ~= nil and moneyType == capturedAIType)
+            -- Re-read the wage MoneyTypes at call time. The hook installs early in
+            -- load, when the enum may still be nil (that is why capturedAIType can be
+            -- nil); by the time a wage is actually charged the enum is populated. This
+            -- keeps us on the reliable type match and off the magnitude heuristic.
+            local aiType   = (MoneyType and MoneyType.AI) or capturedAIType
+            local wageType = MoneyType and MoneyType.WORKER_WAGES
 
-            -- Also catch MoneyType.WORKER_WAGES in case some FS25 builds use it.
-            if not isHelperWage and MoneyType and MoneyType.WORKER_WAGES ~= nil then
-                isHelperWage = (moneyType == MoneyType.WORKER_WAGES)
-            end
+            local isHelperWage = (aiType ~= nil and moneyType == aiType)
+                              or (wageType ~= nil and moneyType == wageType)
 
-            -- Fallback when MoneyType enum is unavailable: intercept small negative
-            -- charges that coincide with active AI jobs (AIJob flushes at >25§ chunks).
-            if not isHelperWage and capturedAIType == nil then
+            -- Last-resort heuristic ONLY when this build exposes NEITHER wage
+            -- MoneyType. Previously it fired whenever MoneyType.AI was nil even if
+            -- WORKER_WAGES existed, so it could eat any unrelated negative <=500
+            -- (e.g. a small purchase) during a job. Now gated on both being absent,
+            -- and it warns visibly since suppression here is an informed guess.
+            if not isHelperWage and aiType == nil and wageType == nil then
                 local hasActiveJobs = false
                 local aiSystem = g_currentMission and g_currentMission.aiSystem
                 if aiSystem and aiSystem.getActiveJobs then
                     local jobs = aiSystem:getActiveJobs()
                     hasActiveJobs = (jobs ~= nil and #jobs > 0)
                 end
-                isHelperWage = hasActiveJobs and math.abs(amount) <= 500
+                if hasActiveJobs and math.abs(amount) <= 500 then
+                    isHelperWage = true
+                    Logging.warning("[Worker Costs] No wage MoneyType in this build; "
+                        .. "suppressing suspected helper wage by heuristic: %d", amount)
+                end
             end
 
             if isHelperWage then
@@ -277,17 +331,19 @@ function WorkerSystem:getActiveWorkers()
     return workers
 end
 
---- Estimated wage bill for the current payment interval (UI display only).
+--- Estimated wage bill for the current settlement period (UI display only).
 -- Phase 4: now runs each active worker through the same calculateLaborCost
 -- pipeline (level / fatigue / night / weather / overtime) so the dashboard
 -- estimate matches what will actually be charged.
--- Hourly mode: projects the full interval per worker.
--- Per-hectare mode: uses the area accrued so far this interval, so it grows live.
+-- Hourly mode: projects one full settlement period (an in-game day) per worker.
+-- Per-hectare mode: uses the area accrued so far this period, so it grows live.
 ---@param workerCount number  unused; kept for call-site compatibility
----@return number  estimated cost in $ for this interval
+---@return number  estimated cost in $ for this settlement period
 function WorkerSystem:getEstimatedIntervalCost(workerCount)
     local workers = self:getActiveWorkers()
-    local intervalHours = self.paymentInterval / 3600000
+    -- One settlement period = one in-game day = BILLED_HOURS_PER_DAY billed
+    -- hours, the same magnitude the old 30-real-minute interval projected.
+    local intervalHours = WorkerSystem.BILLED_HOURS_PER_DAY
     local isHourly = (self.settings.costMode == Settings.COST_MODE_HOURLY)
     local total = 0
 
@@ -346,8 +402,9 @@ function WorkerSystem:calculateLaborCost(worker, hoursWorked, hectaresWorked, ro
     -- 1. Level efficiency discount (perk: higher level => cheaper per unit).
     cost = cost * (WorkerSystem.LEVEL_WAGE_FACTOR[level] or 1.0)
 
-    -- 2. Fatigue surcharge — Master workers are immune (Phase 2 perk).
-    if level ~= WorkerRoster.LEVEL_MASTER and fatigue > 0 then
+    -- 2. Fatigue surcharge. Master and above are immune (Phase 2 perk); a Legendary
+    --    worker is never treated worse than a Master.
+    if level < WorkerRoster.LEVEL_MASTER and fatigue > 0 then
         cost = cost * (1 + fatigue * WorkerSystem.FATIGUE_SURCHARGE)
     end
 
@@ -533,6 +590,36 @@ function WorkerSystem:chargeWage(workerName, amount, workType, silent)
     return true
 end
 
+--- In-game milliseconds elapsed since the previous call (rule 10 clock source).
+-- Uses the absolute in-game clock currentMonotonicDay * DAY_MS + dayTime:
+-- currentMonotonicDay is the counter the base game uses for day arithmetic
+-- (AbstractMission), dayTime is in-game ms since midnight (0..DAY_MS). The
+-- absolute form survives midnight wraps and multi-day skips. Returns 0 on the
+-- first observation (baseline) and while the game is paused (clock frozen).
+function WorkerSystem:consumeInGameMs()
+    local env = g_currentMission and g_currentMission.environment
+    if not env or env.dayTime == nil then
+        return 0
+    end
+    local monotonicDay = env.currentMonotonicDay or 0
+    local nowMs = monotonicDay * WorkerSystem.DAY_MS + env.dayTime
+    local lastMs = self.lastAbsoluteGameTimeMs
+    self.lastAbsoluteGameTimeMs = nowMs
+    if lastMs == nil then
+        return 0
+    end
+    local delta = nowMs - lastMs
+    if delta < 0 then
+        -- Midnight wrap without a monotonic counter (defensive: only possible
+        -- when currentMonotonicDay is unavailable and dayTime wrapped).
+        delta = delta + WorkerSystem.DAY_MS
+        if delta < 0 then
+            return 0
+        end
+    end
+    return delta
+end
+
 function WorkerSystem:update(dt)
     if not self.settings.enabled or not self.isInitialized then
         return
@@ -542,14 +629,18 @@ function WorkerSystem:update(dt)
         return
     end
 
-    -- dt is real elapsed milliseconds this frame. Using it (instead of
-    -- environment.dayTime) means wages scale with real time regardless of
-    -- the in-game time-speed setting, which fixes the ~20x overcharge bug.
+    -- Rule 10: wages accrue from IN-GAME time worked, read from the environment
+    -- clock, so billing follows the in-game calendar at every speed setting
+    -- (and freezes while the game is paused).
+    local inGameMsThisFrame = self:consumeInGameMs()
+
     local activeWorkers = self:getActiveWorkers()
 
-    -- Accumulate real hours worked per active worker this frame.
-    -- 1 real hour = 3,600,000 real ms.
-    local realHoursThisFrame = dt / 3600000
+    -- Accrue billed hours per active worker this frame.
+    -- billedHours = inGameMsWorked / DAY_MS * BILLED_HOURS_PER_DAY, i.e. one
+    -- full in-game day of work bills 0.5 hours, exactly what the old
+    -- 30-real-minute interval billed per in-game day at 1x speed.
+    local billedHoursThisFrame = inGameMsThisFrame / WorkerSystem.DAY_MS * WorkerSystem.BILLED_HOURS_PER_DAY
 
     for _, worker in ipairs(activeWorkers) do
         local vehicleId = tostring(worker.vehicle)
@@ -574,10 +665,10 @@ function WorkerSystem:update(dt)
             end
         end
 
-        self.workerHours[vehicleId] = self.workerHours[vehicleId] + realHoursThisFrame
-        -- Phase 3 overtime: accumulate the day's hours (persists across jobs;
-        -- reset only on day change, not at per-job settlement).
-        self.workerDailyHours[vehicleId] = (self.workerDailyHours[vehicleId] or 0) + realHoursThisFrame
+        self.workerHours[vehicleId] = self.workerHours[vehicleId] + billedHoursThisFrame
+        -- Phase 3 overtime: accumulate the day's billed hours (persists across
+        -- jobs; reset only on day change, not at per-job settlement).
+        self.workerDailyHours[vehicleId] = (self.workerDailyHours[vehicleId] or 0) + billedHoursThisFrame
 
         -- Track hectares if the job exposes them
         if worker.job and worker.job.getLastHa then
@@ -586,12 +677,31 @@ function WorkerSystem:update(dt)
         end
     end
 
-    -- Payment timer: fire every paymentInterval real milliseconds.
-    -- Subtract rather than reset so we don't drift over time.
-    self.realTimeAccumulator = self.realTimeAccumulator + dt
-    if self.realTimeAccumulator >= self.paymentInterval then
-        self:processWorkerPayments()
-        self.realTimeAccumulator = self.realTimeAccumulator - self.paymentInterval
+    -- Daily settlement: bill all accrued wages once per in-game day, at the
+    -- day change (midnight). currentDay is used for change detection only;
+    -- currentMonotonicDay is the arithmetic source for how many days elapsed.
+    -- Billing is accrual-based, so even if several day transitions pass
+    -- between updates the accrued amount is settled exactly once and the
+    -- markers jump to the current day (no re-billing of settled accrual).
+    -- This runs BEFORE onDayChange() below so the settlement still sees the
+    -- outgoing day's overtime counters.
+    local env = g_currentMission.environment
+    if env and env.currentDay ~= nil then
+        local monotonicDay = env.currentMonotonicDay or -1
+        if self.lastSettledDay == -1 then
+            -- First observation after load: baseline only, nothing to settle.
+            self.lastSettledDay = env.currentDay
+            self.lastSettledMonotonicDay = monotonicDay
+        elseif env.currentDay ~= self.lastSettledDay then
+            local daysElapsed = 1
+            if monotonicDay >= 0 and self.lastSettledMonotonicDay >= 0 then
+                daysElapsed = math.max(1, monotonicDay - self.lastSettledMonotonicDay)
+            end
+            self.lastSettledDay = env.currentDay
+            self.lastSettledMonotonicDay = monotonicDay
+            self:processWorkerPayments()
+            self:log("Daily wage settlement fired (%d in-game day(s) since last settlement)", daysElapsed)
+        end
     end
 
     -- Phase 3: daily housekeeping (overtime reset + idle fatigue recovery).

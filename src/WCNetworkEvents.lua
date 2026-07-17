@@ -33,7 +33,7 @@ WCCommand = {
 -- ---------------------------------------------------------------------------
 local function writeSnapshot(streamId, snap)
     snap = snap or {}
-    local levels   = snap.levels   or { novice = 0, experienced = 0, master = 0 }
+    local levels   = snap.levels   or { novice = 0, experienced = 0, master = 0, legendary = 0 }
     local finance  = snap.finance  or {}
     local workers  = snap.workers  or {}
     local recruits = snap.recruits or {}
@@ -44,6 +44,7 @@ local function writeSnapshot(streamId, snap)
     streamWriteInt32(streamId, levels.novice or 0)
     streamWriteInt32(streamId, levels.experienced or 0)
     streamWriteInt32(streamId, levels.master or 0)
+    streamWriteInt32(streamId, levels.legendary or 0)
 
     -- Finance block
     streamWriteFloat32(streamId, finance.baseRate or 0)
@@ -107,6 +108,7 @@ local function readSnapshot(streamId)
     snap.levels.novice      = streamReadInt32(streamId)
     snap.levels.experienced = streamReadInt32(streamId)
     snap.levels.master      = streamReadInt32(streamId)
+    snap.levels.legendary   = streamReadInt32(streamId)
 
     snap.finance.baseRate        = streamReadFloat32(streamId)
     snap.finance.isHourly        = streamReadBool(streamId)
@@ -308,6 +310,14 @@ end
 --- the server/SP. Every caller (tablet, roster panel) goes through here so the
 --- SP and MP paths can never drift.
 function WCNetwork_SendCommand(action, uuid, slot, vehicleUniqueId, farmId)
+    -- NetworkSync delegate-when-present: route through NS's validated client-to-server
+    -- action channel (which applies directly on the host and sends to the server on a
+    -- pure client). Returns true when handled; falls through to the own path otherwise.
+    if WorkerNetworkSyncBridge
+        and WorkerNetworkSyncBridge.sendCommand(action, uuid, slot, vehicleUniqueId, farmId) then
+        return
+    end
+
     if g_client ~= nil and g_server == nil then
         -- Pure client: ask the server.
         g_client:getServerConnection():sendEvent(

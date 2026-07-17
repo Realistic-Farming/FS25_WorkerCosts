@@ -115,10 +115,16 @@ function WCMenuPage:refreshLive()
     end
 
     if self.txtNextPayment then
-        local remaining = math.max(0, ws.paymentInterval - ws.realTimeAccumulator)
-        local mins = math.floor(remaining / 60000)
-        local secs = math.floor((remaining % 60000) / 1000)
-        self.txtNextPayment:setText(string.format("%d:%02d", mins, secs))
+        -- Rule 10: wages settle at in-game midnight. Show the in-game time
+        -- remaining until then as H:MM (environment.dayTime = ms since midnight).
+        local env = g_currentMission and g_currentMission.environment
+        local remaining = 0
+        if env and env.dayTime then
+            remaining = math.max(0, WorkerSystem.DAY_MS - env.dayTime)
+        end
+        local hrs  = math.floor(remaining / 3600000)
+        local mins = math.floor((remaining % 3600000) / 60000)
+        self.txtNextPayment:setText(string.format("%d:%02d", hrs, mins))
     end
 
     if self.txtEstCost then

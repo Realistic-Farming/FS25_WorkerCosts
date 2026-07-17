@@ -199,9 +199,8 @@ function WCWageSettingsFrame:refreshRatePreview()
     end
 
     if self.txtPayInterval and g_WorkerManager.workerSystem then
-        local ms  = g_WorkerManager.workerSystem.paymentInterval
-        local min = math.floor(ms / 60000)
-        self.txtPayInterval:setText(string.format("%d min", min))
+        -- Rule 10: one settlement per in-game day (24 in-game hours, at midnight).
+        self.txtPayInterval:setText("24 h")
     end
 end
 

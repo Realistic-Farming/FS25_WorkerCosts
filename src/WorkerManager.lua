@@ -127,6 +127,36 @@ function WorkerManager:onMissionLoaded()
         self.settings:load()
     end
 
+    -- Register with SettingsHub (if installed) so FarmTablet's System Settings
+    -- app can list Worker Costs' settings. No-ops safely if SettingsHub is absent.
+    WorkerSettingsHubBridge.register(self)
+
+    -- StateLedger (bedrock, delegate-when-present): when installed, the shared master
+    -- save file becomes the load source of truth for the roster + hire-hall lifecycle;
+    -- workerData.xml / hireHallCore.xml stay the standalone safety copies. No-ops when
+    -- StateLedger is absent. Registered BEFORE loadWorkerData / hireHall:initialize
+    -- below so the ledger's deserialize has already delivered when we read (register()
+    -- forces the parse, since WorkerCosts loads in the same phase StateLedger parses).
+    if WorkerStateLedgerBridge then
+        WorkerStateLedgerBridge.register(self)
+    end
+
+    -- MasterHUD (bedrock, delegate-when-present): when installed, the roster panel's
+    -- draw folds into MasterHUD's single suspend-aware loop and our own FSBaseMission
+    -- .draw hook stands down. No-ops when MasterHUD is absent (own hook draws it).
+    if WorkerMasterHUDBridge then
+        WorkerMasterHUDBridge.register(self)
+    end
+
+    -- NetworkSync v2 (bedrock, delegate-when-present): when installed, the roster
+    -- snapshot syncs through NS's 1Hz delta batch and the six worker commands route
+    -- through NS's client-to-server action channel; WorkerCosts' own event classes
+    -- stand down. No-ops when NetworkSync is absent. Registered on both server and
+    -- client (server writes, client reads).
+    if WorkerNetworkSyncBridge then
+        WorkerNetworkSyncBridge.register(self)
+    end
+
     -- Pro-Staff Phase 0: load the roster now that savegameDirectory is populated.
     -- The roster lives server-side; in multiplayer, clients receive it via sync
     -- (Phase 5), so only the server/SP host reads it from disk.
@@ -162,7 +192,16 @@ function WorkerManager:onMissionLoaded()
 end
 
 function WorkerManager:update(dt)
-    if self.workerSystem then
+    -- Wage billing is server-authoritative. workerSystem:update runs the payment
+    -- tick that calls g_currentMission:addMoney, so a pure MP client must never
+    -- enter it. (Clients being spared today only because aiSystem:getActiveJobs()
+    -- returns empty is incidental cover, not a gate.) SP is a server, so this is
+    -- a no-op there. The client roster-sync pull below stays OUTSIDE this gate.
+    local isServer = g_currentMission ~= nil
+        and g_currentMission.getIsServer ~= nil
+        and g_currentMission:getIsServer()
+
+    if isServer and self.workerSystem then
         self.workerSystem:update(dt)
     end
     if self.hireHall then
@@ -174,8 +213,11 @@ function WorkerManager:update(dt)
 
     -- Pro-Staff Phase 5: a pure MP client pulls the roster mirror from the host.
     -- Retry a handful of times in case our first request beats the host's mod init
-    -- on join; stop as soon as the first snapshot lands.
-    if g_currentMission and not g_currentMission:getIsServer() then
+    -- on join; stop as soon as the first snapshot lands. Stands down when NetworkSync
+    -- is active: NS auto-requests a full snapshot on join and delivers it through the
+    -- bridge's onReadState, so this own-event pull would be redundant.
+    local nsActive = WorkerNetworkSyncBridge and WorkerNetworkSyncBridge.active
+    if not nsActive and g_currentMission and not g_currentMission:getIsServer() then
         if self.clientRosterSnapshot == nil and (self._syncRetries or 0) < 6 then
             self._syncRetryTimer = (self._syncRetryTimer or 2500) + dt
             if self._syncRetryTimer >= 2500 then
@@ -216,6 +258,14 @@ end
 
 function WorkerManager:loadWorkerData()
     if not self.workerRoster then
+        return
+    end
+    -- StateLedger is the load source of truth when present and it delivered a roster
+    -- block; otherwise import the standalone workerData.xml (also the first-load path
+    -- right after installing the ledger onto an existing save, where the ledger has
+    -- no block yet). workerData.xml is written every save regardless, as a safety copy.
+    if WorkerStateLedgerBridge and WorkerStateLedgerBridge.hasRosterState() then
+        WorkerStateLedgerBridge.applyRosterState(self.workerRoster)
         return
     end
     local missionInfo = g_currentMission and g_currentMission.missionInfo
@@ -357,7 +407,7 @@ function WorkerManager:getServerSnapshot()
         count   = 0,
         working = 0,   -- workers currently driving a vehicle on a live AI job
         pinned  = 0,   -- workers with a persistent vehicle assignment
-        levels  = { novice = 0, experienced = 0, master = 0 },
+        levels  = { novice = 0, experienced = 0, master = 0, legendary = 0 },
         workers = {},
         recruits = {},
         finance = {
@@ -391,7 +441,9 @@ function WorkerManager:getServerSnapshot()
             if isPinned  then snapshot.pinned  = snapshot.pinned  + 1 end
 
             local level = w.level or WorkerRoster.LEVEL_NOVICE
-            if level == WorkerRoster.LEVEL_MASTER then
+            if level == WorkerRoster.LEVEL_LEGENDARY then
+                snapshot.levels.legendary = snapshot.levels.legendary + 1
+            elseif level == WorkerRoster.LEVEL_MASTER then
                 snapshot.levels.master = snapshot.levels.master + 1
             elseif level == WorkerRoster.LEVEL_EXPERIENCED then
                 snapshot.levels.experienced = snapshot.levels.experienced + 1
@@ -400,12 +452,14 @@ function WorkerManager:getServerSnapshot()
             end
 
             -- Indicative per-worker rate: base * level-efficiency, then fatigue
-            -- surcharge (Master is immune). Situational night/weather/overtime
-            -- multipliers are deliberately excluded — this is the steady-state rate.
+            -- surcharge (Master and above are immune; a Legendary worker is never
+            -- treated worse than a Master, matching the authoritative charge in
+            -- WorkerSystem:calculateLaborCost). Situational night/weather/overtime
+            -- multipliers are deliberately excluded, this is the steady-state rate.
             local fatigue     = w.fatigue or 0
             local levelFactor = WorkerSystem.LEVEL_WAGE_FACTOR[level] or 1.0
             local effRate     = baseRate * levelFactor
-            if level ~= WorkerRoster.LEVEL_MASTER and fatigue > 0 then
+            if level < WorkerRoster.LEVEL_MASTER and fatigue > 0 then
                 effRate = effRate * (1 + fatigue * WorkerSystem.FATIGUE_SURCHARGE)
             end
             snapshot.finance.proStaffDelta = snapshot.finance.proStaffDelta + (effRate - baseRate)
@@ -470,7 +524,7 @@ function WorkerManager:getRosterSnapshot()
         count   = 0,
         working = 0,
         pinned  = 0,
-        levels  = { novice = 0, experienced = 0, master = 0 },
+        levels  = { novice = 0, experienced = 0, master = 0, legendary = 0 },
         workers = {},
         recruits = {},
         finance = {},
@@ -481,6 +535,22 @@ end
 -- Client stores the host's snapshot mirror (called from WCRosterSyncEvent).
 function WorkerManager:applyClientSnapshot(snapshot)
     self.clientRosterSnapshot = snapshot
+end
+
+-- Farm-scoped roster read (companion maturity ask, e.g. DairyCore staffing context).
+-- IMPORTANT: WorkerCosts keeps a SINGLE SHARED roster. Workers are not owned per
+-- farm; a farmId only governs which account is charged at hire/fire time
+-- (WCWorkerCommandEvent), never worker ownership. So there is no per-worker farm
+-- attribution to filter on: this returns the whole roster the farm draws from. The
+-- farmId is validated for the requested API shape (and to reject the spectator farm 0)
+-- but does not sub-filter. If true per-farm segmentation is ever needed, workers must
+-- first carry a farmId (a roster model change + save migration) -- flag to design, do
+-- not fake it here. Reads through getRosterSnapshot, so it honors the MP client mirror.
+-- @return array of worker entries (same shape as snapshot.workers); {} for an invalid farm.
+function WorkerManager:getWorkersForFarm(farmId)
+    if type(farmId) ~= "number" or farmId <= 0 then return {} end
+    local snap = self:getRosterSnapshot()
+    return (snap and snap.workers) or {}
 end
 
 -- =========================================================
@@ -676,6 +746,11 @@ end
 
 -- Push the fresh snapshot to all clients after a mutation (no-op in SP).
 function WorkerManager:_broadcastRosterSync()
+    -- NetworkSync delegate-when-present: flag the roster module dirty so NS carries
+    -- the change on its next 1Hz (delta) batch, and stand our own broadcast down.
+    if WorkerNetworkSyncBridge and WorkerNetworkSyncBridge.markRosterDirty() then
+        return
+    end
     if g_server ~= nil then
         g_server:broadcastEvent(WCRosterSyncEvent.new(self:getServerSnapshot()))
     end

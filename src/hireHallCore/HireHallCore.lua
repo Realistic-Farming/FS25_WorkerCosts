@@ -219,7 +219,15 @@ function HireHallCore:initialize(missionInfo)
             end
         end
         if HireHallCore.Schema then
-            HireHallCore.Schema:loadIfExists(missionInfo, self.roster)
+            -- StateLedger delegate-when-present: re-attach lifecycle state from the
+            -- shared master file when the ledger delivered a hire-hall block; else
+            -- read the isolated hireHallCore.xml (also the first-load-after-install
+            -- path). hireHallCore.xml is written every save regardless.
+            if WorkerStateLedgerBridge and WorkerStateLedgerBridge.hasHireHallState() then
+                WorkerStateLedgerBridge.applyHireHallState(self.roster)
+            else
+                HireHallCore.Schema:loadIfExists(missionInfo, self.roster)
+            end
         end
     end)
 

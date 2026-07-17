@@ -535,6 +535,22 @@ function WorkerManager:applyClientSnapshot(snapshot)
     self.clientRosterSnapshot = snapshot
 end
 
+-- Farm-scoped roster read (companion maturity ask, e.g. DairyCore staffing context).
+-- IMPORTANT: WorkerCosts keeps a SINGLE SHARED roster. Workers are not owned per
+-- farm; a farmId only governs which account is charged at hire/fire time
+-- (WCWorkerCommandEvent), never worker ownership. So there is no per-worker farm
+-- attribution to filter on: this returns the whole roster the farm draws from. The
+-- farmId is validated for the requested API shape (and to reject the spectator farm 0)
+-- but does not sub-filter. If true per-farm segmentation is ever needed, workers must
+-- first carry a farmId (a roster model change + save migration) -- flag to design, do
+-- not fake it here. Reads through getRosterSnapshot, so it honors the MP client mirror.
+-- @return array of worker entries (same shape as snapshot.workers); {} for an invalid farm.
+function WorkerManager:getWorkersForFarm(farmId)
+    if type(farmId) ~= "number" or farmId <= 0 then return {} end
+    local snap = self:getRosterSnapshot()
+    return (snap and snap.workers) or {}
+end
+
 -- =========================================================
 -- Pro-Staff Phase 5: worker management command API
 -- =========================================================

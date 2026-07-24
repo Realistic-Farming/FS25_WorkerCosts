@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-07-21T18:12:34Z
-**Days tracked:** 100 | **Download snapshots:** 399 (hourly)
+**Last updated:** 2026-07-24T00:02:36Z
+**Days tracked:** 101 | **Download snapshots:** 404 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 205 | 89 |
-| Git Clones | 587 | 145 |
+| Page Views | 201 | 90 |
+| Git Clones | 548 | 131 |
 
-> **Engagement:** 2.3 pages per visitor (14-day avg)
+> **Engagement:** 2.2 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 683 of 89 visitors cloned or downloaded (**767.4%**)
+> **14-day conversion:** 676 of 90 visitors cloned or downloaded (**751.1%**)
 >
-> Unique cloners: 145 | Release downloads: 538
+> Unique cloners: 131 | Release downloads: 545
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 538 |
-| Git Clones (14-day) | 587 |
-| **Total Acquisitions** | **1125** |
+| Zip Downloads | 545 |
+| Git Clones (14-day) | 548 |
+| **Total Acquisitions** | **1093** |
 
 ---
 
@@ -54,11 +54,11 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 100 | 50 |
-| Google | 23 | 18 |
-| kingmods.net | 8 | 3 |
-| Bing | 6 | 5 |
-| yandex.ru | 3 | 2 |
+| github.com | 98 | 49 |
+| Google | 24 | 19 |
+| kingmods.net | 9 | 4 |
+| Bing | 5 | 4 |
+| yandex.ru | 4 | 3 |
 | ecosia.org | 3 | 1 |
 | chatgpt.com | 1 | 1 |
 | search.brave.com | 1 | 1 |
@@ -82,11 +82,11 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 116 | 83 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.1.0` | 31 | 18 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 15 | 14 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 14 | 12 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues` | 4 | 2 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 115 | 83 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.1.0` | 25 | 15 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 21 | 19 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 11 | 11 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues` | 3 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/tree/development` | 3 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.1` | 2 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/commit/7b4865033699bc1e0c08737255dcd262dbf094ea` | 2 | 1 |

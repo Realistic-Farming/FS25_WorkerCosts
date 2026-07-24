@@ -24773,31 +24773,31 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-07-24T00:02:14Z",
+    "timestamp": "2026-07-24T12:14:45Z",
     "date": "2026-07-24",
     "views": {
-      "count": 201,
+      "count": 203,
       "uniques": 90
     },
     "clones": {
-      "count": 548,
-      "uniques": 131
+      "count": 517,
+      "uniques": 125
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 98,
-        "uniques": 49
+        "count": 102,
+        "uniques": 51
       },
       {
         "referrer": "Google",
-        "count": 24,
-        "uniques": 19
+        "count": 19,
+        "uniques": 15
       },
       {
         "referrer": "kingmods.net",
-        "count": 9,
-        "uniques": 4
+        "count": 11,
+        "uniques": 5
       },
       {
         "referrer": "Bing",
@@ -24834,8 +24834,8 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 115,
-        "uniques": 83
+        "count": 117,
+        "uniques": 84
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.1.0",
@@ -24846,7 +24846,7 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 21,
+        "count": 22,
         "uniques": 19
       },
       {
@@ -24880,15 +24880,15 @@
         "uniques": 1
       },
       {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v1.0.7.0",
-        "title": "/releases/tag/v1.0.7.0",
+        "path": "/Realistic-Farming/FS25_WorkerCosts/tree/main/tools",
+        "title": "/tree/main/tools",
         "count": 2,
         "uniques": 1
       },
       {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/tree/main/tools",
-        "title": "/tree/main/tools",
-        "count": 2,
+        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/WorkerCostsSlice.dds",
+        "title": "/blob/main/WorkerCostsSlice.dds",
+        "count": 1,
         "uniques": 1
       }
     ],

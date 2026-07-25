@@ -16,6 +16,7 @@
 
 ## Near-term (next release cycle)
 - [x] Server-authoritative wage path (Point 7): wage-charge chain gated with `getIsServer()`. DONE (8c70f45), shipped v2.2.2.2.
+- [x] Monthly-salary double-charge gremlin (100d3c6): monthly-salary mode no longer double-charges wages. DONE.
 - [x] Legendary tier (fast-track F1): 4th tier with the LOCKED values. DONE (d20da2f), shipped v2.2.2.2.
 - [!] ProStaff modifiers (Point 5): read getWageModifier / getFatigueRecoveryBonus / getFatigueMitigation in calculateLaborCost and fatigue recovery; neutral 1.0 when ProStaff absent. Blocked on the ProStaff build (brief pulled, under re-review).
 

@@ -16,6 +16,7 @@
 - [x] Design flag resolved: real-time billing replaced by per-in-game-day billing, coherent with the onDayChange cost systems. DONE (0c808d1).
 - [x] G2: the addMoney fallback heuristic tightened. DONE (8c70f45).
 - [x] Legendary surcharge-DISPLAY fix: the roster estimate no longer surcharges Legendary workers (matches the authoritative charge). DONE (b84728f), shipped in v2.2.2.2.
+- [x] WC-001 / WC-002 / WC-003: additional WorkerCosts bugs fixed in 2026-07-26 bug sweep, merged to main.
 
 ## Features / enhancements
 - [~] Legendary tier DONE (d20da2f). The 6-function companion read API is partial: getWorkersForFarm shipped (90ce2e1); the rest pending the DairyCore/ProStaff builds.

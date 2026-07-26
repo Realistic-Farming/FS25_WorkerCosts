@@ -72,7 +72,7 @@ function WorkerSystem.new(settings, roster)
     self._hookedAddMoney = false
 
     -- Monthly salary tracking
-    -- monthlyCosts[workerName] = accumulated amount for this month
+    -- monthlyCosts[workerId] = { name = displayName, amount = accumulated $ for this month }
     self.monthlyCosts   = {}
     self.lastDay        = -1       -- last in-game day we checked
     self.lastMonthPaid  = -1       -- last in-game month that triggered the salary dialog
@@ -418,10 +418,12 @@ function WorkerSystem:calculateLaborCost(worker, hoursWorked, hectaresWorked, ro
         cost = cost * WorkerSystem.WEATHER_MULT
     end
 
-    -- 5. Overtime: once a vehicle passes the daily hour threshold, the rest of
-    -- the day bills at the overtime rate.
+    -- 5. Graduated overtime: only the fraction of hours above the daily
+    -- threshold bills at the premium rate (not a step function on the
+    -- entire cost).
     if dailyHours and dailyHours > WorkerSystem.OVERTIME_HOURS then
-        cost = cost * WorkerSystem.OVERTIME_MULT
+        local overtimeFraction = 1 - (WorkerSystem.OVERTIME_HOURS / dailyHours)
+        cost = cost * (1 + overtimeFraction * (WorkerSystem.OVERTIME_MULT - 1))
     end
 
     return math.floor(cost)
@@ -536,7 +538,7 @@ end
 -- @param silent  If true, suppresses the per-payment HUD notification.
 --                Used when flushing interval payments into the monthly salary
 --                summary so the dialog is the single notification, not both.
-function WorkerSystem:chargeWage(workerName, amount, workType, silent)
+function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
     if not g_currentMission then
         self:log("Cannot charge wage: No mission")
         return false
@@ -554,6 +556,24 @@ function WorkerSystem:chargeWage(workerName, amount, workType, silent)
         return false
     end
 
+    -- Monthly salary mode: accrue only, never deduct here. The wage settles ONCE
+    -- at month end (executeMonthlySalaryPayment), where the player can accept or
+    -- decline it. Deducting per interval AND again in the month-end lump would
+    -- double-charge the wage, so in this mode we accumulate and return without
+    -- moving any money. The accrual is persisted (saveMonthlyState) so a mid-month
+    -- reload cannot drop what is owed.
+    if self.settings.monthlySalaryEnabled then
+        local entry = self.monthlyCosts[workerId]
+        if entry then
+            entry.amount = entry.amount + amount
+        else
+            self.monthlyCosts[workerId] = { name = workerName, amount = amount }
+        end
+        self:log("%s %s wage accrued for monthly salary: $%d (farm %d)", workerName, workType, amount, farmId)
+        return true
+    end
+
+    -- Immediate mode: deduct the wage now.
     -- Raise the flag so the hook knows this negative addMoney call is ours.
     -- Use pcall so the flag is always cleared even if addMoney throws.
     self._isProcessingPayment = true
@@ -579,11 +599,6 @@ function WorkerSystem:chargeWage(workerName, amount, workType, silent)
         local message = string.format("%s - %s: -%s", workerName, modeText, formattedAmount)
 
         self:showNotification("Worker Payment", message)
-    end
-
-    -- Accumulate into monthly totals for the end-of-month salary dialog
-    if self.settings.monthlySalaryEnabled then
-        self.monthlyCosts[workerName] = (self.monthlyCosts[workerName] or 0) + amount
     end
 
     self:log("%s %s wage: $%d from farm %d", workerName, workType, amount, farmId)
@@ -710,6 +725,10 @@ function WorkerSystem:update(dt)
     -- Monthly salary: check if the last day of the month has just been reached
     if self.settings.monthlySalaryEnabled then
         self:checkMonthEnd()
+    elseif next(self.monthlyCosts) ~= nil then
+        -- Monthly mode was switched off with wages still accrued: settle once now
+        -- so the accrual is never orphaned (money still moves exactly once).
+        self:settlePendingMonthlyAccrual()
     end
 end
 
@@ -739,7 +758,8 @@ function WorkerSystem:processWorkerPayments(silent)
                 local wage = self:calculateLaborCost(worker, hoursWorked, hectaresWorked, rosterWorker, self.workerDailyHours[vehicleId])
 
                 if wage > 0 then
-                    self:chargeWage(worker.name, wage, self.settings:getCostModeName(), silent)
+                    local workerId = (rosterWorker and rosterWorker.uuid) or vehicleId
+                    self:chargeWage(workerId, worker.name, wage, self.settings:getCostModeName(), silent)
                     totalPaid = totalPaid + wage
                     workersCount = workersCount + 1
                     -- Accumulate into job total for the completion notification
@@ -770,7 +790,8 @@ function WorkerSystem:processWorkerPayments(silent)
 
             local name = self.workerNames[vehicleId] or "Dismissed Worker"
             if wage > 0 then
-                self:chargeWage(name, wage, self.settings:getCostModeName(), true)
+                local workerId = self.workerRosterUuid[vehicleId] or vehicleId
+                self:chargeWage(workerId, name, wage, self.settings:getCostModeName(), true)
                 totalPaid = totalPaid + wage
                 workersCount = workersCount + 1
             end
@@ -800,7 +821,7 @@ end
 
 function WorkerSystem:testPayment()
     -- chargeWage already handles the notification, so no extra call needed here
-    return self:chargeWage("Test Worker", 100, "test")
+    return self:chargeWage("test", "Test Worker", 100, "test")
 end
 
 -- ─────────────────────────────────────────────────────────
@@ -855,15 +876,15 @@ function WorkerSystem:triggerMonthlySalaryDialog(month)
     local entries = {}
     local total   = 0
 
-    for workerName, amount in pairs(self.monthlyCosts) do
-        if amount > 0 then
+    for workerId, entry in pairs(self.monthlyCosts) do
+        if entry.amount > 0 then
             -- Apply 20 % late-payment penalty if player declined last month
-            local finalAmount = amount
+            local finalAmount = entry.amount
             if self.declinedLastMonth then
-                finalAmount = math.floor(amount * 1.20)
-                self:log("Late-pay penalty applied to %s: $%d -> $%d", workerName, amount, finalAmount)
+                finalAmount = math.floor(entry.amount * 1.20)
+                self:log("Late-pay penalty applied to %s: $%d -> $%d", entry.name, entry.amount, finalAmount)
             end
-            table.insert(entries, { name = workerName, amount = finalAmount })
+            table.insert(entries, { name = entry.name, amount = finalAmount })
             total = total + finalAmount
         end
     end
@@ -996,4 +1017,127 @@ function WorkerSystem:declineMonthlySalary()
 
     -- Keep monthlyCosts so the unpaid amounts carry over and are penalised next month
     self.declinedLastMonth = true
+end
+
+-- ─────────────────────────────────────────────────────────
+-- Monthly salary persistence
+-- Monthly mode accrues wages across the month and settles once at month end, so
+-- the accrual (monthlyCosts) plus the paid-marker (lastMonthPaid) and the decline
+-- carry-over flag must survive a mid-month save/reload, or a reload would silently
+-- drop the wages owed so far. Server-side only (wage billing is server-gated) and
+-- written to its own isolated file so a bad write can never corrupt the roster.
+-- ─────────────────────────────────────────────────────────
+WorkerSystem.MONTHLY_SAVE_FILE      = "workerMonthlySalary.xml"
+WorkerSystem.MONTHLY_SAVE_ROOT      = "workerMonthlySalary"
+WorkerSystem.MONTHLY_SCHEMA_VERSION = "1"
+
+function WorkerSystem:saveMonthlyState(missionInfo)
+    local dir = missionInfo and missionInfo.savegameDirectory
+    if not dir then
+        return false
+    end
+
+    local path = dir .. "/" .. WorkerSystem.MONTHLY_SAVE_FILE
+    local xmlFile = XMLFile.create("wc_MonthlyXML", path, WorkerSystem.MONTHLY_SAVE_ROOT)
+    if xmlFile == nil then
+        self:log("Monthly salary save failed to create file: %s", path)
+        return false
+    end
+
+    local root = WorkerSystem.MONTHLY_SAVE_ROOT
+    xmlFile:setString(root .. "#version", WorkerSystem.MONTHLY_SCHEMA_VERSION)
+    xmlFile:setInt(root .. "#lastMonthPaid", self.lastMonthPaid or -1)
+    xmlFile:setBool(root .. "#declinedLastMonth", self.declinedLastMonth == true)
+
+    local i = 0
+    for workerId, entry in pairs(self.monthlyCosts or {}) do
+        if entry and entry.amount and entry.amount > 0 then
+            local key = string.format("%s.worker(%d)", root, i)
+            xmlFile:setString(key .. "#id", tostring(workerId))
+            xmlFile:setString(key .. "#name", entry.name)
+            xmlFile:setInt(key .. "#amount", math.floor(entry.amount))
+            i = i + 1
+        end
+    end
+
+    xmlFile:save()
+    xmlFile:delete()
+    return true
+end
+
+function WorkerSystem:loadMonthlyState(missionInfo)
+    local dir = missionInfo and missionInfo.savegameDirectory
+    if not dir then
+        return false
+    end
+
+    local path = dir .. "/" .. WorkerSystem.MONTHLY_SAVE_FILE
+    local xmlFile = XMLFile.loadIfExists("wc_MonthlyXML", path, WorkerSystem.MONTHLY_SAVE_ROOT)
+    if xmlFile == nil then
+        return false  -- new career or immediate-mode save: nothing to restore
+    end
+
+    local root = WorkerSystem.MONTHLY_SAVE_ROOT
+    self.lastMonthPaid     = xmlFile:getInt(root .. "#lastMonthPaid", self.lastMonthPaid or -1)
+    self.declinedLastMonth = xmlFile:getBool(root .. "#declinedLastMonth", false)
+
+    self.monthlyCosts = {}
+    xmlFile:iterate(root .. ".worker", function(_, key)
+        local name   = xmlFile:getString(key .. "#name")
+        local amount = xmlFile:getInt(key .. "#amount", 0)
+        local id     = xmlFile:getString(key .. "#id") or name
+        if name and amount > 0 then
+            self.monthlyCosts[id] = { name = name, amount = amount }
+        end
+    end)
+
+    xmlFile:delete()
+    return true
+end
+
+--- Settle any pending monthly accrual immediately, with no dialog. Used when
+--- monthly-salary mode is switched OFF mid-month so accrued wages are never
+--- orphaned - the money still moves exactly once. Keeps the accrual on failure
+--- (e.g. no valid farm yet) so the next update tick retries.
+function WorkerSystem:settlePendingMonthlyAccrual()
+    if not self.monthlyCosts then
+        return
+    end
+
+    local total = 0
+    for _, entry in pairs(self.monthlyCosts) do
+        if entry and entry.amount and entry.amount > 0 then
+            total = total + entry.amount
+        end
+    end
+
+    if total <= 0 then
+        self.monthlyCosts = {}
+        return
+    end
+
+    local farmId = g_currentMission and g_currentMission:getFarmId()
+    if not farmId or farmId == 0 then
+        return  -- no valid farm this tick; keep the accrual and retry
+    end
+
+    self._isProcessingPayment = true
+    local ok, err = pcall(function()
+        g_currentMission:addMoney(-total, farmId, MoneyType.OTHER, false)
+    end)
+    self._isProcessingPayment = false
+
+    if not ok then
+        self:log("settlePendingMonthlyAccrual: addMoney error: %s", tostring(err))
+        return  -- keep the accrual and retry next tick
+    end
+
+    self:log("Settled pending monthly accrual after mode switch: $%d (farm %d)", total, farmId)
+    if self.settings.showNotifications then
+        self:showNotification("Worker Salary Settled",
+            string.format("Pending monthly wages settled: -$%d", total))
+    end
+
+    self.monthlyCosts      = {}
+    self.declinedLastMonth = false
 end

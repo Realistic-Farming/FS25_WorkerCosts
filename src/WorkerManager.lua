@@ -178,6 +178,11 @@ function WorkerManager:onMissionLoaded()
 
     if self.workerSystem then
         self.workerSystem:initialize()
+        -- Restore the persisted monthly-salary accrual (server-side; its own file).
+        -- After initialize() so nothing clobbers the loaded values.
+        if g_currentMission and g_currentMission:getIsServer() then
+            self.workerSystem:loadMonthlyState(g_currentMission.missionInfo)
+        end
     end
 
     -- Single startup banner — WorkerSystem no longer shows its own.
@@ -253,6 +258,12 @@ function WorkerManager:saveWorkerData(missionInfo)
     -- isolated hireHallCore.xml (a bad write here can never corrupt the roster file).
     if self.hireHall then
         self.hireHall:save(missionInfo)
+    end
+
+    -- Monthly-salary accrual persists into its own isolated file so a mid-month
+    -- reload cannot drop wages owed (monthly mode settles once at month end).
+    if self.workerSystem then
+        self.workerSystem:saveMonthlyState(missionInfo)
     end
 end
 

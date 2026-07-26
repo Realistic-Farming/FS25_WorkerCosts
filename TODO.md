@@ -11,6 +11,7 @@
 - [x] Billing model decided + built: per-in-game-day billing (middle path), replacing the real-time interval. DONE (0c808d1), shipped in v2.2.2.2.
 
 ## Bugs
+- [x] Monthly-salary double-charge (100d3c6): monthly-salary billing mode no longer charges wages twice. This is the ledger's WorkerCosts monthly double-charge gremlin (WorkerSystem.lua), closed.
 - [x] CRITICAL (MP): the wage-charge chain ran ungated on every peer; now server-gated. FIXED (8c70f45), shipped in v2.2.2.2. (Point 7 / F15-F19 class.)
 - [x] Design flag resolved: real-time billing replaced by per-in-game-day billing, coherent with the onDayChange cost systems. DONE (0c808d1).
 - [x] G2: the addMoney fallback heuristic tightened. DONE (8c70f45).

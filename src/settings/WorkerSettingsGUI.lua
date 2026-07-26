@@ -345,10 +345,20 @@ function WorkerSettingsGUI:consoleCommandHire(name)
     if name == nil or name == "" then
         return "Usage: WorkerCostsHire <name>"
     end
-    local w = g_WorkerManager.workerRoster:createWorker(name)
-    local msg = string.format("Hired '%s' (id=%d)", w.name, w.uuid)
-    print(msg)
-    return msg
+    local mgr = g_WorkerManager
+    local pool = mgr:getRecruitPool()
+    local slot = nil
+    for i, cand in ipairs(pool) do
+        if cand.name and cand.name:lower() == name:lower() then
+            slot = i
+            break
+        end
+    end
+    if slot == nil then
+        return string.format("No recruit named '%s' in pool. Use WorkerCostsShowRoster to see candidates.", name)
+    end
+    mgr:hireWorker(slot)
+    return string.format("Hire request sent for '%s' (slot %d)", name, slot)
 end
 
 function WorkerSettingsGUI:consoleCommandFire(idStr)
@@ -369,6 +379,8 @@ function WorkerSettingsGUI:consoleCommandFire(idStr)
         severance = mgr.workerSystem:chargeSeverance(w.name, w.level)
     end
     mgr.workerRoster:removeWorker(uuid)
+    mgr:saveWorkerData()
+    mgr:_broadcastRosterSync()
     local money = g_i18n and g_i18n:formatMoney(severance, 0, true, true) or ("$" .. severance)
     local msg = string.format("Fired '%s' (id=%d); severance %s", w.name, uuid, money)
     print(msg)
@@ -397,6 +409,8 @@ function WorkerSettingsGUI:consoleCommandAssign(idStr)
         return "That vehicle has no stable id yet - save the game once, then assign"
     end
     mgr.workerRoster:assignVehiclePersistent(uuid, uniqueId)
+    mgr:saveWorkerData()
+    mgr:_broadcastRosterSync()
     local vname = (vehicle.getFullName and vehicle:getFullName()) or "the vehicle"
     local msg = string.format("Pinned '%s' (id=%d) to %s", w.name, uuid, vname)
     print(msg)
@@ -415,6 +429,8 @@ function WorkerSettingsGUI:consoleCommandUnassign(idStr)
     if not mgr.workerRoster:unassignPersistent(uuid) then
         return string.format("No worker with id=%d", uuid)
     end
+    mgr:saveWorkerData()
+    mgr:_broadcastRosterSync()
     local msg = string.format("Unpinned worker id=%d", uuid)
     print(msg)
     return msg
@@ -535,8 +551,8 @@ function WorkerSettingsGUI:consoleCommandTestMonthlySalary()
     if g_WorkerManager and g_WorkerManager.workerSystem then
         local ws = g_WorkerManager.workerSystem
         -- Add a fake entry so the dialog has something to show
-        ws.monthlyCosts["Test Worker A"] = (ws.monthlyCosts["Test Worker A"] or 0) + 1200
-        ws.monthlyCosts["Test Worker B"] = (ws.monthlyCosts["Test Worker B"] or 0) + 850
+        ws.monthlyCosts["test_a"] = { name = "Test Worker A", amount = (ws.monthlyCosts["test_a"] and ws.monthlyCosts["test_a"].amount or 0) + 1200 }
+        ws.monthlyCosts["test_b"] = { name = "Test Worker B", amount = (ws.monthlyCosts["test_b"] and ws.monthlyCosts["test_b"].amount or 0) + 850 }
         -- Force trigger
         local month = 1
         if g_currentMission and g_currentMission.environment then

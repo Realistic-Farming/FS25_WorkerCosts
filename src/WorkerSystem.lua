@@ -72,7 +72,7 @@ function WorkerSystem.new(settings, roster)
     self._hookedAddMoney = false
 
     -- Monthly salary tracking
-    -- monthlyCosts[workerName] = accumulated amount for this month
+    -- monthlyCosts[workerId] = { name = displayName, amount = accumulated $ for this month }
     self.monthlyCosts   = {}
     self.lastDay        = -1       -- last in-game day we checked
     self.lastMonthPaid  = -1       -- last in-game month that triggered the salary dialog
@@ -418,10 +418,12 @@ function WorkerSystem:calculateLaborCost(worker, hoursWorked, hectaresWorked, ro
         cost = cost * WorkerSystem.WEATHER_MULT
     end
 
-    -- 5. Overtime: once a vehicle passes the daily hour threshold, the rest of
-    -- the day bills at the overtime rate.
+    -- 5. Graduated overtime: only the fraction of hours above the daily
+    -- threshold bills at the premium rate (not a step function on the
+    -- entire cost).
     if dailyHours and dailyHours > WorkerSystem.OVERTIME_HOURS then
-        cost = cost * WorkerSystem.OVERTIME_MULT
+        local overtimeFraction = 1 - (WorkerSystem.OVERTIME_HOURS / dailyHours)
+        cost = cost * (1 + overtimeFraction * (WorkerSystem.OVERTIME_MULT - 1))
     end
 
     return math.floor(cost)
@@ -536,7 +538,7 @@ end
 -- @param silent  If true, suppresses the per-payment HUD notification.
 --                Used when flushing interval payments into the monthly salary
 --                summary so the dialog is the single notification, not both.
-function WorkerSystem:chargeWage(workerName, amount, workType, silent)
+function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
     if not g_currentMission then
         self:log("Cannot charge wage: No mission")
         return false
@@ -561,7 +563,12 @@ function WorkerSystem:chargeWage(workerName, amount, workType, silent)
     -- moving any money. The accrual is persisted (saveMonthlyState) so a mid-month
     -- reload cannot drop what is owed.
     if self.settings.monthlySalaryEnabled then
-        self.monthlyCosts[workerName] = (self.monthlyCosts[workerName] or 0) + amount
+        local entry = self.monthlyCosts[workerId]
+        if entry then
+            entry.amount = entry.amount + amount
+        else
+            self.monthlyCosts[workerId] = { name = workerName, amount = amount }
+        end
         self:log("%s %s wage accrued for monthly salary: $%d (farm %d)", workerName, workType, amount, farmId)
         return true
     end
@@ -751,7 +758,8 @@ function WorkerSystem:processWorkerPayments(silent)
                 local wage = self:calculateLaborCost(worker, hoursWorked, hectaresWorked, rosterWorker, self.workerDailyHours[vehicleId])
 
                 if wage > 0 then
-                    self:chargeWage(worker.name, wage, self.settings:getCostModeName(), silent)
+                    local workerId = (rosterWorker and rosterWorker.uuid) or vehicleId
+                    self:chargeWage(workerId, worker.name, wage, self.settings:getCostModeName(), silent)
                     totalPaid = totalPaid + wage
                     workersCount = workersCount + 1
                     -- Accumulate into job total for the completion notification
@@ -782,7 +790,8 @@ function WorkerSystem:processWorkerPayments(silent)
 
             local name = self.workerNames[vehicleId] or "Dismissed Worker"
             if wage > 0 then
-                self:chargeWage(name, wage, self.settings:getCostModeName(), true)
+                local workerId = self.workerRosterUuid[vehicleId] or vehicleId
+                self:chargeWage(workerId, name, wage, self.settings:getCostModeName(), true)
                 totalPaid = totalPaid + wage
                 workersCount = workersCount + 1
             end
@@ -812,7 +821,7 @@ end
 
 function WorkerSystem:testPayment()
     -- chargeWage already handles the notification, so no extra call needed here
-    return self:chargeWage("Test Worker", 100, "test")
+    return self:chargeWage("test", "Test Worker", 100, "test")
 end
 
 -- ─────────────────────────────────────────────────────────
@@ -867,15 +876,15 @@ function WorkerSystem:triggerMonthlySalaryDialog(month)
     local entries = {}
     local total   = 0
 
-    for workerName, amount in pairs(self.monthlyCosts) do
-        if amount > 0 then
+    for workerId, entry in pairs(self.monthlyCosts) do
+        if entry.amount > 0 then
             -- Apply 20 % late-payment penalty if player declined last month
-            local finalAmount = amount
+            local finalAmount = entry.amount
             if self.declinedLastMonth then
-                finalAmount = math.floor(amount * 1.20)
-                self:log("Late-pay penalty applied to %s: $%d -> $%d", workerName, amount, finalAmount)
+                finalAmount = math.floor(entry.amount * 1.20)
+                self:log("Late-pay penalty applied to %s: $%d -> $%d", entry.name, entry.amount, finalAmount)
             end
-            table.insert(entries, { name = workerName, amount = finalAmount })
+            table.insert(entries, { name = entry.name, amount = finalAmount })
             total = total + finalAmount
         end
     end
@@ -1041,11 +1050,12 @@ function WorkerSystem:saveMonthlyState(missionInfo)
     xmlFile:setBool(root .. "#declinedLastMonth", self.declinedLastMonth == true)
 
     local i = 0
-    for workerName, amount in pairs(self.monthlyCosts or {}) do
-        if amount and amount > 0 then
+    for workerId, entry in pairs(self.monthlyCosts or {}) do
+        if entry and entry.amount and entry.amount > 0 then
             local key = string.format("%s.worker(%d)", root, i)
-            xmlFile:setString(key .. "#name", workerName)
-            xmlFile:setInt(key .. "#amount", math.floor(amount))
+            xmlFile:setString(key .. "#id", tostring(workerId))
+            xmlFile:setString(key .. "#name", entry.name)
+            xmlFile:setInt(key .. "#amount", math.floor(entry.amount))
             i = i + 1
         end
     end
@@ -1075,8 +1085,9 @@ function WorkerSystem:loadMonthlyState(missionInfo)
     xmlFile:iterate(root .. ".worker", function(_, key)
         local name   = xmlFile:getString(key .. "#name")
         local amount = xmlFile:getInt(key .. "#amount", 0)
+        local id     = xmlFile:getString(key .. "#id") or name
         if name and amount > 0 then
-            self.monthlyCosts[name] = amount
+            self.monthlyCosts[id] = { name = name, amount = amount }
         end
     end)
 
@@ -1094,9 +1105,9 @@ function WorkerSystem:settlePendingMonthlyAccrual()
     end
 
     local total = 0
-    for _, amount in pairs(self.monthlyCosts) do
-        if amount and amount > 0 then
-            total = total + amount
+    for _, entry in pairs(self.monthlyCosts) do
+        if entry and entry.amount and entry.amount > 0 then
+            total = total + entry.amount
         end
     end
 

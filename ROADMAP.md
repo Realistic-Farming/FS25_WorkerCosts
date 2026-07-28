@@ -19,6 +19,7 @@
 - [x] Monthly-salary double-charge gremlin (100d3c6): monthly-salary mode no longer double-charges wages. DONE.
 - [x] Legendary tier (fast-track F1): 4th tier with the LOCKED values. DONE (d20da2f), shipped v2.2.2.2.
 - [!] ProStaff modifiers (Point 5): read getWageModifier / getFatigueRecoveryBonus / getFatigueMitigation in calculateLaborCost and fatigue recovery; neutral 1.0 when ProStaff absent. Blocked on the ProStaff build (brief pulled, under re-review).
+- [x] 2026-07-26 bug sweep: WC-001 / WC-002 / WC-003 fixed and merged to main.
 
 ## Mid-term (this season)
 - [x] Bedrock migration: StateLedger (4328920), NetworkSync v2 (c179141), MasterHUD roster panel (4b10bd5), SettingsHub (ff35ed0). DONE, shipped v2.2.2.2, addMoney hook intact. (ESC WorkerSettingsUI removal still open.)

@@ -1590,9 +1590,7 @@ Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
     </l10n>
 
     <inputBinding>
-        <actionBinding action="WC_OPEN_ROSTER">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_h" />
-        </actionBinding>
+        <actionBinding action="WC_OPEN_ROSTER" />
     </inputBinding>
 
 </modDesc>

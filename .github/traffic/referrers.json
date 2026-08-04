@@ -3011,23 +3011,23 @@
   "2026-08-04": [
     {
       "referrer": "github.com",
-      "count": 93,
-      "uniques": 47
+      "count": 81,
+      "uniques": 42
     },
     {
       "referrer": "Google",
-      "count": 19,
-      "uniques": 18
-    },
-    {
-      "referrer": "kingmods.net",
-      "count": 6,
-      "uniques": 5
+      "count": 32,
+      "uniques": 23
     },
     {
       "referrer": "Bing",
-      "count": 3,
-      "uniques": 3
+      "count": 5,
+      "uniques": 4
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 5,
+      "uniques": 4
     },
     {
       "referrer": "yandex.ru",
@@ -3035,8 +3035,8 @@
       "uniques": 2
     },
     {
-      "referrer": "ya.ru",
-      "count": 1,
+      "referrer": "forbidden-mods.de",
+      "count": 2,
       "uniques": 1
     }
   ]

@@ -123,12 +123,26 @@ function WCModGui:load()
     -- Load our custom profiles first so all WC_ names are available
     g_gui:loadProfiles(MOD_DIR .. "xml/gui/guiProfiles.xml")
 
-    -- Load the outer InGameMenu page (the icon-tab entry point)
-    if not self:loadMenuFrame(WCMenuPage) then
-        Logging.warning("WCModGui: WCMenuPage already loaded or failed.")
+    -- RF Esc greenfield: one Realistic Farming door; skip legacy only when door actually exists.
+    -- RfEscBootstrap ~= nil means class sourced, not door present — call tryRegister/ensureDoor first.
+    if RfEscBootstrap ~= nil then
+        local ok = false
+        if WcRfPdaGuest ~= nil and type(WcRfPdaGuest.tryRegister) == "function" then
+            ok = WcRfPdaGuest.tryRegister()
+        end
+        if ok and g_inGameMenu ~= nil and g_inGameMenu.menuRealisticFarming ~= nil then
+            Logging.info("WCModGui: RF Esc door + workerCosts module ready (legacy WCMenuPage skipped)")
+        else
+            Logging.warning("WCModGui: RF Esc register pending; will retry on update (no legacy until door exists)")
+        end
+    else
+        -- Load the outer InGameMenu page (the icon-tab entry point)
+        if not self:loadMenuFrame(WCMenuPage) then
+            Logging.warning("WCModGui: WCMenuPage already loaded or failed.")
+        end
     end
 
-    -- Load the inner TabbedMenu with its sub-frames
+    -- Load the inner TabbedMenu with its sub-frames (Worker Manager deep desk)
     self:loadTabbedMenu()
 end
 
@@ -201,6 +215,23 @@ function WCModGui:onMapLoaded()
             g_inGameMenu.pagingTabList.listItemAlignment = SmoothListElement.ALIGN_START
         end
         self:load()
+    end
+end
+
+function WCModGui:update(_dt)
+    if g_client == nil or RfEscBootstrap == nil or WcRfPdaGuest == nil then
+        return
+    end
+    -- Retry until door exists AND module registered (isRegistered alone is not enough).
+    local doorPresent = g_inGameMenu ~= nil and g_inGameMenu.menuRealisticFarming ~= nil
+    if doorPresent and type(WcRfPdaGuest.isRegistered) == "function" and WcRfPdaGuest.isRegistered() then
+        return
+    end
+    if type(WcRfPdaGuest.tryRegister) == "function" then
+        local ok = WcRfPdaGuest.tryRegister()
+        if ok then
+            Logging.info("WCModGui: RF Esc door + workerCosts module ready (legacy WCMenuPage skipped)")
+        end
     end
 end
 

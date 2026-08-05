@@ -61,6 +61,13 @@ source(modDirectory .. "src/gui/WCAboutFrame.lua")
 source(modDirectory .. "src/gui/WCSalaryDialog.lua")
 source(modDirectory .. "src/gui/WCGui.lua")
 source(modDirectory .. "src/gui/WCMenuPage.lua")
+-- RF Esc greenfield (NO-HOST Option B): shared door + Worker Costs module.
+source(modDirectory .. "src/gui/RfEscModules.lua")
+source(modDirectory .. "src/gui/RfPdaMenuPage.lua")
+source(modDirectory .. "src/gui/RfEscBootstrap.lua")
+-- DEV: Esc UIDebugger (F6). Install no-ops if Soil (or another mod) already registered.
+source(modDirectory .. "src/gui/RfEscUiDebugger.lua")
+source(modDirectory .. "src/gui/WcRfPdaGuest.lua")
 source(modDirectory .. "src/gui/WCModGui.lua")
 
 local wm
@@ -115,6 +122,9 @@ FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
 FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, function(mission, dt)
     if wm then
         wm:update(dt)
+    end
+    if g_wcModGui ~= nil and type(g_wcModGui.update) == "function" then
+        g_wcModGui:update(dt)
     end
 end)
 

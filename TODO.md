@@ -30,6 +30,9 @@
 - [ ] Keep all 26 languages in step for any new setting.
 - [ ] Update README/version on each release.
 
+## Esc deep-desk door (2026-08-06)
+- [x] Add "Open Worker Manager" button to the Esc RF panel so all four Worker Manager tabs open without the Farm Tablet. DONE in code, deployed. In-game observation pending.
+
 ## Blocked / waiting on
 - [x] Billing-model decision RESOLVED: per-in-game-day (middle path), built (0c808d1).
 - [!] ProStaff modifier wiring (Point 5) waits on the ProStaff build (brief pulled, under re-review).

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.2.2.2</version>
+    <version>2.2.2.6</version>
     <modName>FS25_WorkerCostsMod</modName>
     <title>
         <en>Realistic Worker Costs</en>
@@ -1586,6 +1586,110 @@ BETALINGER
 Afregnes en gang pr. spildag ved midnat, baseret på det bearbejdede areal. Medarbejdere, der ikke er aktive, opkræves ikke for den pågældende dag.
 
 Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
+        </text>
+        <text name="rf_pda_col_area">
+            <br>[EN] Area</br>
+            <cz>[EN] Area</cz>
+            <da>[EN] Area</da>
+            <de>[EN] Area</de>
+            <en>Area</en>
+            <es>[EN] Area</es>
+            <fr>[EN] Area</fr>
+            <it>[EN] Area</it>
+            <pl>[EN] Area</pl>
+            <ru>[EN] Area</ru>
+            <uk>[EN] Area</uk>
+        </text>
+        <text name="rf_pda_col_fert">
+            <br>[EN] Fertilizer</br>
+            <cz>[EN] Fertilizer</cz>
+            <da>[EN] Fertilizer</da>
+            <de>[EN] Fertilizer</de>
+            <en>Fertilizer</en>
+            <es>[EN] Fertilizer</es>
+            <fr>[EN] Fertilizer</fr>
+            <it>[EN] Fertilizer</it>
+            <pl>[EN] Fertilizer</pl>
+            <ru>[EN] Fertilizer</ru>
+            <uk>[EN] Fertilizer</uk>
+        </text>
+        <text name="rf_pda_sample_hint">
+            <br>[EN] Soil sample dates appear here when available.</br>
+            <cz>[EN] Soil sample dates appear here when available.</cz>
+            <da>[EN] Soil sample dates appear here when available.</da>
+            <de>[EN] Soil sample dates appear here when available.</de>
+            <en>Soil sample dates appear here when available.</en>
+            <es>[EN] Soil sample dates appear here when available.</es>
+            <fr>[EN] Soil sample dates appear here when available.</fr>
+            <it>[EN] Soil sample dates appear here when available.</it>
+            <pl>[EN] Soil sample dates appear here when available.</pl>
+            <ru>[EN] Soil sample dates appear here when available.</ru>
+            <uk>[EN] Soil sample dates appear here when available.</uk>
+        </text>
+        <text name="rf_pda_section_treatment">
+            <br>[EN] Treatment</br>
+            <cz>[EN] Treatment</cz>
+            <da>[EN] Treatment</da>
+            <de>[EN] Treatment</de>
+            <en>Treatment</en>
+            <es>[EN] Treatment</es>
+            <fr>[EN] Treatment</fr>
+            <it>[EN] Treatment</it>
+            <pl>[EN] Treatment</pl>
+            <ru>[EN] Treatment</ru>
+            <uk>[EN] Treatment</uk>
+        </text>
+        <text name="rf_pda_treat_products">
+            <br>[EN] Products</br>
+            <cz>[EN] Products</cz>
+            <da>[EN] Products</da>
+            <de>[EN] Products</de>
+            <en>Products</en>
+            <es>[EN] Products</es>
+            <fr>[EN] Products</fr>
+            <it>[EN] Products</it>
+            <pl>[EN] Products</pl>
+            <ru>[EN] Products</ru>
+            <uk>[EN] Products</uk>
+        </text>
+        <text name="sf_pda_col_field">
+            <br>[EN] Field</br>
+            <cz>[EN] Field</cz>
+            <da>[EN] Field</da>
+            <de>[EN] Field</de>
+            <en>Field</en>
+            <es>[EN] Field</es>
+            <fr>[EN] Field</fr>
+            <it>[EN] Field</it>
+            <pl>[EN] Field</pl>
+            <ru>[EN] Field</ru>
+            <uk>[EN] Field</uk>
+        </text>
+        <text name="sf_pda_col_status">
+            <br>[EN] Status</br>
+            <cz>[EN] Status</cz>
+            <da>[EN] Status</da>
+            <de>[EN] Status</de>
+            <en>Status</en>
+            <es>[EN] Status</es>
+            <fr>[EN] Status</fr>
+            <it>[EN] Status</it>
+            <pl>[EN] Status</pl>
+            <ru>[EN] Status</ru>
+            <uk>[EN] Status</uk>
+        </text>
+        <text name="sf_pda_no_fields">
+            <br>[EN] No field data recorded yet.</br>
+            <cz>[EN] No field data recorded yet.</cz>
+            <da>[EN] No field data recorded yet.</da>
+            <de>[EN] No field data recorded yet.</de>
+            <en>No field data recorded yet.</en>
+            <es>[EN] No field data recorded yet.</es>
+            <fr>[EN] No field data recorded yet.</fr>
+            <it>[EN] No field data recorded yet.</it>
+            <pl>[EN] No field data recorded yet.</pl>
+            <ru>[EN] No field data recorded yet.</ru>
+            <uk>[EN] No field data recorded yet.</uk>
         </text>
     </l10n>
 

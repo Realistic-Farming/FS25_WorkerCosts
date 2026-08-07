@@ -3039,5 +3039,37 @@
       "count": 2,
       "uniques": 1
     }
+  ],
+  "2026-08-07": [
+    {
+      "referrer": "github.com",
+      "count": 91,
+      "uniques": 46
+    },
+    {
+      "referrer": "Google",
+      "count": 33,
+      "uniques": 24
+    },
+    {
+      "referrer": "Bing",
+      "count": 5,
+      "uniques": 4
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 4,
+      "uniques": 3
+    },
+    {
+      "referrer": "forbidden-mods.de",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "referrer": "yandex.ru",
+      "count": 1,
+      "uniques": 1
+    }
   ]
 }

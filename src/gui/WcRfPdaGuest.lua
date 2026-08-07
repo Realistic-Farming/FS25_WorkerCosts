@@ -675,6 +675,14 @@ function WcRfPdaGuest.standDownLegacyEsc()
 end
 
 function WcRfPdaGuest.tryRegister()
+    -- Suite soft-detect: publish the Worker Manager screen on the mission so the
+    -- Esc door host (whichever mod built RfPdaMenuPage) can open it from its own
+    -- env. g_currentMission is the only table every mod can read; bare g_wcGui is
+    -- WorkerCosts-scoped and nil to the host.
+    if g_currentMission ~= nil and g_wcGui ~= nil then
+        g_currentMission.rfWcGui = g_wcGui
+    end
+
     -- Equal Option B: WC may create menuRealisticFarming when Soil absent.
     -- Always ensureDoor when bootstrap class is sourced; never trust bare g_currentModDirectory at callback time.
     if RfEscBootstrap ~= nil then

@@ -3043,8 +3043,8 @@
   "2026-08-07": [
     {
       "referrer": "github.com",
-      "count": 91,
-      "uniques": 46
+      "count": 88,
+      "uniques": 45
     },
     {
       "referrer": "Google",
@@ -3058,11 +3058,16 @@
     },
     {
       "referrer": "kingmods.net",
-      "count": 4,
-      "uniques": 3
+      "count": 2,
+      "uniques": 2
     },
     {
       "referrer": "forbidden-mods.de",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "referrer": "ya.ru",
       "count": 2,
       "uniques": 1
     },

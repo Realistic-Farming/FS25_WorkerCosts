@@ -27423,21 +27423,21 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-07T00:36:30Z",
+    "timestamp": "2026-08-07T12:44:46Z",
     "date": "2026-08-07",
     "views": {
-      "count": 176,
-      "uniques": 89
+      "count": 177,
+      "uniques": 88
     },
     "clones": {
-      "count": 334,
-      "uniques": 93
+      "count": 333,
+      "uniques": 95
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 91,
-        "uniques": 46
+        "count": 88,
+        "uniques": 45
       },
       {
         "referrer": "Google",
@@ -27451,11 +27451,16 @@
       },
       {
         "referrer": "kingmods.net",
-        "count": 4,
-        "uniques": 3
+        "count": 2,
+        "uniques": 2
       },
       {
         "referrer": "forbidden-mods.de",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "referrer": "ya.ru",
         "count": 2,
         "uniques": 1
       },
@@ -27469,8 +27474,8 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 108,
-        "uniques": 82
+        "count": 104,
+        "uniques": 80
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
@@ -27481,7 +27486,7 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 15,
+        "count": 16,
         "uniques": 10
       },
       {
@@ -27503,6 +27508,12 @@
         "uniques": 2
       },
       {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md",
+        "title": "/blob/main/README.md",
+        "count": 2,
+        "uniques": 1
+      },
+      {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/55",
         "title": "/issues/55",
         "count": 2,
@@ -27519,19 +27530,13 @@
         "title": "/actions",
         "count": 1,
         "uniques": 1
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/CLAUDE.md",
-        "title": "/blob/main/CLAUDE.md",
-        "count": 1,
-        "uniques": 1
       }
     ],
     "releases": [
       {
         "assets": [
           {
-            "downloads": 76,
+            "downloads": 77,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

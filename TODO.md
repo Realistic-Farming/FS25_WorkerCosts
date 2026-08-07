@@ -40,3 +40,4 @@
 ## Esc panel buttons UI fixes (2026-08-07)
 - [x] Bottom-bar buttons were disabled while the Esc menu is paused (InGameMenu sets paused=true; TabbedMenu keeps a button clickable only with showWhenPaused). Fixed on every custom button.
 - [x] Help / Rotation Planner / Field Detail / Worker Manager callbacks now resolve Soil and WorkerCosts classes cross-mod via g_currentMission (the door is built by whichever mod loads first, and FS25 mod envs are per-mod). Deployed and verified in-game.
+- [x] Help button shows only on the Soil module; other modules show Back only.

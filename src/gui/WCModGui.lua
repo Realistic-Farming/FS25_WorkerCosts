@@ -194,6 +194,16 @@ function WCModGui:loadTabbedMenu()
 
     g_wcGui = WCGui.new(g_messageCenter, g_i18n, g_inputBinding)
 
+    -- Suite soft-detect: publish the Worker Manager screen on the mission so the
+    -- Esc door host (whichever mod built RfPdaMenuPage) can open it from its own
+    -- env. g_currentMission is the only table every mod can read; bare g_wcGui is
+    -- WorkerCosts-scoped and nil to the host. This is the authoritative publish
+    -- site, right where the screen is created (the guest's tryRegister can run
+    -- before this and must not rely on g_wcGui existing yet).
+    if g_currentMission ~= nil then
+        g_currentMission.rfWcGui = g_wcGui
+    end
+
     g_gui:loadGui(MOD_DIR .. "xml/gui/WCDashboardFrame.xml",    "WCDashboardFrame",    dashFrame,  true)
     g_gui:loadGui(MOD_DIR .. "xml/gui/WCWageSettingsFrame.xml", "WCWageSettingsFrame", wageFrame,  true)
     g_gui:loadGui(MOD_DIR .. "xml/gui/WCWorkerStatsFrame.xml",  "WCWorkerStatsFrame",  statsFrame, true)

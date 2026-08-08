@@ -335,7 +335,7 @@ function WCRosterPanel:drawTitleBar(snap)
     -- KPI strip on the right: head-count + working now + monthly payroll.
     local working = (snap and snap.working) or 0
     local payroll = (snap and snap.finance and snap.finance.monthAccrued) or 0
-    local money = (g_i18n and g_i18n:formatMoney(payroll, 0, true, true)) or ("$" .. payroll)
+    local money = (g_i18n and g_i18n:formatMoney(payroll, 0, true, true)) or tostring(payroll)
     local kpi = string.format("%d staff  -  %d working  -  %s/mo", count, working, money)
     self:drawText(xX - 0.014, ty + TB_H * 0.34, TS_INFO, kpi, C.dim, RenderText.ALIGN_RIGHT)
 end
@@ -363,7 +363,7 @@ function WCRosterPanel:drawLeftPane(snap)
     local nextCand = snap and snap.recruits and snap.recruits[1] or nil
     if nextCand then
         local cost = (g_i18n and g_i18n:formatMoney(nextCand.hireCost or 0, 0, true, true))
-            or ("$" .. (nextCand.hireCost or 0))
+            or tostring(nextCand.hireCost or 0)
         self:drawText(leftX + leftW, quotaY, TS_SMALL,
             string.format("%s %s", nextCand.name or "?", cost), C.dim, RenderText.ALIGN_RIGHT)
     end
@@ -467,7 +467,7 @@ function WCRosterPanel:drawDetailPane(snap)
 
     local dx = rx + 0.016
     local dw = rw - 0.032
-    local fmt = function(v) return (g_i18n and g_i18n:formatMoney(v, 0, true, true)) or ("$" .. math.floor(v or 0)) end
+    local fmt = function(v) return (g_i18n and g_i18n:formatMoney(v, 0, true, true)) or tostring(math.floor(v or 0)) end
     local labelW, valueW = 0.070, 0.085
     local barX = dx + labelW
     local barW = dw - labelW - valueW
@@ -645,7 +645,7 @@ function WCRosterPanel:handleClick(id, data)
             local cand = pool and pool[1]
             mgr:hireWorker(1)
             if cand then
-                local money = g_i18n and g_i18n:formatMoney(cand.hireCost or 0, 0, true, true) or ("$" .. (cand.hireCost or 0))
+                local money = g_i18n and g_i18n:formatMoney(cand.hireCost or 0, 0, true, true) or tostring(cand.hireCost or 0)
                 local used = (mgr.getHiresUsedToday and mgr:getHiresUsedToday()) or 0
                 self.infoMsg = string.format("Hired %s  (signing %s)  -  %d/%d today",
                     cand.name, money, used, limit)
@@ -664,7 +664,7 @@ function WCRosterPanel:handleClick(id, data)
         if mgr then
             local severance = (mgr.workerSystem and mgr.workerSystem:computeSeverance(data.level)) or 0
             mgr:fireWorker(data.uuid)
-            local money = g_i18n and g_i18n:formatMoney(severance, 0, true, true) or ("$" .. severance)
+            local money = g_i18n and g_i18n:formatMoney(severance, 0, true, true) or tostring(severance)
             self.infoMsg = string.format("Fired %s  (severance %s)", data.name or "Worker", money)
         end
 

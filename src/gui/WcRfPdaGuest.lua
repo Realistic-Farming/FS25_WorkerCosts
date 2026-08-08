@@ -1,7 +1,7 @@
 -- =========================================================
 -- WcRfPdaGuest
--- Esc RF PDA guest: Worker Costs FULL PORT (4 pages under PF-style subnav).
--- Stage-8 BUILD 2026-07-31 (Samantha DESIGN + George ENGINE ACK + Ash GO).
+-- Esc RF PDA guest: Worker Costs Dashboard | Wages | Workers (+ side About).
+-- Stage-8 densify 2026-08-05: getRosterSnapshot crew/recruits/hires/month/ESC-pays.
 -- Soft-detects g_currentMission.rfEscModules (NO HOST); registerModule.
 -- Soft-detect manager: g_currentMission.workerCostsManager.
 -- Hang fences: text / MultiTextOption setState only; no SmoothList reloadData.
@@ -10,7 +10,7 @@
 
 WcRfPdaGuest = {}
 
--- Capture at source() time — g_currentModDirectory is often nil at deferred/map-load callbacks.
+-- Capture at source() time - g_currentModDirectory is often nil at deferred/map-load callbacks.
 local MOD_DIR = g_currentModDirectory
 local WC_RF_MOD_NAME = g_currentModName
 local PANEL_ID = "workerCosts"
@@ -113,7 +113,7 @@ local function formatMoney(amount)
     if g_i18n and g_i18n.formatMoney then
         return g_i18n:formatMoney(amount, 0, true, false)
     end
-    return string.format("$%d", math.floor(amount + 0.5))
+    return tostring(math.floor(amount + 0.5))
 end
 
 local function labeled(label, value)
@@ -164,21 +164,139 @@ local function paintSideInfo(container)
     local howTo
     if idx == PAGE_WAGES then
         howTo = tr("rf_pda_side_info_wc_wages",
-            "Wages\n\nSet AI pay: billing on/off, Hourly (per active hour) or Per hectare (area worked), Wage Level, and notices. Reset restores defaults. Hire/fire in Worker Manager / Farm Tablet; confirm actives on Dashboard afterward.")
+            "Wages\n\nAI pay: on/off, Hourly or Per hectare, Wage Level, notices.\nEscape on salary dialog = Pay (not defer). Reset = defaults.\nHire/fire in Worker Manager / Farm Tablet.")
     elseif idx == PAGE_WORKERS then
         howTo = tr("rf_pda_side_info_wc_workers",
-            "Workers\n\nRoster glance: summary stats and per-worker cost for your wage settings. Read-only hire - use Worker Manager (or Farm Tablet with Pro-Staff). Dashboard shows who is active; Wages if rates look wrong.")
+            "Workers\n\nCrew board: status, pinned, trusted, level, fatigue.\nToday's recruits and hires left. Read-only here.\nHire/fire in Worker Manager / Farm Tablet.")
     else
         howTo = tr("rf_pda_side_info_wc_dashboard",
-            "Dashboard\n\nLive glance: wage mode (Hourly or Per hectare), rate, active AI workers, next midnight settle. Names = who is on the clock now. Billing on Wages; hire/fire in Worker Manager (or Farm Tablet with Pro-Staff), not here.")
+            "Dashboard\n\nWage mode, rate, active AI, next settle, month accrued.\nNames = on the clock now. Full roster on Workers.\nHire/fire in Worker Manager / Farm Tablet.")
     end
     local about = tr("rf_pda_side_info_wc_about",
-        "About: Wages settle at midnight on the in-game clock (fair 1x-120x). Settings save per game; MP follows the host. Hourly or Per hectare both scale with Wage Level. Pro-Staff links appear when loaded.")
+        "About: Midnight settle (fair 1x-120x). Settings per save; MP follows host.\nClients wait for host sync. Wage Level scales Hourly / Per hectare.\nPro-Staff links show when loaded.")
     local body = howTo .. "\n\n" .. about
     local shell = findDescendant(container, "wcSideInfoShell")
     local bodyEl = findDescendant(container, "wcSideInfoBody")
     setVis(shell, true)
     setText(bodyEl, body)
+end
+
+local LIST_MAX_LINES = 16
+
+local function getRosterSnap(mgr)
+    if mgr == nil or type(mgr.getRosterSnapshot) ~= "function" then
+        return nil
+    end
+    local ok, snap = pcall(function() return mgr:getRosterSnapshot() end)
+    if ok and type(snap) == "table" then
+        return snap
+    end
+    return nil
+end
+
+local function isAuthoritative(snap)
+    return snap ~= nil and snap.authoritative == true
+end
+
+local function awaitingSyncText()
+    return tr("wc_rf_pda_awaiting_sync", "Awaiting host sync")
+end
+
+--- Human crew line: Name · Working/Idle · pinned · trusted · Level · fatigue N%
+local function formatCrewLine(w)
+    if w == nil then
+        return ""
+    end
+    local parts = {}
+    table.insert(parts, tostring(w.name or tr("wc_rf_pda_worker_fallback", "Worker")))
+    local working = w.working == true
+    if type(w.status) == "string" then
+        local s = w.status:lower()
+        if s:find("working", 1, true) then
+            working = true
+        elseif s:find("idle", 1, true) then
+            working = false
+        end
+    end
+    table.insert(parts, working
+        and tr("wc_rf_pda_status_working", "Working")
+        or tr("wc_rf_pda_status_idle", "Idle"))
+    if w.pinned == true then
+        table.insert(parts, tr("wc_rf_pda_token_pinned", "pinned"))
+    end
+    if w.trusted == true then
+        table.insert(parts, tr("wc_rf_pda_token_trusted", "trusted"))
+    end
+    if w.levelName ~= nil and tostring(w.levelName) ~= "" then
+        table.insert(parts, tostring(w.levelName))
+    end
+    local fatigue = tonumber(w.fatigue) or 0
+    if fatigue > 0 then
+        table.insert(parts, string.format(tr("wc_rf_pda_fatigue_pct", "fatigue %d%%"), math.floor(fatigue * 100)))
+    end
+    return table.concat(parts, " · ")
+end
+
+local function formatRecruitLine(r)
+    if r == nil then
+        return ""
+    end
+    local slot = tonumber(r.slot) or 0
+    local name = tostring(r.name or tr("wc_rf_pda_worker_fallback", "Worker"))
+    local level = tostring(r.levelName or "")
+    local cost = formatMoney(tonumber(r.hireCost) or 0)
+    return string.format(tr("wc_rf_pda_recruit_line", "#%d %s · %s · %s"), slot, name, level, cost)
+end
+
+local function buildWorkersListText(snap)
+    local lines = {}
+    local workers = (snap and snap.workers) or {}
+    local recruits = (snap and snap.recruits) or {}
+    local crewTotal = #workers
+    local recruitLines = {}
+    if #recruits > 0 then
+        table.insert(recruitLines, tr("wc_rf_pda_recruits_title", "Today's recruits"))
+        for _, r in ipairs(recruits) do
+            table.insert(recruitLines, formatRecruitLine(r))
+        end
+    else
+        table.insert(recruitLines, tr("wc_rf_pda_no_recruits", "No recruits today"))
+    end
+    local recruitNeed = #recruitLines
+    local sep = 1 -- blank line between crew band and recruits
+    local crewBudget = LIST_MAX_LINES - recruitNeed - sep
+    if crewBudget < 1 then
+        crewBudget = 1
+    end
+
+    local showingClause = nil
+    if crewTotal == 0 then
+        table.insert(lines, tr("wc_rf_pda_no_staff", "No staff yet"))
+    else
+        local paintN = math.min(crewTotal, crewBudget)
+        if paintN < crewTotal then
+            showingClause = string.format(tr("wc_rf_pda_showing_n_of_m", "Showing %d of %d"), paintN, crewTotal)
+        end
+        for i = 1, paintN do
+            table.insert(lines, formatCrewLine(workers[i]))
+        end
+    end
+
+    table.insert(lines, "")
+    for _, rl in ipairs(recruitLines) do
+        table.insert(lines, rl)
+    end
+
+    -- Cap honesty: if somehow over MaxLines, trim crew first (recruits preferred).
+    while #lines > LIST_MAX_LINES and #lines > recruitNeed + 1 do
+        table.remove(lines, 1)
+        if showingClause == nil and crewTotal > 0 then
+            showingClause = string.format(tr("wc_rf_pda_showing_n_of_m", "Showing %d of %d"),
+                math.max(0, LIST_MAX_LINES - recruitNeed - 1), crewTotal)
+        end
+    end
+
+    return table.concat(lines, "\n"), showingClause
 end
 
 local function seedSubnav(container)
@@ -245,6 +363,8 @@ local function paintDashboard(container, lightOnly)
     end
     local settings = mgr.settings
     local ws = mgr.workerSystem
+    local snap = getRosterSnap(mgr)
+    local auth = isAuthoritative(snap)
 
     if not lightOnly then
         local status = settings.enabled and tr("wc_status_active", "Active") or tr("wc_status_inactive", "Inactive")
@@ -269,29 +389,51 @@ local function paintDashboard(container, lightOnly)
 
     local workers = ws:getActiveWorkers()
     local workerCount = #workers
-    setText(findDescendant(container, "wcDashWorkers"),
-        labeled(tr("wc_label_active_workers", "Active Workers"), tostring(workerCount)))
-
     local namesEl = findDescendant(container, "wcDashWorkerNames")
-    if workerCount > 0 then
-        local names = {}
-        local roster = mgr.workerRoster
-        for _, w in ipairs(workers) do
-            local label = w.name
-            if w.vehicleName ~= nil and w.vehicleName ~= w.name then
-                label = string.format("%s (%s)", w.name, w.vehicleName)
-            end
-            if roster then
-                local rw = roster:getWorkerByVehicle(tostring(w.vehicle))
-                if rw and WorkerRoster and WorkerRoster.levelName then
-                    label = string.format("[%s] %s", WorkerRoster.levelName(rw.level), label)
-                end
-            end
-            table.insert(names, label)
-        end
-        setText(namesEl, table.concat(names, "\n"))
+
+    if not auth then
+        setText(findDescendant(container, "wcDashWorkers"),
+            labeled(tr("wc_label_active_workers", "Active Workers"), awaitingSyncText()))
+        setText(findDescendant(container, "wcDashEstimate"), awaitingSyncText())
+        setText(namesEl, awaitingSyncText())
     else
-        setText(namesEl, tr("wc_no_workers", "No active workers"))
+        setText(findDescendant(container, "wcDashWorkers"),
+            labeled(tr("wc_label_active_workers", "Active Workers"), tostring(workerCount)))
+
+        local monthAccrued = 0
+        local est = 0
+        if snap.finance ~= nil then
+            monthAccrued = tonumber(snap.finance.monthAccrued) or 0
+            est = tonumber(snap.finance.estIntervalCost) or 0
+        end
+        if workerCount > 0 and (est == 0 or est == nil) and ws.getEstimatedIntervalCost then
+            est = ws:getEstimatedIntervalCost(workerCount) or 0
+        end
+        setText(findDescendant(container, "wcDashEstimate"),
+            string.format(tr("wc_rf_pda_month_est", "Month: %s · Est: %s"),
+                formatMoney(monthAccrued), formatMoney(est)))
+
+        -- Stage-7: on-the-clock names only (full roster lives on Workers).
+        if workerCount > 0 then
+            local names = {}
+            local roster = mgr.workerRoster
+            for _, w in ipairs(workers) do
+                local label = w.name
+                if w.vehicleName ~= nil and w.vehicleName ~= w.name then
+                    label = string.format("%s (%s)", w.name, w.vehicleName)
+                end
+                if roster then
+                    local rw = roster:getWorkerByVehicle(tostring(w.vehicle))
+                    if rw and WorkerRoster and WorkerRoster.levelName then
+                        label = string.format("[%s] %s", WorkerRoster.levelName(rw.level), label)
+                    end
+                end
+                table.insert(names, label)
+            end
+            setText(namesEl, table.concat(names, "\n"))
+        else
+            setText(namesEl, tr("wc_no_workers", "No active workers"))
+        end
     end
 
     local remaining = 0
@@ -303,14 +445,6 @@ local function paintDashboard(container, lightOnly)
     local mins = math.floor((remaining % 3600000) / 60000)
     setText(findDescendant(container, "wcDashCountdown"),
         labeled(tr("wc_label_next_payment", "Next Payment"), string.format("%d:%02d", hrs, mins)))
-
-    if workerCount > 0 then
-        setText(findDescendant(container, "wcDashEstimate"),
-            labeled(tr("wc_label_est_cost", "Est. Cost"), formatMoney(ws:getEstimatedIntervalCost(workerCount))))
-    else
-        setText(findDescendant(container, "wcDashEstimate"),
-            labeled(tr("wc_label_est_cost", "Est. Cost"), "-"))
-    end
     -- Farm balance intentionally omitted on Esc (Wizard LOCK).
 end
 
@@ -362,7 +496,7 @@ local function syncWageWidgets(container)
         for i = 1, 3 do
             local base = tr("wc_diff_" .. i, "Tier " .. i)
             local name = base:gsub("%s*%b()%s*$", "")
-            texts[i] = string.format("%s ($%d/%s)", name, rates[i], unit)
+            texts[i] = string.format("%s (%s/%s)", name, formatMoney(rates[i]), unit)
         end
         optWageLevel:setTexts(texts)
         if optWageLevel.setState then optWageLevel:setState(settings.wageLevel, false) end
@@ -386,17 +520,26 @@ local function syncWageWidgets(container)
 
     local rate = settings:getWageRate()
     if settings.costMode == Settings.COST_MODE_HOURLY then
-        setText(findDescendant(container, "wcWageBigRate"), string.format("$%d / h", rate))
+        setText(findDescendant(container, "wcWageBigRate"), formatMoney(rate) .. " / h")
     else
-        setText(findDescendant(container, "wcWageBigRate"), string.format("$%d / ha", rate))
+        setText(findDescendant(container, "wcWageBigRate"), formatMoney(rate) .. " / ha")
     end
     setText(findDescendant(container, "wcWageRateLabel"), settings:getWageLevelName())
     setText(findDescendant(container, "wcWagePayInterval"),
         labeled(tr("wc_label_pay_interval", "Pay Interval"), "24 h"))
+    -- Esc MaxLines 5: short densify help + ESC-pays (copy only; no dialog mutate).
+    local escPays = tr("wc_rf_pda_esc_pays",
+        "Closing the salary dialog with Escape pays the salary (same as Pay). It does not defer.")
     if settings.costMode == Settings.COST_MODE_HOURLY then
-        setText(findDescendant(container, "wcWageHelpBody"), tr("wc_help_body", ""))
+        setText(findDescendant(container, "wcWageHelpBody"),
+            tr("wc_rf_pda_wage_help",
+                "Hourly: fixed rate per active worker hour. Wage Level sets the rate. Settles at midnight.")
+                .. "\n" .. escPays)
     else
-        setText(findDescendant(container, "wcWageHelpBody"), tr("wc_help_body_ha", ""))
+        setText(findDescendant(container, "wcWageHelpBody"),
+            tr("wc_rf_pda_wage_help_ha",
+                "Per hectare: billed by area worked since last settle. Wage Level sets the rate. Settles at midnight.")
+                .. "\n" .. escPays)
     end
     local resetBtn = findDescendant(container, "wcBtnWageReset")
     if resetBtn and resetBtn.setText then
@@ -472,27 +615,57 @@ local function paintWorkers(container, lightOnly)
     end
     local settings = mgr.settings
     local ws = mgr.workerSystem
+    local snap = getRosterSnap(mgr)
+    local auth = isAuthoritative(snap)
 
     if not lightOnly then
         setText(findDescendant(container, "wcStatsMode"),
             labeled(tr("wc_label_cost_mode", "Cost Mode"), settings:getCostModeName()))
         setText(findDescendant(container, "wcStatsWage"),
             labeled(tr("wc_label_wage_level", "Wage Level"), settings:getWageLevelName()))
-        setText(findDescendant(container, "wcStatsInterval"),
-            labeled(tr("wc_label_pay_interval", "Pay Interval"), "24 h"))
     end
 
-    local workers = ws:getActiveWorkers()
-    local workerCount = #workers
+    local listEl = findDescendant(container, "wcStatsWorkerList")
     local rate = settings:getWageRate()
     local intervalHrs = (WorkerSystem and WorkerSystem.BILLED_HOURS_PER_DAY) or 0.5
     local isHourly = (settings.costMode == Settings.COST_MODE_HOURLY)
+    local activeWorkers = ws:getActiveWorkers()
+    local activeCount = #activeWorkers
 
-    setText(findDescendant(container, "wcStatsCount"),
-        labeled(tr("wc_label_active_workers", "Active Workers"), tostring(workerCount)))
+    if not auth then
+        setText(findDescendant(container, "wcStatsInterval"),
+            labeled(tr("wc_rf_pda_hires_left_lbl", "Hires left"), awaitingSyncText()))
+        setText(findDescendant(container, "wcStatsCount"),
+            labeled(tr("wc_rf_pda_crew_lbl", "Crew"), awaitingSyncText()))
+        setText(findDescendant(container, "wcStatsCostPer"),
+            labeled(tr("wc_label_cost_per_worker", "Cost / Worker"), "-"))
+        setText(findDescendant(container, "wcStatsTotal"),
+            labeled(tr("wc_label_total_interval_cost", "Total Interval"), "-"))
+        setText(listEl, awaitingSyncText())
+        return
+    end
 
-    if workerCount > 0 then
-        local total = ws:getEstimatedIntervalCost(workerCount)
+    local hiring = snap.hiring or {}
+    local remaining = tonumber(hiring.remaining) or 0
+    local limit = tonumber(hiring.limit) or 0
+    setText(findDescendant(container, "wcStatsInterval"),
+        string.format(tr("wc_rf_pda_hires_left", "Hires left: %d of %d"), remaining, limit))
+
+    local crewN = tonumber(snap.count) or #(snap.workers or {})
+    local workingN = tonumber(snap.working) or 0
+    local countText = string.format(tr("wc_rf_pda_crew_count", "Crew: %d"), crewN)
+    if workingN > 0 then
+        countText = countText .. string.format(tr("wc_rf_pda_crew_working", " · %d working"), workingN)
+    end
+    local listText, showingClause = buildWorkersListText(snap)
+    if showingClause ~= nil then
+        countText = countText .. " · " .. showingClause
+    end
+    setText(findDescendant(container, "wcStatsCount"), countText)
+
+    -- Stage-7 Workers finance: billed actives interval cost (not month; month is Dashboard).
+    if activeCount > 0 then
+        local total = ws:getEstimatedIntervalCost(activeCount)
         if isHourly then
             setText(findDescendant(container, "wcStatsCostPer"),
                 labeled(tr("wc_label_cost_per_worker", "Cost / Worker"),
@@ -500,7 +673,7 @@ local function paintWorkers(container, lightOnly)
         else
             setText(findDescendant(container, "wcStatsCostPer"),
                 labeled(tr("wc_label_cost_per_worker", "Cost / Worker"),
-                    formatMoney(math.floor(total / workerCount))))
+                    formatMoney(math.floor(total / activeCount))))
         end
         setText(findDescendant(container, "wcStatsTotal"),
             labeled(tr("wc_label_total_interval_cost", "Total Interval"), formatMoney(total)))
@@ -511,38 +684,13 @@ local function paintWorkers(container, lightOnly)
             labeled(tr("wc_label_total_interval_cost", "Total Interval"), "-"))
     end
 
-    local listEl = findDescendant(container, "wcStatsWorkerList")
-    if workerCount > 0 then
-        local lines = {}
-        local roster = mgr.workerRoster
-        for _, w in ipairs(workers) do
-            local cost
-            if isHourly then
-                cost = math.floor(rate * intervalHrs)
-            else
-                local hectares = ws.workerHectares and ws.workerHectares[tostring(w.vehicle)] or 0
-                cost = math.floor(rate * hectares)
-            end
-            local tag = ""
-            if roster then
-                local rw = roster:getWorkerByVehicle(tostring(w.vehicle))
-                if rw and WorkerRoster and WorkerRoster.levelName then
-                    tag = string.format(" [%s, fatigue %d%%]",
-                        WorkerRoster.levelName(rw.level), math.floor((rw.fatigue or 0) * 100))
-                end
-            end
-            table.insert(lines, w.name .. tag .. "   -" .. formatMoney(cost))
-        end
-        setText(listEl, table.concat(lines, "\n"))
-    else
-        setText(listEl, tr("wc_no_workers", "No active workers"))
-    end
+    setText(listEl, listText)
 end
 
 ---@param container table|nil rfHostPlaceholder from Soil RfPdaMenuPage
 ---@param lightOnly boolean|nil when true: page switch / live tick (seed once only; no forceEvent)
 function WcRfPdaGuest.onShow(container, lightOnly)
-    -- Placement polish: page hero is Soil rfPageTitle/rfPageBlurb only — do not second-paint host title/blurb.
+    -- Placement polish: page hero is Soil rfPageTitle/rfPageBlurb only - do not second-paint host title/blurb.
     setText(findDescendant(container, "rfHostBody"), "")
 
     -- Seed only when missing (arrow path must never re-seed / forceEvent).
@@ -687,7 +835,7 @@ function WcRfPdaGuest.tryRegister()
     -- Always ensureDoor when bootstrap class is sourced; never trust bare g_currentModDirectory at callback time.
     if RfEscBootstrap ~= nil then
         if MOD_DIR == nil then
-            print("[WorkerCosts] WcRfPdaGuest: WARNING MOD_DIR nil — cannot ensureDoor (source capture failed)")
+            print("[WorkerCosts] WcRfPdaGuest: WARNING MOD_DIR nil - cannot ensureDoor (source capture failed)")
         else
             local doorOk = RfEscBootstrap.ensureDoor(MOD_DIR, {
                 profilesXml = MOD_DIR .. "xml/gui/rfEscProfiles.xml",

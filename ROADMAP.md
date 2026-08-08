@@ -38,3 +38,6 @@
 
 ## 2026-08-06 (Fred): Esc RF deep-desk door restored
 - [x] When the RF Esc door is live, the Worker Manager (all four tabs: Dashboard, Wage Settings, Worker Stats, About) was unreachable without the Farm Tablet. A bottom-bar "Open Worker Manager" button (MENU_ACTIVATE) on the Esc panel now calls `g_gui:showGui("WCGui")` when `g_wcGui` is present. The button is present in every mod's RfPdaMenuPage copy so it works whether WorkerCosts hosts the Esc door or is a guest. In-game observation still pending.
+
+## 2026-08-07 (Fred): module page dots always visible
+- [x] The Esc RF module selector hid its page dots when Worker Costs or Market Dynamics was the active module. Soil and Crop Stress always showed theirs, so WC never read as the 3rd module and the left panel was inconsistent. All four RfPdaMenuPage copies now keep the dots visible (dots = N, chrome unchanged, per the esc-rf-pda umbrella brief). Built, deployed, PR open.

@@ -36,3 +36,11 @@
 ## Blocked / waiting on
 - [x] Billing-model decision RESOLVED: per-in-game-day (middle path), built (0c808d1).
 - [!] ProStaff modifier wiring (Point 5) waits on the ProStaff build (brief pulled, under re-review).
+
+## Esc panel buttons UI fixes (2026-08-07)
+- [x] Bottom-bar buttons were disabled while the Esc menu is paused (InGameMenu sets paused=true; TabbedMenu keeps a button clickable only with showWhenPaused). Fixed on every custom button.
+- [x] Help / Rotation Planner / Field Detail / Worker Manager callbacks now resolve Soil and WorkerCosts classes cross-mod via g_currentMission (the door is built by whichever mod loads first, and FS25 mod envs are per-mod). Deployed and verified in-game.
+- [x] Help button shows only on the Soil module; other modules show Back only.
+
+## Module page dots always visible (2026-08-07)
+- [x] The Esc RF module page dots were hidden while Worker Costs or Market Dynamics was active, so WC never read as the 3rd module. All four RfPdaMenuPage copies now keep them visible. Built, deployed, PR open.

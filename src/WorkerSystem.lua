@@ -58,6 +58,7 @@ function WorkerSystem.new(settings, roster)
     self.workerHectares = {}   -- accumulated hectares per vehicleId since last settlement
     self.workerNames = {}      -- last-known display name per vehicleId (for dismissed workers)
     self.workerRosterUuid = {} -- vehicleId -> roster worker uuid (captured while bound; survives unbind at settlement)
+    self.workerFarmId = {}     -- vehicleId -> startedFarmId (dedicated-safe billing; survives dismiss)
     self.workerDailyHours = {} -- vehicleId -> billed hours worked this in-game day (Phase 3 overtime); reset on day change
     -- Rule 10: billing follows the in-game calendar. Wages accrue from the
     -- environment clock (currentMonotonicDay * DAY_MS + dayTime) and are settled
@@ -252,6 +253,51 @@ function WorkerSystem:showNotification(title, message)
     self:log("%s: %s", title, message)
 end
 
+-- Real farm ids only (reject spectator / guided tour / invalid). Dairy F75 shape.
+function WorkerSystem:_isRealFarmId(farmId)
+    if type(farmId) ~= "number" or farmId <= 0 then return false end
+    local fm = FarmManager
+    local spectator = (fm ~= nil and fm.SPECTATOR_FARM_ID) or 0
+    local tour      = (fm ~= nil and fm.GUIDED_TOUR_FARM_ID) or 14
+    local invalid   = (fm ~= nil and fm.INVALID_FARM_ID) or 15
+    return farmId ~= spectator and farmId ~= tour and farmId ~= invalid
+end
+
+-- Resolve a billing farmId without treating dedicated nil getFarmId() as authority.
+function WorkerSystem:_resolveBillingFarmId(explicitFarmId)
+    if self:_isRealFarmId(explicitFarmId) then
+        return explicitFarmId
+    end
+    local localId = nil
+    pcall(function()
+        if g_currentMission ~= nil and g_currentMission.getFarmId ~= nil then
+            localId = g_currentMission:getFarmId()
+        end
+    end)
+    if self:_isRealFarmId(localId) then
+        return localId
+    end
+    return nil
+end
+
+-- Soft-detect ProStaffCoOp wage modifier (neutral 1.0 when absent / pcall fails).
+function WorkerSystem:_proStaffWageModifier(farmId)
+    local ps = g_currentMission and g_currentMission.proStaffManager
+    if ps == nil or type(ps.getWageModifier) ~= "function" then
+        return 1.0
+    end
+    if not self:_isRealFarmId(farmId) then
+        return 1.0
+    end
+    local ok, mod = pcall(function()
+        return ps:getWageModifier(farmId)
+    end)
+    if ok and type(mod) == "number" and mod == mod and mod > 0 then
+        return mod
+    end
+    return 1.0
+end
+
 function WorkerSystem:getActiveWorkers()
     local workers = {}
 
@@ -274,13 +320,22 @@ function WorkerSystem:getActiveWorkers()
     -- with a fallback to job.vehicle for any custom job types that set it directly.
     -- job.startedFarmId (set by AIJob:start) identifies the owning farm; skip jobs
     -- started by other farms (e.g. NPC neighbor workers from neighbour mods).
-    local playerFarmId = g_currentMission:getFarmId()
+    -- Dedicated: getFarmId() is nil — do NOT treat that as "no farms". Include every
+    -- real startedFarmId so helpers are billed; chargeWage uses that explicit id.
+    local playerFarmId = nil
+    pcall(function()
+        playerFarmId = g_currentMission:getFarmId()
+    end)
     for _, job in ipairs(activeJobs) do
         if job and job.isRunning then
-            if playerFarmId and job.startedFarmId and job.startedFarmId ~= playerFarmId then
-                -- skip: job belongs to a different farm
-            else
-                -- Get vehicle: prefer the official vehicleParameter API
+            local jobFarmId = job.startedFarmId
+            local skip = false
+            if self:_isRealFarmId(playerFarmId) and self:_isRealFarmId(jobFarmId) and jobFarmId ~= playerFarmId then
+                skip = true
+            elseif jobFarmId ~= nil and not self:_isRealFarmId(jobFarmId) then
+                skip = true
+            end
+            if not skip then
                 local vehicle = nil
                 if job.vehicleParameter and job.vehicleParameter.getVehicle then
                     vehicle = job.vehicleParameter:getVehicle()
@@ -289,12 +344,9 @@ function WorkerSystem:getActiveWorkers()
                 end
 
                 if vehicle then
-                    -- Vehicle display name, used as name fallback and shown
-                    -- beside the helper name on the dashboard (#48)
                     local vehicleName = (vehicle.getFullName and vehicle:getFullName())
                                      or (vehicle.getName and vehicle:getName())
 
-                    -- Helper name: job:getHelperName() is defined on AIJob base class
                     local name = "Worker"
                     if job.getHelperName then
                         local ok, helperName = pcall(function() return job:getHelperName() end)
@@ -302,14 +354,10 @@ function WorkerSystem:getActiveWorkers()
                             name = helperName
                         end
                     end
-                    -- Fall back to vehicle name if helper name unavailable
                     if name == "Worker" then
                         name = vehicleName or "Worker"
                     end
 
-                    -- Pro-Staff: if a roster worker is attributed to this vehicle,
-                    -- show ITS name (e.g. "Dave") everywhere instead of the in-game
-                    -- helper name. Flows to the UI tabs, payments and salary dialog.
                     if self.roster then
                         local rw = self.roster:getWorkerByVehicle(tostring(vehicle))
                         if rw and rw.name then
@@ -321,7 +369,8 @@ function WorkerSystem:getActiveWorkers()
                         vehicle     = vehicle,
                         job         = job,
                         name        = name,
-                        vehicleName = vehicleName
+                        vehicleName = vehicleName,
+                        farmId      = jobFarmId,
                     })
                 end
             end
@@ -426,6 +475,13 @@ function WorkerSystem:calculateLaborCost(worker, hoursWorked, hectaresWorked, ro
         cost = cost * (1 + overtimeFraction * (WorkerSystem.OVERTIME_MULT - 1))
     end
 
+    -- 6. ProStaffCoOp wage modifier (soft-detect; neutral 1.0 when absent).
+    local billingFarm = nil
+    if worker and self:_isRealFarmId(worker.farmId) then
+        billingFarm = worker.farmId
+    end
+    cost = cost * self:_proStaffWageModifier(billingFarm)
+
     return math.floor(cost)
 end
 
@@ -462,8 +518,8 @@ function WorkerSystem:chargeSeverance(workerName, level, farmId)
     if amount <= 0 then
         return 0
     end
-    farmId = farmId or (g_currentMission and g_currentMission:getFarmId())
-    if not farmId or farmId == 0 then
+    farmId = self:_resolveBillingFarmId(farmId)
+    if farmId == nil then
         return 0
     end
     self._isProcessingPayment = true
@@ -472,7 +528,7 @@ function WorkerSystem:chargeSeverance(workerName, level, farmId)
     end)
     self._isProcessingPayment = false
     if ok and self.settings.showNotifications then
-        local money = g_i18n and g_i18n:formatMoney(amount, 0, true, true) or ("$" .. amount)
+        local money = g_i18n and g_i18n:formatMoney(amount, 0, true, true) or tostring(amount)
         self:showNotification("Severance", string.format("%s dismissed - severance %s", workerName, money))
     end
     return ok and amount or 0
@@ -493,8 +549,8 @@ function WorkerSystem:chargeHireCost(workerName, level, farmId)
     if amount <= 0 then
         return 0
     end
-    farmId = farmId or (g_currentMission and g_currentMission:getFarmId())
-    if not farmId or farmId == 0 then
+    farmId = self:_resolveBillingFarmId(farmId)
+    if farmId == nil then
         return 0
     end
     self._isProcessingPayment = true
@@ -503,7 +559,7 @@ function WorkerSystem:chargeHireCost(workerName, level, farmId)
     end)
     self._isProcessingPayment = false
     if ok and self.settings.showNotifications then
-        local money = g_i18n and g_i18n:formatMoney(amount, 0, true, true) or ("$" .. amount)
+        local money = g_i18n and g_i18n:formatMoney(amount, 0, true, true) or tostring(amount)
         self:showNotification("New Hire", string.format("%s hired - signing cost %s", workerName, money))
     end
     return ok and amount or 0
@@ -538,7 +594,8 @@ end
 -- @param silent  If true, suppresses the per-payment HUD notification.
 --                Used when flushing interval payments into the monthly salary
 --                summary so the dialog is the single notification, not both.
-function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
+-- @param farmId  Explicit owning farm (job.startedFarmId). Required on dedicated.
+function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent, farmId)
     if not g_currentMission then
         self:log("Cannot charge wage: No mission")
         return false
@@ -549,10 +606,10 @@ function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
         return false
     end
 
-    local farmId = g_currentMission:getFarmId()
-    if not farmId or farmId == 0 then
-        -- farmId 0 = spectator in multiplayer; cannot deduct from an unowned farm
-        self:log("Cannot charge wage: No valid farm ID (spectator or uninitialized farm)")
+    farmId = self:_resolveBillingFarmId(farmId)
+    if farmId == nil then
+        -- Dedicated with no explicit farmId: fail-closed (do not pretend farm 1).
+        self:log("Cannot charge wage: No valid farm ID (need explicit startedFarmId on dedicated)")
         return false
     end
 
@@ -566,10 +623,13 @@ function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
         local entry = self.monthlyCosts[workerId]
         if entry then
             entry.amount = entry.amount + amount
+            if entry.farmId == nil then
+                entry.farmId = farmId
+            end
         else
-            self.monthlyCosts[workerId] = { name = workerName, amount = amount }
+            self.monthlyCosts[workerId] = { name = workerName, amount = amount, farmId = farmId }
         end
-        self:log("%s %s wage accrued for monthly salary: $%d (farm %d)", workerName, workType, amount, farmId)
+        self:log("%s %s wage accrued for monthly salary: %d (farm %d)", workerName, workType, amount, farmId)
         return true
     end
 
@@ -593,7 +653,7 @@ function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
         if g_i18n then
             formattedAmount = g_i18n:formatMoney(amount, 0, true, true)
         else
-            formattedAmount = string.format("$%d", amount)
+            formattedAmount = tostring(amount)
         end
         local modeText = self.settings:getCostModeName()
         local message = string.format("%s - %s: -%s", workerName, modeText, formattedAmount)
@@ -601,7 +661,7 @@ function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent)
         self:showNotification("Worker Payment", message)
     end
 
-    self:log("%s %s wage: $%d from farm %d", workerName, workType, amount, farmId)
+    self:log("%s %s wage: %d from farm %d", workerName, workType, amount, farmId)
     return true
 end
 
@@ -669,6 +729,10 @@ function WorkerSystem:update(dt)
         end
         -- Always refresh the name so dismissed-worker payments use the latest value
         self.workerNames[vehicleId] = worker.name
+        if self:_isRealFarmId(worker.farmId) then
+            self.workerFarmId = self.workerFarmId or {}
+            self.workerFarmId[vehicleId] = worker.farmId
+        end
 
         -- Phase 3: remember which roster worker this vehicle maps to while the
         -- binding still exists, so the wage pipeline can apply level/fatigue even
@@ -759,7 +823,7 @@ function WorkerSystem:processWorkerPayments(silent)
 
                 if wage > 0 then
                     local workerId = (rosterWorker and rosterWorker.uuid) or vehicleId
-                    self:chargeWage(workerId, worker.name, wage, self.settings:getCostModeName(), silent)
+                    self:chargeWage(workerId, worker.name, wage, self.settings:getCostModeName(), silent, worker.farmId)
                     totalPaid = totalPaid + wage
                     workersCount = workersCount + 1
                     -- Accumulate into job total for the completion notification
@@ -785,13 +849,14 @@ function WorkerSystem:processWorkerPayments(silent)
             -- Dismissed workers have no job object, so skill defaults to neutral.
             -- The roster uuid was captured while bound, so level/fatigue still apply.
             local rosterWorker = self.roster and self.roster:getWorker(self.workerRosterUuid[vehicleId])
-            local pseudoWorker = {}
+            local farmId = (self.workerFarmId and self.workerFarmId[vehicleId]) or nil
+            local pseudoWorker = { farmId = farmId }
             local wage = self:calculateLaborCost(pseudoWorker, hoursWorked, hectaresWorked, rosterWorker, self.workerDailyHours[vehicleId])
 
             local name = self.workerNames[vehicleId] or "Dismissed Worker"
             if wage > 0 then
                 local workerId = self.workerRosterUuid[vehicleId] or vehicleId
-                self:chargeWage(workerId, name, wage, self.settings:getCostModeName(), true)
+                self:chargeWage(workerId, name, wage, self.settings:getCostModeName(), true, farmId)
                 totalPaid = totalPaid + wage
                 workersCount = workersCount + 1
             end
@@ -800,7 +865,7 @@ function WorkerSystem:processWorkerPayments(silent)
             if not silent and self.settings.showNotifications then
                 local jobTotal = (self.workerJobTotal[vehicleId] or 0) + wage
                 local totalStr = g_i18n and g_i18n:formatMoney(jobTotal, 0, true, true)
-                             or string.format("$%d", jobTotal)
+                             or tostring(jobTotal)
                 self:showNotification("Job Complete",
                     string.format("%s: job done - Total: -%s", name, totalStr))
             end
@@ -811,6 +876,9 @@ function WorkerSystem:processWorkerPayments(silent)
             self.workerNames[vehicleId]      = nil
             self.workerJobTotal[vehicleId]   = nil
             self.workerRosterUuid[vehicleId] = nil
+            if self.workerFarmId then
+                self.workerFarmId[vehicleId] = nil
+            end
         end
     end
 
@@ -884,7 +952,7 @@ function WorkerSystem:triggerMonthlySalaryDialog(month)
                 finalAmount = math.floor(entry.amount * 1.20)
                 self:log("Late-pay penalty applied to %s: $%d -> $%d", entry.name, entry.amount, finalAmount)
             end
-            table.insert(entries, { name = entry.name, amount = finalAmount })
+            table.insert(entries, { name = entry.name, amount = finalAmount, farmId = entry.farmId })
             total = total + finalAmount
         end
     end
@@ -967,28 +1035,45 @@ function WorkerSystem:executeMonthlySalaryPayment()
         return
     end
 
-    -- Charge as a single lump sum (using OTHER so our hook passes it through)
-    local farmId = g_currentMission and g_currentMission:getFarmId()
-    if not farmId or farmId == 0 then
-        self:log("executeMonthlySalaryPayment: no valid farmId, skipping")
-        self.monthlyCosts      = {}
-        self.declinedLastMonth = false
-        return
+    -- Charge per owning farm (explicit farmId on each accrual). Dedicated-safe.
+    local byFarm = {}
+    for _, entry in ipairs(entries or {}) do
+        local fid = self:_resolveBillingFarmId(entry.farmId)
+        if fid ~= nil and entry.amount and entry.amount > 0 then
+            byFarm[fid] = (byFarm[fid] or 0) + entry.amount
+        end
+    end
+    if next(byFarm) == nil then
+        -- Legacy accrual without farmId: try local real farm only.
+        local fallback = self:_resolveBillingFarmId(nil)
+        if fallback == nil then
+            self:log("executeMonthlySalaryPayment: no valid farmId, skipping")
+            self.monthlyCosts      = {}
+            self.declinedLastMonth = false
+            return
+        end
+        byFarm[fallback] = total
     end
 
-    self._isProcessingPayment = true
-    local ok, err = pcall(function()
-        g_currentMission:addMoney(-total, farmId, MoneyType.OTHER, false)
-    end)
-    self._isProcessingPayment = false
+    local paidOk = true
+    for farmId, farmTotal in pairs(byFarm) do
+        self._isProcessingPayment = true
+        local ok, err = pcall(function()
+            g_currentMission:addMoney(-farmTotal, farmId, MoneyType.OTHER, false)
+        end)
+        self._isProcessingPayment = false
+        if not ok then
+            paidOk = false
+            self:log("executeMonthlySalaryPayment: addMoney error farm %d: %s", farmId, tostring(err))
+        end
+    end
 
-    if not ok then
-        self:log("executeMonthlySalaryPayment: addMoney error: %s", tostring(err))
-    else
-        self:log("Monthly salary paid: month=%d, workers=%d, total=$%d", month, #entries, total)
+    if paidOk then
+        self:log("Monthly salary paid: month=%d, workers=%d, total=%d", month, #entries, total)
 
         if self.settings.showNotifications then
-            local msg = string.format("Monthly salary paid: $%d for %d worker(s)", total, #entries)
+            local money = g_i18n and g_i18n:formatMoney(total, 0, true, true) or tostring(total)
+            local msg = string.format("Monthly salary paid: %s for %d worker(s)", money, #entries)
             self:showNotification("Monthly Salary", msg)
         end
     end
@@ -1011,8 +1096,9 @@ function WorkerSystem:declineMonthlySalary()
     self:log("Monthly salary DECLINED: month=%d, total=$%d — penalty will apply next month", month, total)
 
     if self.settings.showNotifications then
+        local money = g_i18n and g_i18n:formatMoney(total, 0, true, true) or tostring(total)
         self:showNotification("Monthly Salary Declined",
-            string.format("Warning: $%d salary declined — workers will demand 20%% more next month!", total))
+            string.format("Warning: %s salary declined — workers will demand 20%% more next month!", money))
     end
 
     -- Keep monthlyCosts so the unpaid amounts carry over and are penalised next month
@@ -1056,6 +1142,9 @@ function WorkerSystem:saveMonthlyState(missionInfo)
             xmlFile:setString(key .. "#id", tostring(workerId))
             xmlFile:setString(key .. "#name", entry.name)
             xmlFile:setInt(key .. "#amount", math.floor(entry.amount))
+            if entry.farmId ~= nil then
+                xmlFile:setInt(key .. "#farmId", entry.farmId)
+            end
             i = i + 1
         end
     end
@@ -1086,8 +1175,13 @@ function WorkerSystem:loadMonthlyState(missionInfo)
         local name   = xmlFile:getString(key .. "#name")
         local amount = xmlFile:getInt(key .. "#amount", 0)
         local id     = xmlFile:getString(key .. "#id") or name
+        local farmId = xmlFile:getInt(key .. "#farmId", 0)
         if name and amount > 0 then
-            self.monthlyCosts[id] = { name = name, amount = amount }
+            local entry = { name = name, amount = amount }
+            if farmId and farmId > 0 then
+                entry.farmId = farmId
+            end
+            self.monthlyCosts[id] = entry
         end
     end)
 
@@ -1116,26 +1210,46 @@ function WorkerSystem:settlePendingMonthlyAccrual()
         return
     end
 
-    local farmId = g_currentMission and g_currentMission:getFarmId()
-    if not farmId or farmId == 0 then
-        return  -- no valid farm this tick; keep the accrual and retry
+    -- Charge per owning farm from accrual entries (dedicated-safe).
+    local byFarm = {}
+    for _, entry in pairs(self.monthlyCosts) do
+        if entry and entry.amount and entry.amount > 0 then
+            local fid = self:_resolveBillingFarmId(entry.farmId)
+            if fid ~= nil then
+                byFarm[fid] = (byFarm[fid] or 0) + entry.amount
+            end
+        end
+    end
+    if next(byFarm) == nil then
+        local fallback = self:_resolveBillingFarmId(nil)
+        if fallback == nil then
+            return  -- no valid farm this tick; keep the accrual and retry
+        end
+        byFarm[fallback] = total
     end
 
-    self._isProcessingPayment = true
-    local ok, err = pcall(function()
-        g_currentMission:addMoney(-total, farmId, MoneyType.OTHER, false)
-    end)
-    self._isProcessingPayment = false
+    local paidOk = true
+    for farmId, farmTotal in pairs(byFarm) do
+        self._isProcessingPayment = true
+        local ok, err = pcall(function()
+            g_currentMission:addMoney(-farmTotal, farmId, MoneyType.OTHER, false)
+        end)
+        self._isProcessingPayment = false
+        if not ok then
+            paidOk = false
+            self:log("settlePendingMonthlyAccrual: addMoney error farm %d: %s", farmId, tostring(err))
+        end
+    end
 
-    if not ok then
-        self:log("settlePendingMonthlyAccrual: addMoney error: %s", tostring(err))
+    if not paidOk then
         return  -- keep the accrual and retry next tick
     end
 
-    self:log("Settled pending monthly accrual after mode switch: $%d (farm %d)", total, farmId)
+    self:log("Settled pending monthly accrual after mode switch: %d", total)
     if self.settings.showNotifications then
+        local money = g_i18n and g_i18n:formatMoney(total, 0, true, true) or tostring(total)
         self:showNotification("Worker Salary Settled",
-            string.format("Pending monthly wages settled: -$%d", total))
+            string.format("Pending monthly wages settled: -%s", money))
     end
 
     self.monthlyCosts      = {}

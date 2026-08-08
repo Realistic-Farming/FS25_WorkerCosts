@@ -27753,31 +27753,31 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-08T12:32:04Z",
+    "timestamp": "2026-08-08T18:25:33Z",
     "date": "2026-08-08",
     "views": {
-      "count": 177,
+      "count": 180,
       "uniques": 88
     },
     "clones": {
-      "count": 333,
-      "uniques": 95
+      "count": 341,
+      "uniques": 94
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 88,
-        "uniques": 45
+        "count": 87,
+        "uniques": 47
       },
       {
         "referrer": "Google",
-        "count": 33,
-        "uniques": 24
+        "count": 37,
+        "uniques": 26
       },
       {
         "referrer": "Bing",
-        "count": 5,
-        "uniques": 4
+        "count": 4,
+        "uniques": 3
       },
       {
         "referrer": "kingmods.net",
@@ -27804,26 +27804,26 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 104,
-        "uniques": 80
+        "count": 105,
+        "uniques": 82
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 23,
-        "uniques": 17
+        "count": 24,
+        "uniques": 18
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
         "count": 16,
-        "uniques": 10
+        "uniques": 9
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues",
         "title": "/issues",
-        "count": 15,
-        "uniques": 4
+        "count": 14,
+        "uniques": 3
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/54",

@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-08-08T12:32:23Z
-**Days tracked:** 110 | **Download snapshots:** 455 (hourly)
+**Last updated:** 2026-08-08T18:25:53Z
+**Days tracked:** 110 | **Download snapshots:** 456 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 177 | 88 |
-| Git Clones | 333 | 95 |
+| Page Views | 180 | 88 |
+| Git Clones | 341 | 94 |
 
 > **Engagement:** 2.0 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 684 of 88 visitors cloned or downloaded (**777.2%**)
+> **14-day conversion:** 683 of 88 visitors cloned or downloaded (**776.1%**)
 >
-> Unique cloners: 95 | Release downloads: 589
+> Unique cloners: 94 | Release downloads: 589
 
 ---
 
@@ -43,8 +43,8 @@
 | Channel | Count |
 |---------|-------|
 | Zip Downloads | 589 |
-| Git Clones (14-day) | 333 |
-| **Total Acquisitions** | **922** |
+| Git Clones (14-day) | 341 |
+| **Total Acquisitions** | **930** |
 
 ---
 
@@ -54,9 +54,9 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 88 | 45 |
-| Google | 33 | 24 |
-| Bing | 5 | 4 |
+| github.com | 87 | 47 |
+| Google | 37 | 26 |
+| Bing | 4 | 3 |
 | kingmods.net | 2 | 2 |
 | forbidden-mods.de | 2 | 1 |
 | ya.ru | 2 | 1 |
@@ -80,10 +80,10 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 104 | 80 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 23 | 17 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 16 | 10 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues` | 15 | 4 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 105 | 82 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 24 | 18 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 16 | 9 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues` | 14 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 3 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/pulls` | 2 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md` | 2 | 1 |

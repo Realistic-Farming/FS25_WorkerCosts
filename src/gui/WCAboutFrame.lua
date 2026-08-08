@@ -115,7 +115,7 @@ function WCAboutFrame:refresh()
         local rate     = settings:getWageRate()
         local isHourly = settings.costMode == Settings.COST_MODE_HOURLY
         if self.txtEffRate then
-            self.txtEffRate:setText(string.format(isHourly and "$%d / h" or "$%d / ha", rate))
+            local rateStr = (g_i18n and g_i18n:formatMoney(rate, 0, true, false) or tostring(rate)); self.txtEffRate:setText(rateStr .. (isHourly and " / h" or " / ha"))
         end
         if self.txtRateLabel then
             self.txtRateLabel:setText(settings:getWageLevelName())

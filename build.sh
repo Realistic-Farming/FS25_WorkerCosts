@@ -21,7 +21,7 @@ VERSION=$(grep -oP '(?<=<version>)[^<]+' modDesc.xml)
 echo "Building ${MOD_NAME} v${VERSION}..."
 
 # Files and directories to include in the zip (relative to repo root)
-INCLUDE=("modDesc.xml" "icon.dds" "tab_icons.dds" "WorkerCostsSlice.dds" "README.md" "src" "xml")
+INCLUDE=("modDesc.xml" "icon.dds" "tab_icons.dds" "WorkerCostsSlice.dds" "README.md" "src" "textures" "xml")
 
 # Absolute path of the repo root (convert to Windows path for PowerShell)
 REPO_ROOT=$(pwd -W)

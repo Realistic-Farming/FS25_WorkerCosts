@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-08-08T18:25:53Z
-**Days tracked:** 110 | **Download snapshots:** 456 (hourly)
+**Last updated:** 2026-08-09T06:41:57Z
+**Days tracked:** 111 | **Download snapshots:** 459 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 180 | 88 |
-| Git Clones | 341 | 94 |
+| Page Views | 173 | 84 |
+| Git Clones | 365 | 100 |
 
 > **Engagement:** 2.0 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 683 of 88 visitors cloned or downloaded (**776.1%**)
+> **14-day conversion:** 691 of 84 visitors cloned or downloaded (**822.6%**)
 >
-> Unique cloners: 94 | Release downloads: 589
+> Unique cloners: 100 | Release downloads: 591
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 589 |
-| Git Clones (14-day) | 341 |
-| **Total Acquisitions** | **930** |
+| Zip Downloads | 591 |
+| Git Clones (14-day) | 365 |
+| **Total Acquisitions** | **956** |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 87 | 47 |
-| Google | 37 | 26 |
+| github.com | 78 | 43 |
+| Google | 39 | 27 |
 | Bing | 4 | 3 |
 | kingmods.net | 2 | 2 |
 | forbidden-mods.de | 2 | 1 |
@@ -80,9 +80,9 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 105 | 82 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 24 | 18 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 16 | 9 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 97 | 77 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 23 | 17 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 17 | 9 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues` | 14 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 3 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/pulls` | 2 | 2 |

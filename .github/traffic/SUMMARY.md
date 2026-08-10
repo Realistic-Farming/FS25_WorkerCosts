@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-08-09T18:29:25Z
-**Days tracked:** 111 | **Download snapshots:** 463 (hourly)
+**Last updated:** 2026-08-10T12:52:02Z
+**Days tracked:** 112 | **Download snapshots:** 466 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 173 | 84 |
-| Git Clones | 365 | 100 |
+| Page Views | 172 | 86 |
+| Git Clones | 355 | 95 |
 
 > **Engagement:** 2.0 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 693 of 84 visitors cloned or downloaded (**825.0%**)
+> **14-day conversion:** 691 of 86 visitors cloned or downloaded (**803.4%**)
 >
-> Unique cloners: 100 | Release downloads: 593
+> Unique cloners: 95 | Release downloads: 596
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 593 |
-| Git Clones (14-day) | 365 |
-| **Total Acquisitions** | **958** |
+| Zip Downloads | 596 |
+| Git Clones (14-day) | 355 |
+| **Total Acquisitions** | **951** |
 
 ---
 
@@ -54,12 +54,13 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 78 | 43 |
-| Google | 39 | 27 |
+| github.com | 79 | 45 |
+| Google | 37 | 25 |
 | Bing | 4 | 3 |
 | kingmods.net | 2 | 2 |
 | forbidden-mods.de | 2 | 1 |
 | ya.ru | 2 | 1 |
+| DuckDuckGo | 1 | 1 |
 | yandex.ru | 1 | 1 |
 
 ---
@@ -80,10 +81,10 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 97 | 77 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 23 | 17 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 17 | 9 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues` | 14 | 3 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 95 | 79 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 27 | 21 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 16 | 9 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues` | 13 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 3 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/pulls` | 2 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md` | 2 | 1 |

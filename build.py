@@ -31,6 +31,7 @@ INCLUDE = [
     "README.md",
     "src",
     "xml",
+    "translations",
 ]
 
 

@@ -39,7 +39,7 @@
         <action name="WC_OPEN_ROSTER" category="ONFOOT" />
     </actions>
 
-    <l10n>
+    <l10n filenamePrefix="translations/translation" defaultLanguage="en">
         <text name="wc_section">
             <en>Worker Costs Mod</en>
             <de>Arbeiterkosten-Mod</de>
@@ -1691,7 +1691,91 @@ Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÂ¦rdierne.</d
             <ru>[EN] No field data recorded yet.</ru>
             <uk>[EN] No field data recorded yet.</uk>
         </text>
-    </l10n>
+                <text name="wc_rf_pda_open_manager">
+            <br>Abrir gerenciador de trabalhadores</br>
+            <cz>Otevřít správce pracovníků</cz>
+            <da>Åbn medarbejderstyring</da>
+            <de>Arbeitermanager öffnen</de>
+            <en>Open Worker Manager</en>
+            <es>Abrir gestor de trabajadores</es>
+            <fr>Ouvrir le gestionnaire d'ouvriers</fr>
+            <it>Apri gestore operai</it>
+            <pl>Otwórz menedżera pracowników</pl>
+            <ru>Открыть менеджер работников</ru>
+            <uk>Відкрити менеджер працівників</uk>
+            <nl>Werkersbeheer openen</nl>
+            <pt>Abrir gestor de trabalhadores</pt>
+            <sv>Öppna arbetshanteraren</sv>
+            <no>Åpne arbeiderbehandler</no>
+            <fi>Avaa työntekijähallinta</fi>
+            <hu>Dolgozókezelő megnyitása</hu>
+            <ro>Deschide managerul de muncitori</ro>
+            <tr>İşçi yöneticisini aç</tr>
+            <jp>作業員マネージャーを開く</jp>
+            <kr>작업자 관리자 열기</kr>
+            <ct>開啟工人管理員</ct>
+            <fc>Ouvrir le gestionnaire d'ouvriers</fc>
+            <ea>Abrir gestor de trabajadores</ea>
+            <id>Buka manajer pekerja</id>
+            <vi>Mở trình quản lý công nhân</vi>
+        </text>
+        <text name="sf_pda_btn_rotation_planner">
+            <br>Planejador de rotação</br>
+            <cz>Plánovač osevního postupu</cz>
+            <da>Rotationsplanlægger</da>
+            <de>Fruchtfolgeplaner</de>
+            <en>Rotation Planner</en>
+            <es>Planificador de rotación</es>
+            <fr>Planificateur de rotation</fr>
+            <it>Pianificatore rotazioni</it>
+            <pl>Planer płodozmianu</pl>
+            <ru>Планировщик севооборота</ru>
+            <uk>Планувальник сівозміни</uk>
+            <nl>Rotatieplanner</nl>
+            <pt>Planeador de rotação</pt>
+            <sv>Växtföljdsplanerare</sv>
+            <no>Rotasjonsplanlegger</no>
+            <fi>Viljelykiertosuunnittelija</fi>
+            <hu>Vetésforgó-tervező</hu>
+            <ro>Planificator de rotație</ro>
+            <tr>Ekim nöbeti planlayıcı</tr>
+            <jp>輪作プランナー</jp>
+            <kr>윤작 계획기</kr>
+            <ct>輪作規劃</ct>
+            <fc>Planificateur de rotation</fc>
+            <ea>Planificador de rotación</ea>
+            <id>Perencana rotasi</id>
+            <vi>Lập kế hoạch luân canh</vi>
+        </text>
+        <text name="sf_pda_btn_field_detail">
+            <br>Detalhe do campo</br>
+            <cz>Detail pole</cz>
+            <da>Markdetaljer</da>
+            <de>Felddetails</de>
+            <en>Field Detail</en>
+            <es>Detalle del campo</es>
+            <fr>Détail du champ</fr>
+            <it>Dettaglio campo</it>
+            <pl>Szczegóły pola</pl>
+            <ru>Сведения о поле</ru>
+            <uk>Деталі поля</uk>
+            <nl>Veldgegevens</nl>
+            <pt>Detalhe do campo</pt>
+            <sv>Fältdetaljer</sv>
+            <no>Feltdetaljer</no>
+            <fi>Pellon tiedot</fi>
+            <hu>Táblarészletek</hu>
+            <ro>Detaliu câmp</ro>
+            <tr>Tarla detayı</tr>
+            <jp>畑の詳細</jp>
+            <kr>밯 상세</kr>
+            <ct>田地詳情</ct>
+            <fc>Détail du champ</fc>
+            <ea>Detalle del campo</ea>
+            <id>Detail lahan</id>
+            <vi>Chi tiết thửa ruộng</vi>
+        </text>
+</l10n>
 
     <inputBinding>
         <actionBinding action="WC_OPEN_ROSTER" />

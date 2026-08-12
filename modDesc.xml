@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.2.3.43</version>
+    <version>2.2.3.42</version>
     <modName>FS25_WorkerCostsMod</modName>
     <title>
         <en>Realistic Worker Costs</en>
@@ -1691,7 +1691,7 @@ Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÂ¦rdierne.</d
             <ru>[EN] No field data recorded yet.</ru>
             <uk>[EN] No field data recorded yet.</uk>
         </text>
-            <text name="wc_rf_pda_open_manager">
+                <text name="wc_rf_pda_open_manager">
             <br>Abrir gerenciador de trabalhadores</br>
             <cz>Otevřít správce pracovníků</cz>
             <da>Åbn medarbejderstyring</da>
@@ -1775,7 +1775,7 @@ Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÂ¦rdierne.</d
             <id>Detail lahan</id>
             <vi>Chi tiết thửa ruộng</vi>
         </text>
-    </l10n>
+</l10n>
 
     <inputBinding>
         <actionBinding action="WC_OPEN_ROSTER" />

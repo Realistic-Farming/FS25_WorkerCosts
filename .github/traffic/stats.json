@@ -29076,5 +29076,335 @@
     "stars": 20,
     "forks": 1,
     "watchers": 2
+  },
+  {
+    "timestamp": "2026-08-12T12:52:08Z",
+    "date": "2026-08-12",
+    "views": {
+      "count": 170,
+      "uniques": 84
+    },
+    "clones": {
+      "count": 406,
+      "uniques": 114
+    },
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 71,
+        "uniques": 44
+      },
+      {
+        "referrer": "Google",
+        "count": 39,
+        "uniques": 24
+      },
+      {
+        "referrer": "kingmods.net",
+        "count": 5,
+        "uniques": 4
+      },
+      {
+        "referrer": "Bing",
+        "count": 3,
+        "uniques": 2
+      },
+      {
+        "referrer": "forbidden-mods.de",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "referrer": "ya.ru",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "referrer": "DuckDuckGo",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "popular_paths": [
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts",
+        "title": "Overview",
+        "count": 96,
+        "uniques": 80
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
+        "title": "/releases/tag/v2.2.2.2",
+        "count": 27,
+        "uniques": 21
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
+        "title": "/releases",
+        "count": 17,
+        "uniques": 10
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/issues",
+        "title": "/issues",
+        "count": 12,
+        "uniques": 2
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/issues/54",
+        "title": "/issues/54",
+        "count": 3,
+        "uniques": 2
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md",
+        "title": "/blob/main/README.md",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/issues/55",
+        "title": "/issues/55",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/96",
+        "title": "/pull/96",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/src/WorkerManager.lua",
+        "title": "/blob/main/src/WorkerManager.lua",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/101",
+        "title": "/pull/101",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 90,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.2.2.2"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.2.2.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 12,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.2.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 87,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.2.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 37,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.2.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 28,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.1.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 5,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.0.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.9.5"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 20,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.9.4"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 28,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.9.3"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 34,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.9.2"
+      },
+      {
+        "assets": [],
+        "tag": "v1.0.9.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 92,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.9.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.8.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 18,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.7.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 9,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.6.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.4.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 8,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.3.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 1,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 28,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.1.1"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 12,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 23,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v1.0.0.7"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 25,
+            "name": "FS25_WorkerCosts.zip"
+          }
+        ],
+        "tag": "v2.0.1"
+      },
+      {
+        "assets": [],
+        "tag": "v1.0.0.6"
+      },
+      {
+        "assets": [],
+        "tag": "v1.0.0.5"
+      },
+      {
+        "assets": [],
+        "tag": "v1.0.0.0"
+      }
+    ],
+    "stars": 20,
+    "forks": 1,
+    "watchers": 2
   }
 ]

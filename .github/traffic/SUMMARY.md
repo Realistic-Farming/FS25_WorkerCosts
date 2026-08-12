@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-08-11T18:52:21Z
-**Days tracked:** 113 | **Download snapshots:** 473 (hourly)
+**Last updated:** 2026-08-12T12:52:28Z
+**Days tracked:** 114 | **Download snapshots:** 476 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 168 | 84 |
-| Git Clones | 374 | 102 |
+| Page Views | 170 | 84 |
+| Git Clones | 406 | 114 |
 
 > **Engagement:** 2.0 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 701 of 84 visitors cloned or downloaded (**834.5%**)
+> **14-day conversion:** 715 of 84 visitors cloned or downloaded (**851.1%**)
 >
-> Unique cloners: 102 | Release downloads: 599
+> Unique cloners: 114 | Release downloads: 601
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 599 |
-| Git Clones (14-day) | 374 |
-| **Total Acquisitions** | **973** |
+| Zip Downloads | 601 |
+| Git Clones (14-day) | 406 |
+| **Total Acquisitions** | **1007** |
 
 ---
 
@@ -54,10 +54,10 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 73 | 44 |
-| Google | 40 | 26 |
+| github.com | 71 | 44 |
+| Google | 39 | 24 |
+| kingmods.net | 5 | 4 |
 | Bing | 3 | 2 |
-| kingmods.net | 2 | 2 |
 | forbidden-mods.de | 2 | 1 |
 | ya.ru | 2 | 1 |
 | DuckDuckGo | 1 | 1 |
@@ -80,9 +80,9 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 95 | 79 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 26 | 20 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 16 | 10 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 96 | 80 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 27 | 21 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 17 | 10 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues` | 12 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 3 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md` | 2 | 1 |

@@ -165,7 +165,7 @@ function WCWageSettingsFrame:refreshWageLevelOptions()
     for i = 1, 3 do
         local base = g_i18n:getText("wc_diff_" .. i) or ""
         local name = base:gsub("%s*%b()%s*$", "")   -- drop "($15/h)", keep the localized tier name
-        texts[i] = string.format("%s ($%d/%s)", name, rates[i], unit)
+        local rStr = (g_i18n and g_i18n:formatMoney(rates[i], 0, true, false) or tostring(rates[i])); texts[i] = string.format("%s (%s/%s)", name, rStr, unit)
     end
 
     -- Guard so setState() doesn't re-fire the wage-level callback mid-update.
@@ -188,9 +188,9 @@ function WCWageSettingsFrame:refreshRatePreview()
 
     if self.txtBigRate then
         if settings.costMode == Settings.COST_MODE_HOURLY then
-            self.txtBigRate:setText(string.format("$%d / h", rate))
+            self.txtBigRate:setText((g_i18n and g_i18n:formatMoney(rate, 0, true, false) or tostring(rate)) .. " / h")
         else
-            self.txtBigRate:setText(string.format("$%d / ha", rate))
+            self.txtBigRate:setText((g_i18n and g_i18n:formatMoney(rate, 0, true, false) or tostring(rate)) .. " / ha")
         end
     end
 

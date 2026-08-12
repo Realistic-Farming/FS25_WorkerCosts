@@ -167,7 +167,63 @@ local function soilGuideDialog()
 end
 
 --- Resolve l10n with English fallback. When CS/WC create the Esc door, MOD_NAME
---- i18n may lack Soil table keys — also probe Soil modEnv, then g_i18n.
+--- i18n may lack Soil table keys - also probe Soil modEnv, then g_i18n.
+--- BUILD 21:41 cross-mod resolve for Market Dynamics classes.
+--- The RfPdaMenuPage that actually runs belongs to whichever mod won the NO-HOST door
+--- race, so bare MDMMarketScreenGraph / MdRfPdaGuest are nil in every environment except
+--- MarketDynamics' own - that is why the Prices graph vanished when Dairy hosted the door.
+--- Same shape as the Open Market resolve below: read the bare global in the caller's env
+--- first, then fall back to g_modEnvironments. Never invents a class it cannot find.
+---
+--- BUILD 22:04: this MUST stay above draw/update/onListSelectionChanged. It was defined
+--- near resolveListRowIndex at first, which is ~1900 lines BELOW the draw call, and a Lua
+--- local is nil before its definition - so draw called a nil global once per frame and
+--- took the Esc rail down with it. Kept next to the other cross-mod resolvers so its
+--- ordering requirement is obvious.
+local function mdResolve(bare, name)
+    -- 1. in-env: free when MarketDynamics itself is the host.
+    if bare ~= nil then
+        return bare
+    end
+    -- 2. the named environment. Kept first among the fallbacks because it is the cheapest
+    --    and correct in the common case, but NOT trusted alone - this hardcodes a mod name
+    --    the guest itself never hardcodes (it uses g_currentModName), so a rename or a
+    --    differently-named install slips straight past it. That is what produced
+    --    "GATE graph=false" on the Dairy door.
+    if g_modEnvironments ~= nil then
+        -- BUILD 12:59: owner per name. This belt used to hardcode MarketDynamics, so every
+        -- other suite class fell straight past it to the scan. Crop Stress and the Market
+        -- screen now get the same cheap first-guess Market Dynamics always had.
+        local OWNER = {
+            MdRfPdaGuest = "FS25_MarketDynamics",
+            MDMMarketScreenGraph = "FS25_MarketDynamics",
+            MDMMarketScreen = "FS25_MarketDynamics",
+            CsRfPdaGuest = "FS25_SeasonalCropStress",
+        }
+        local env = g_modEnvironments[OWNER[name] or "FS25_MarketDynamics"]
+        if env ~= nil and env[name] ~= nil then
+            return env[name]
+        end
+        -- 3. key-independent scan: ask every loaded mod environment whether it carries the
+        --    class. No name guessing, so a rename cannot break this belt.
+        for _, e in pairs(g_modEnvironments) do
+            if type(e) == "table" and e[name] ~= nil then
+                return e[name]
+            end
+        end
+    end
+    -- 4. real global table: MarketDynamics publishes here from BUILD 11:43.
+    local okEnv, root = pcall(getfenv, 0)
+    if okEnv and type(root) == "table" and root[name] ~= nil then
+        return root[name]
+    end
+    -- 5. mission handle, same publish.
+    if g_currentMission ~= nil and g_currentMission[name] ~= nil then
+        return g_currentMission[name]
+    end
+    return nil
+end
+
 local function tr(key, fallback)
     local function tryI18n(i18n)
         if i18n == nil then
@@ -257,6 +313,10 @@ function RfPdaMenuPage.new()
     self._wcLiveTimer = 0
     self.wcSubPageIndex = 1
     self.wcAboutTabIndex = 1
+    self.mdSubPageIndex = 1
+    self.csSubPageIndex = 1
+    self.mdCommodityData = {}
+    self.mdSelectedFillType = nil
     self._panelCache = {}
     self._lastPanelFingerprint = nil
     self._hostListenerBound = false
@@ -264,6 +324,10 @@ function RfPdaMenuPage.new()
     self._wcWageRefreshing = false
     self._wcSubnavSeeding = false
     self._wcSubnavSeeded = false
+    self._mdSubnavSeeding = false
+    self._mdSubnavSeeded = false
+    self._csSubnavSeeding = false
+    self._csSubnavSeeded = false
     self._lastModuleSelectId = nil
     self._lastModuleSelectAt = 0
     self._frameDebug = false
@@ -327,16 +391,41 @@ function RfPdaMenuPage:onGuiSetupFinished()
     self.csFieldsEmptyHint = self:getDescendantById("csFieldsEmptyHint") or self.csFieldsEmptyHint
     self.rfHostTableRegion = self:getDescendantById("rfHostTableRegion") or self.rfHostTableRegion
     self.csDetailStrip = self:getDescendantById("csDetailStrip") or self.csDetailStrip
+    self.csActionBar = self:getDescendantById("csActionBar") or self.csActionBar
+    self.csBtnConsultant = self:getDescendantById("csBtnConsultant") or self.csBtnConsultant
+    self.csBtnSchedule = self:getDescendantById("csBtnSchedule") or self.csBtnSchedule
+    self.csDetailNoCoverage = self:getDescendantById("csDetailNoCoverage") or self.csDetailNoCoverage
+    self.csConsultPanel = self:getDescendantById("csConsultPanel") or self.csConsultPanel
+    self.csPivotCard = self:getDescendantById("csPivotCard") or self.csPivotCard
+    self.csAgronomistCard = self:getDescendantById("csAgronomistCard") or self.csAgronomistCard
+    self.csFieldDetailCard = self:getDescendantById("csFieldDetailCard") or self.csFieldDetailCard
     self.mdGraphRegion = self:getDescendantById("mdGraphRegion") or self.mdGraphRegion
     self.mdGraphArea = self:getDescendantById("mdGraphArea") or self.mdGraphArea
     self.mdDetailStrip = self:getDescendantById("mdDetailStrip") or self.mdDetailStrip
     self.mdMoverSelector = self:getDescendantById("mdMoverSelector") or self.mdMoverSelector
+    self.mdTableRegion = self:getDescendantById("mdTableRegion") or self.mdTableRegion
+    self.mdCommodityList = self:getDescendantById("mdCommodityList") or self.mdCommodityList
+    self.mdPageBand = self:getDescendantById("mdPageBand") or self.mdPageBand
+    self.mdPricesBand = self:getDescendantById("mdPricesBand") or self.mdPricesBand
     self.mdEventsBand = self:getDescendantById("mdEventsBand") or self.mdEventsBand
+    self.mdContractsBand = self:getDescendantById("mdContractsBand") or self.mdContractsBand
     self.mdOpenMarketBtn = self:getDescendantById("mdOpenMarketBtn") or self.mdOpenMarketBtn
+    self.mdSubnavShell = self:getDescendantById("mdSubnavShell") or self.mdSubnavShell
+    self.mdSubnavSelector = self:getDescendantById("mdSubnavSelector") or self.mdSubnavSelector
+    self.mdSubnavDotBox = self:getDescendantById("mdSubnavDotBox") or self.mdSubnavDotBox
+    self.csSubnavShell = self:getDescendantById("csSubnavShell") or self.csSubnavShell
+    self.csSubnavSelector = self:getDescendantById("csSubnavSelector") or self.csSubnavSelector
+    self.csSubnavDotBox = self:getDescendantById("csSubnavDotBox") or self.csSubnavDotBox
+    self.mdSideInfoShell = self:getDescendantById("mdSideInfoShell") or self.mdSideInfoShell
+    self.mdSideInfoBody = self:getDescendantById("mdSideInfoBody") or self.mdSideInfoBody
     self.wcGlanceShell = self:getDescendantById("wcGlanceShell") or self.wcGlanceShell
     self.wcSubnavShell = self:getDescendantById("wcSubnavShell") or self.wcSubnavShell
     self.wcSubnavSelector = self:getDescendantById("wcSubnavSelector") or self.wcSubnavSelector
     self.wcSubnavDotBox = self:getDescendantById("wcSubnavDotBox") or self.wcSubnavDotBox
+    if self.mdCommodityList then
+        self.mdCommodityList.dataSource = self
+        self.mdCommodityList.delegate = self
+    end
     -- Dual-arrow FAIL-FIX: live page selector = title-chrome wcTitlePageSelector (not left twin).
     self.wcTitlePageShell = self:getDescendantById("wcTitlePageShell") or self.wcTitlePageShell
     self.wcTitlePageSelector = self:getDescendantById("wcTitlePageSelector") or self.wcTitlePageSelector
@@ -346,9 +435,14 @@ function RfPdaMenuPage:onGuiSetupFinished()
     self.wcSideVersion = self:getDescendantById("wcSideVersion") or self.wcSideVersion
     self.rfSideInfoShell = self:getDescendantById("rfSideInfoShell") or self.rfSideInfoShell
     self.rfSideInfoBody = self:getDescendantById("rfSideInfoBody") or self.rfSideInfoBody
+    self.csSideInfoShell = self:getDescendantById("csSideInfoShell") or self.csSideInfoShell
+    self.csSideInfoBody = self:getDescendantById("csSideInfoBody") or self.csSideInfoBody
     self.rfSideMidSeparator = self:getDescendantById("rfSideMidSeparator") or self.rfSideMidSeparator
     self.rfModuleListShell = self:getDescendantById("rfModuleListShell") or self.rfModuleListShell
     self.wcPageShell = self:getDescendantById("wcPageShell") or self.wcPageShell
+    self.rfFrameworkGlanceShell = self:getDescendantById("rfFrameworkGlanceShell") or self.rfFrameworkGlanceShell
+    self.rfFwStatusBlock = self:getDescendantById("rfFwStatusBlock") or self.rfFwStatusBlock
+    self.rfFwTableBlock = self:getDescendantById("rfFwTableBlock") or self.rfFwTableBlock
     self.wcPageDashboard = self:getDescendantById("wcPageDashboard") or self.wcPageDashboard
     self.wcPageWages = self:getDescendantById("wcPageWages") or self.wcPageWages
     self.wcPageWorkers = self:getDescendantById("wcPageWorkers") or self.wcPageWorkers
@@ -359,8 +453,30 @@ function RfPdaMenuPage:onGuiSetupFinished()
     self.soilColArea = self:getDescendantById("soilColArea") or self.soilColArea
     self.soilColStatus = self:getDescendantById("soilColStatus") or self.soilColStatus
     self.soilColFert = self:getDescendantById("soilColFert") or self.soilColFert
+    self.soilColWeed = self:getDescendantById("soilColWeed") or self.soilColWeed
+    self.soilColPest = self:getDescendantById("soilColPest") or self.soilColPest
+    self.soilColDisease = self:getDescendantById("soilColDisease") or self.soilColDisease
     self.soilSectionTreatment = self:getDescendantById("soilSectionTreatment") or self.soilSectionTreatment
     self.soilTreatProducts = self:getDescendantById("soilTreatProducts") or self.soilTreatProducts
+    -- Read-only rotation card (2026-08-07). Nil-safe: older door XML lacks these ids.
+    self.soilRotationCard   = self:getDescendantById("soilRotationCard") or self.soilRotationCard
+    self.soilRotationTitle  = self:getDescendantById("soilRotationTitle") or self.soilRotationTitle
+    self.soilRotationLast   = self:getDescendantById("soilRotationLast") or self.soilRotationLast
+    self.soilRotationStatus = self:getDescendantById("soilRotationStatus") or self.soilRotationStatus
+    self.soilRotationTip    = self:getDescendantById("soilRotationTip") or self.soilRotationTip
+    -- What-if block (2026-08-08). Nil-safe: older door XML lacks these ids.
+    self.soilRotationWhatIfHeader = self:getDescendantById("soilRotationWhatIfHeader") or self.soilRotationWhatIfHeader
+    self.soilRotationIfColCrop    = self:getDescendantById("soilRotationIfColCrop") or self.soilRotationIfColCrop
+    self.soilRotationIfColStatus  = self:getDescendantById("soilRotationIfColStatus") or self.soilRotationIfColStatus
+    self.soilRotationIfColEffect  = self:getDescendantById("soilRotationIfColEffect") or self.soilRotationIfColEffect
+    self.soilRotationIfRows = {}
+    for i = 1, 3 do
+        self.soilRotationIfRows[i] = {
+            crop   = self:getDescendantById(string.format("soilRotationIf%dCrop", i)),
+            status = self:getDescendantById(string.format("soilRotationIf%dStatus", i)),
+            effect = self:getDescendantById(string.format("soilRotationIf%dEffect", i)),
+        }
+    end
     self.treatSelectedLabel = self:getDescendantById("treatSelectedLabel") or self.treatSelectedLabel
     self.treatNextLabel     = self:getDescendantById("treatNextLabel") or self.treatNextLabel
     self.treatTargetsLabel  = self:getDescendantById("treatTargetsLabel") or self.treatTargetsLabel
@@ -368,6 +484,7 @@ function RfPdaMenuPage:onGuiSetupFinished()
     self.treatTargetN       = self:getDescendantById("treatTargetN") or self.treatTargetN
     self.treatTargetP       = self:getDescendantById("treatTargetP") or self.treatTargetP
     self.treatTargetK       = self:getDescendantById("treatTargetK") or self.treatTargetK
+    self.treatTargetPH      = self:getDescendantById("treatTargetPH") or self.treatTargetPH
     self.treatPlanLines     = self:getDescendantById("treatPlanLines") or self.treatPlanLines
     self.treatProdRows = {}
     for i = 1, 8 do
@@ -416,7 +533,10 @@ function RfPdaMenuPage:_applyChromeL10n()
     setEl(self.soilColField, "sf_pda_col_field", "Field")
     setEl(self.soilColArea, "rf_pda_col_area", "Area")
     setEl(self.soilColStatus, "sf_pda_col_status", "Status")
-    setEl(self.soilColFert, "rf_pda_col_fert", "Fertilizer")
+    setEl(self.soilColFert, "rf_pda_col_fert", "FERT")
+    setEl(self.soilColWeed, "sf_pda_col_weeds", "Weeds")
+    setEl(self.soilColPest, "sf_pda_col_pests", "Pests")
+    setEl(self.soilColDisease, "sf_pda_col_disease", "Disease")
     setEl(self.fieldsEmptyHint, "sf_pda_no_fields", "No field data recorded yet.")
     setEl(self.soilSectionTreatment, "rf_pda_section_treatment", "Treatment")
     setEl(self.soilTreatProducts, "rf_pda_treat_products", "Products")
@@ -469,9 +589,56 @@ function RfPdaMenuPage:initialize()
             end
         end
     }
+    -- Open full Market when MDM module is active (bottom strip twin).
+    -- MENU_EXTRA_1, NOT MENU_ACTIVATE: the commodity SmoothList consumes ACTIVATE/SPACE
+    -- first, so the footer callback never fired at all - zero MarketScreen.show lines in
+    -- the client log on click (Ash+George r2 2026-08-07). EXTRA_1 is free while MDM is
+    -- the active module, since Help / Rotation Planner / Field Detail are Soil-only footers.
+    self.btnOpenMarket = {
+        inputAction = InputAction.MENU_EXTRA_1,
+        showWhenPaused = true,
+        text = tr("md_rf_pda_open_market", "Open full Market"),
+        callback = function()
+            print("[MarketDynamics] Esc footer Open full Market pressed")
+            -- Cross-mod resolve (Vera F2 2026-08-07). MdRfPdaGuest / MDMMarketScreen are
+            -- MarketDynamics-env globals and are nil on a Soil/WC/SCS hosted door, so the
+            -- bare calls silently did nothing there. Same shape as the Worker Manager
+            -- resolve below and Soil's soilGlobal: try in-env, then g_modEnvironments.
+            local host = self:_getHost()
+            local activeId = host ~= nil and host.activeModuleId or nil
+            local mod = (host ~= nil and host.modules ~= nil and activeId ~= nil)
+                and host.modules[activeId] or nil
+            if mod ~= nil and type(mod.onOpenFullMarket) == "function" then
+                print("[MarketDynamics] Open full Market via active module def")
+                mod.onOpenFullMarket()
+                return
+            end
+            -- BUILD 12:59: this had its own two-belt resolve (in-env, then the hardcoded
+            -- MarketDynamics env key) and neither of the belts that actually work - the
+            -- getfenv/mission publish. Routed through mdResolve so SPACE and the footer
+            -- button share one implementation and one set of five belts.
+            local guest = (type(mdResolve) == "function")
+                    and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+            if guest ~= nil and type(guest.onOpenFullMarket) == "function" then
+                print("[MarketDynamics] Open full Market via resolved MdRfPdaGuest")
+                pcall(guest.onOpenFullMarket)
+                return
+            end
+            local scr = (type(mdResolve) == "function")
+                    and mdResolve(MDMMarketScreen, "MDMMarketScreen") or MDMMarketScreen
+            if scr ~= nil and type(scr.show) == "function" then
+                print("[MarketDynamics] Open full Market via resolved MDMMarketScreen")
+                pcall(scr.show)
+                return
+            end
+            print("[MarketDynamics] Open full Market: no handler available (all resolve paths nil)")
+        end
+    }
     -- SPACE / MENU_ACTIVATE: open the Worker Manager deep desk when WC is active.
     self.btnOpenWorkerManager = {
-        inputAction = InputAction.MENU_ACTIVATE,
+        -- MENU_EXTRA_2, not MENU_ACTIVATE: same SmoothList swallow class as Open full
+        -- Market (Ash 2026-08-07). Free while WC is active, Rotation Planner is Soil-only.
+        inputAction = InputAction.MENU_EXTRA_2,
         showWhenPaused = true,
         text = tr("wc_rf_pda_open_manager", "Open Worker Manager"),
         callback = function()
@@ -489,8 +656,21 @@ function RfPdaMenuPage:initialize()
             end
         end
     }
+    -- SPACE (MENU_EXTRA_1): Crop Stress consultant is secondary only — never default home.
+    -- EXTRA_1 free on CS (Help is Soil-only). SmoothList would swallow MENU_ACTIVATE.
+    self.btnCsConsultant = {
+        inputAction = InputAction.MENU_EXTRA_1,
+        showWhenPaused = true,
+        text = tr("cs_rf_pda_btn_consultant", "Crop consultant"),
+        callback = function()
+            self:onClickCsConsultant()
+        end
+    }
 
-    self.menuButtonInfo = { self.btnBack, self.btnHelp }
+    -- Back only. Help is Soil-only and _syncHostGuestChrome adds it when the Soil
+    -- module is the active one; seeding it here leaked Help onto every module's
+    -- footer for the window before the first sync ran.
+    self.menuButtonInfo = { self.btnBack }
     self:_applyChromeL10n()
     self:_bindHostListener()
 end
@@ -513,11 +693,20 @@ end
 
 function RfPdaMenuPage:onFrameOpen()
     RfPdaMenuPage:superClass().onFrameOpen(self)
-    self.isOpen = true
     self._liveTimer = 0
     self._rfSoilPanelMissingWarned = false
     self:_bindHostListener()
     self:_applyChromeL10n()
+    -- Module home BEFORE isOpen so select/notify cannot dual-fire refresh + onShow.
+    do
+        local host = self:_getHost()
+        if host ~= nil and type(host.applyHomeModuleQuiet) == "function" then
+            pcall(function()
+                host:applyHomeModuleQuiet()
+            end)
+        end
+    end
+    self.isOpen = true
     -- F11: lime arrows before and after first refresh (engine may disable on open).
     self:_ensureSelectorArrowsVisible()
     self:refreshPanelSelector(true)
@@ -526,6 +715,19 @@ function RfPdaMenuPage:onFrameOpen()
 end
 
 function RfPdaMenuPage:onFrameClose()
+    do
+        local host = self:_getHost()
+        if host ~= nil and host.activeModuleId ~= nil then
+            if type(host.rememberClosedModule) == "function" then
+                pcall(function()
+                    host:rememberClosedModule(host.activeModuleId)
+                end)
+            else
+                host._lastClosedModuleId = host.activeModuleId
+                host._userHasChosenModule = true
+            end
+        end
+    end
     self.isOpen = false
     RfPdaMenuPage:superClass().onFrameClose(self)
 end
@@ -553,21 +755,155 @@ end
 
 function RfPdaMenuPage:draw(clipX1, clipY1, clipX2, clipY2)
     RfPdaMenuPage:superClass().draw(self, clipX1, clipY1, clipX2, clipY2)
-    -- Market Dynamics Esc glance graph (after chrome). Reuse MDMMarketScreenGraph.draw.
+    -- Market Dynamics Prices page graph (after chrome). Reuse MDMMarketScreenGraph.draw.
     do
         local host = self:_getHost()
         local active = host and host.getActivePanel and host:getActivePanel()
-        if active ~= nil and active.id == "marketDynamics"
-                and self.mdGraphRegion ~= nil
-                and MDMMarketScreenGraph ~= nil and type(MDMMarketScreenGraph.draw) == "function" then
-            local area = self.mdGraphArea or self.mdGraphRegion
-            if area ~= nil and area.absPosition ~= nil and area.absSize ~= nil then
+        local pageIdx = tonumber(self.mdSubPageIndex) or 1
+        local graph = (type(mdResolve) == "function")
+                and mdResolve(MDMMarketScreenGraph, "MDMMarketScreenGraph") or MDMMarketScreenGraph
+        local mdGuest = (type(mdResolve) == "function")
+                and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+        -- BUILD 00:10: the outer skip log fires BEFORE any gate. The 22:27 log lived
+        -- inside the abs gate, so the one case worth seeing - the gate refusing - printed
+        -- nothing at all. Same failure shape as the bug it was meant to diagnose.
+        local isMdPrices = active ~= nil and active.id == "marketDynamics" and pageIdx == 1
+        if isMdPrices and not self._mdGraphOuterLogged then
+            self._mdGraphOuterLogged = true
+            local a = self.mdGraphArea
+            local b = self.mdPricesBand
+            local function box(el)
+                if el == nil then return "nil-element" end
+                if el.absSize == nil or el.absPosition == nil then return "no-abs" end
+                return string.format("%.4fx%.4f at %.4f,%.4f",
+                    el.absSize[1] or -1, el.absSize[2] or -1,
+                    el.absPosition[1] or -1, el.absPosition[2] or -1)
+            end
+            local before = box(a)
+            if a ~= nil and type(a.updateAbsolutePosition) == "function" then
+                pcall(function() a:updateAbsolutePosition() end)
+            end
+            -- Name the belt that won, so a nil class is immediately attributable rather
+            -- than another round of narrowing.
+            local via = "nil"
+            if graph ~= nil then
+                if MDMMarketScreenGraph ~= nil then
+                    via = "in-env"
+                elseif g_modEnvironments ~= nil and g_modEnvironments["FS25_MarketDynamics"] ~= nil
+                        and g_modEnvironments["FS25_MarketDynamics"].MDMMarketScreenGraph ~= nil then
+                    via = "modEnv-named"
+                else
+                    local okE, rootE = pcall(getfenv, 0)
+                    if okE and type(rootE) == "table" and rootE.MDMMarketScreenGraph ~= nil then
+                        via = "getfenv0"
+                    elseif g_currentMission ~= nil and g_currentMission.MDMMarketScreenGraph ~= nil then
+                        via = "mission"
+                    else
+                        via = "modEnv-scan"
+                    end
+                end
+            end
+            print(string.format(
+                "[MarketDynamics] Esc graph GATE: band=%s area=%s graph=%s via=%s trend=%s draw=%s | area before=%s after=%s | band=%s",
+                tostring(b ~= nil), tostring(a ~= nil), tostring(graph ~= nil), via,
+                tostring(graph ~= nil and type(graph.drawPriceTrend) == "function"),
+                tostring(graph ~= nil and type(graph.draw) == "function"),
+                before, box(a), box(b)))
+        end
+
+        -- BUILD 11:43: accept either entry point, prefer the shared tree. Gating on
+        -- graph.draw alone would refuse a companion that has drawPriceTrend, and the
+        -- shared tree is the one both surfaces are supposed to be using.
+        local hasTrend = graph ~= nil and type(graph.drawPriceTrend) == "function"
+        local hasDraw = graph ~= nil and type(graph.draw) == "function"
+        if isMdPrices
+                and self.mdPricesBand ~= nil
+                and (hasTrend or hasDraw) then
+            local area = self.mdGraphArea
+            -- Abs-size guard: on the first frame after the band becomes visible the area
+            -- can still carry a stale or zero size, which would draw into a degenerate rect.
+            if area ~= nil and (area.absSize == nil or area.absPosition == nil
+                    or (area.absSize[1] or 0) <= 0 or (area.absSize[2] or 0) <= 0) then
+                if type(area.updateAbsolutePosition) == "function" then
+                    pcall(function() area:updateAbsolutePosition() end)
+                end
+            end
+
+            -- BUILD 00:10: if the area is STILL unusable, do not give up silently. Derive a
+            -- rect from mdPricesBand and feed the SAME drawPriceTrend. My 21:41 guard failed
+            -- closed, which turned a layout-timing problem into a permanently blank panel.
+            -- A plot in a slightly generous box is a better answer than no plot, and it is
+            -- still the one shared decision tree - no Esc fork, nothing invented.
+            local useBand = false
+            if area == nil or area.absPosition == nil or area.absSize == nil
+                    or (area.absSize[1] or 0) <= 0 or (area.absSize[2] or 0) <= 0 then
+                local b = self.mdPricesBand
+                if b ~= nil and b.absPosition ~= nil and b.absSize ~= nil
+                        and (b.absSize[1] or 0) > 0 and (b.absSize[2] or 0) > 0 then
+                    useBand = true
+                    if not self._mdGraphBandFallbackLogged then
+                        self._mdGraphBandFallbackLogged = true
+                        print(string.format(
+                            "[MarketDynamics] Esc graph: mdGraphArea unusable, drawing into mdPricesBand rect %.4fx%.4f",
+                            b.absSize[1], b.absSize[2]))
+                    end
+                end
+            end
+
+            if useBand or (area ~= nil and area.absPosition ~= nil and area.absSize ~= nil
+                    and (area.absSize[1] or 0) > 0 and (area.absSize[2] or 0) > 0) then
+                -- Resolve the fill type from the host first, then the guest. Both are asked
+                -- because the host copy is set on full show and the guest owns the live pick.
                 local ft = self.mdSelectedFillType
-                if ft == nil and MdRfPdaGuest ~= nil and type(MdRfPdaGuest.getSelectedFillType) == "function" then
-                    ft = MdRfPdaGuest.getSelectedFillType()
+                if ft == nil and mdGuest ~= nil and type(mdGuest.getSelectedFillType) == "function" then
+                    local okFt, v = pcall(mdGuest.getSelectedFillType)
+                    ft = okFt and v or nil
+                end
+                -- BUILD 23:43: pre-ft skip log. Everything below needs ft, so a nil here is a
+                -- silent no-draw; say so once instead of leaving a blank panel unexplained.
+                if ft == nil and not self._mdGraphFtLogged then
+                    self._mdGraphFtLogged = true
+                    print(string.format(
+                        "[MarketDynamics] Esc graph SKIP: no fill type resolved (host=%s guest=%s useBand=%s)",
+                        tostring(self.mdSelectedFillType), tostring(mdGuest ~= nil), tostring(useBand)))
                 end
                 if ft ~= nil then
-                    MDMMarketScreenGraph.draw(ft, area.absPosition[1], area.absPosition[2], area.absSize[1], area.absSize[2])
+                    local src = useBand and self.mdPricesBand or area
+                    local gx = src.absPosition[1]
+                    local gy = src.absPosition[2]
+                    local gw = src.absSize[1]
+                    local gh = src.absSize[2]
+                    if useBand then
+                        -- Inset the band a little so the plot does not run into its edges.
+                        gx = gx + gw * 0.04
+                        gy = gy + gh * 0.10
+                        gw = gw * 0.92
+                        gh = gh * 0.62
+                    end
+                    local sampleCount = 0
+                    if type(graph.getSampleCount) == "function" then
+                        sampleCount = graph.getSampleCount(ft) or 0
+                    end
+                    -- BUILD 23:43: the Esc fork is gone. One shared decision tree lives in
+                    -- MDMMarketScreenGraph.drawPriceTrend and the full Market screen calls the
+                    -- same one, so the two surfaces cannot disagree about the same crop again.
+                    -- The old fork here had no global-sample step and no aggregated-median
+                    -- branch, which is why Esc could be blank while Market plotted.
+                    local branch = "thin"
+                    if type(graph.drawPriceTrend) == "function" then
+                        local okB, b = pcall(graph.drawPriceTrend, ft, gx, gy, gw, gh)
+                        branch = (okB and b) or "thin"
+                    elseif sampleCount >= 2 then
+                        -- Companion older than this build: keep the plot rather than blank it.
+                        graph.draw(ft, gx, gy, gw, gh)
+                        branch = "ring"
+                    end
+                    if not self._mdGraphLogged then
+                        self._mdGraphLogged = true
+                        print(string.format(
+                            "[MarketDynamics] Esc graph: box=%.1fx%.1f at %.3f,%.3f ft=%s samples=%d branch=%s",
+                            gw or -1, gh or -1, gx or -1, gy or -1, tostring(ft), sampleCount, tostring(branch)))
+                    end
                 end
             end
         end
@@ -603,15 +939,46 @@ function RfPdaMenuPage:update(dt)
 
     -- Market Dynamics: light text/graph refresh; never SmoothList thrash.
     if isMd then
+        local pageIdx = tonumber(self.mdSubPageIndex) or 1
+        -- BUILD 21:41: same cross-env resolve as draw. This is the sample ring tick, so
+        -- leaving it bare would have kept getSampleCount at 0 under a foreign host even
+        -- with the draw fixed, and the graph would have limped on engine history alone.
+        local graphUpd = (type(mdResolve) == "function")
+                and mdResolve(MDMMarketScreenGraph, "MDMMarketScreenGraph") or MDMMarketScreenGraph
+        if pageIdx == 1 and graphUpd ~= nil and type(graphUpd.update) == "function" then
+            pcall(graphUpd.update, dt)
+        end
         self._mdLiveTimer = (self._mdLiveTimer or 0) + dt
         if self._mdLiveTimer >= REFRESH_INTERVAL then
             self._mdLiveTimer = 0
-            if active ~= nil and type(active.onShow) == "function" then
+            -- BUILD 22:27: was a full onShow(.., true) every 2000ms, which ran three
+            -- updateAbsolutePosition calls, re-seeded the subnav, re-synced visibility and
+            -- re-asserted the selection. Re-laying out the table twice a second is what
+            -- kept nudging the scroll. The guest light tick repaints digits only.
+            local mdGuest = (type(mdResolve) == "function")
+                    and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+            -- Prefer the registered handler; the direct guest is the belt if it was dropped.
+            local light = (active ~= nil and type(active.onLightTick) == "function")
+                    and active.onLightTick
+                    or (mdGuest ~= nil and mdGuest.onLightTick or nil)
+            if type(light) == "function" then
+                pcall(light, self.rfHostPlaceholder)
+            elseif active ~= nil and type(active.onShow) == "function" then
+                -- Older MarketDynamics without onLightTick: keep the previous behaviour
+                -- rather than silently stop refreshing prices.
                 pcall(active.onShow, self.rfHostPlaceholder, true)
             end
         end
         return
     end
+
+    -- One-shot graph log re-arms whenever Market Dynamics is not the active module, so
+    -- each visit to Prices reports once instead of once per session.
+    self._mdGraphLogged = false
+    self._mdGraphFtLogged = false
+    self._mdGraphOuterLogged = false
+    self._mdGraphBandFallbackLogged = false
+    self._mdGuestBeltLogged = false
 
     -- WC Dashboard/Workers: 500ms text-only live refresh (George FULL PORT ACK).
     if isWc then
@@ -650,7 +1017,7 @@ function RfPdaMenuPage:_getHost()
 end
 
 --- Shared MTO arrow ensure: enable + normalized ~36px hit (never setSize(36,36) literals)
---- then lime tint. Re-apply every call â€” profile can reset circle buttons to 42.
+--- then lime tint. Re-apply every call - profile can reset circle buttons to 42.
 function RfPdaMenuPage:_ensureMtoArrowsVisible(sel)
     if sel == nil then
         return
@@ -665,7 +1032,7 @@ function RfPdaMenuPage:_ensureMtoArrowsVisible(sel)
         sel:setDisabled(false)
     end
 
-    -- Extract: GuiUtils.getNormalizedScreenValues(values, default) â€” values = "Wpx Hpx" or array; returns table.
+    -- Extract: GuiUtils.getNormalizedScreenValues(values, default) - values = "Wpx Hpx" or array; returns table.
     -- Never pass bare numbers (GuiUtils.lua #values throws on number).
     local tw, th = nil, nil
     if GuiUtils ~= nil and type(GuiUtils.getNormalizedScreenValues) == "function" then
@@ -681,7 +1048,7 @@ function RfPdaMenuPage:_ensureMtoArrowsVisible(sel)
         if btn ~= nil then
             if btn.setVisible then btn:setVisible(true) end
             if btn.setDisabled then btn:setDisabled(false) end
-            -- Size THEN lime (George Plan A). Absolute target â€” do not ratio current size.
+            -- Size THEN lime (George Plan A). Absolute target - do not ratio current size.
             if type(btn.setSize) == "function" and tw ~= nil and th ~= nil then
                 btn:setSize(tw, th)
             end
@@ -954,6 +1321,9 @@ end
 function RfPdaMenuPage:_refreshPageHeader(active)
     local isSoil = active == nil or active.id == "soilFertilizer"
     local isWc = active ~= nil and active.id == "workerCosts"
+    local activeId = active ~= nil and active.id or nil
+    local isFw = activeId == "income" or activeId == "tax" or activeId == "dairy"
+            or activeId == "npcFavor" or activeId == "fertilizerDepot"
     if self.rfPageTitle then
         if isSoil then
             self.rfPageTitle:setText(tr("rf_pda_panel_soil", "Soil Fertilizer"))
@@ -962,11 +1332,23 @@ function RfPdaMenuPage:_refreshPageHeader(active)
         end
     end
     if self.rfPageBlurb then
-        if isSoil then
+        -- Framework overlap FAILFIX (George 2026-08-05): side About owns story; blank+hide blurb.
+        if isFw then
+            self.rfPageBlurb:setText("")
+            if type(self.rfPageBlurb.setVisible) == "function" then
+                self.rfPageBlurb:setVisible(false)
+            end
+        elseif isSoil then
+            if type(self.rfPageBlurb.setVisible) == "function" then
+                self.rfPageBlurb:setVisible(true)
+            end
             self.rfPageBlurb:setText(tr("rf_pda_menu_blurb",
                 "Monitor your fields' nutrient levels. Apply fertilizer to maintain optimal yields."))
         elseif isWc then
             -- Chrome FAIL-FIX: never leave Soil nutrient/treatment copy on Worker Costs.
+            if type(self.rfPageBlurb.setVisible) == "function" then
+                self.rfPageBlurb:setVisible(true)
+            end
             local rawBlurb = active and active.blurb
             local wcBlurb = "Wage mode, active workers, next settlement estimate. Open Worker Manager for hire and settings."
             if type(rawBlurb) == "string" and rawBlurb ~= "" then
@@ -977,6 +1359,9 @@ function RfPdaMenuPage:_refreshPageHeader(active)
             end
             self.rfPageBlurb:setText(wcBlurb)
         elseif active ~= nil and type(active.blurb) == "string" and active.blurb ~= "" then
+            if type(self.rfPageBlurb.setVisible) == "function" then
+                self.rfPageBlurb:setVisible(true)
+            end
             local lower = active.blurb:lower()
             if not lower:find("^missing%s") and not lower:find("^missing_") then
                 self.rfPageBlurb:setText(active.blurb)
@@ -985,6 +1370,9 @@ function RfPdaMenuPage:_refreshPageHeader(active)
                     "Quick look at this module. Open Farm Tablet for the full tools."))
             end
         else
+            if type(self.rfPageBlurb.setVisible) == "function" then
+                self.rfPageBlurb:setVisible(true)
+            end
             self.rfPageBlurb:setText(tr("rf_pda_host_blurb",
                 "Quick look at this module. Open Farm Tablet for the full tools."))
         end
@@ -1001,24 +1389,38 @@ function RfPdaMenuPage:_refreshSideInfo(activeId)
     local isCs = activeId == "seasonalCropStress"
     local isWc = activeId == "workerCosts"
     local isMd = activeId == "marketDynamics"
+    local isFw = activeId == "income" or activeId == "tax" or activeId == "dairy"
+            or activeId == "npcFavor" or activeId == "fertilizerDepot"
+    local isFwStatus = activeId == "tax"
+    local isFwTable = activeId == "income" or activeId == "dairy" or activeId == "npcFavor" or activeId == "fertilizerDepot"
     local function setVis(el, visible)
         if el ~= nil and type(el.setVisible) == "function" then
             el:setVisible(visible)
         end
     end
-    setVis(self.rfSideInfoShell, isSoil or isCs or isMd)
+    -- BUILD 21:06: CS is back in the Soil-class shell. The 16:44 nest existed only
+    -- because the teach painted over FIELDS and the page dots; the subnav that owned
+    -- those is retired, so the thing it was avoiding no longer exists. csSideInfoShell
+    -- is forced hidden rather than deleted, so a stale nested copy can never surface.
+    setVis(self.rfSideInfoShell, isSoil or isCs or isFw)
+    setVis(self.csSideInfoShell, false)
     setVis(self.wcSideInfoShell, isWc)
+    setVis(self.mdSideInfoShell, isMd)
     setVis(self.rfSuiteHint, false)
+    -- BUILD 16:44 item 5: CS teach paints into the nested body under the subnav.
+    -- The filter-box body is cleared for CS so a stale sentence cannot survive
+    -- behind the new shell if visibility ever flips back.
+    -- Nested body is cleared unconditionally now, not just for non-CS.
+    if self.csSideInfoBody ~= nil and self.csSideInfoBody.setText then
+        self.csSideInfoBody:setText("")
+    end
     if self.rfSideInfoBody and self.rfSideInfoBody.setText then
         if isSoil then
             self.rfSideInfoBody:setText(tr("rf_pda_side_info_soil",
-                "Soil Fertilizer\n\nThis table lists every field you own. One row = one field.\n\nColumns: Field #, Area, N/P/K (% of a healthy target), Status (Good / Fair / Poor), Fertilizer need (short cue for what still looks short).\n\nClick a row. Treatment (below) is the plan for that field:\n- PRODUCT = what to buy (first is preferred; \"or ...\" is an alternate)\n- RATE = amount per area / TOTAL = amount for this field\n- Selected names the field; Next (under it) says what to do first\n\nHow to apply: dry goods (urea, MAP, potash, lime) go through a fertilizer spreader; liquids go in a sprayer tank. If pH and nutrients both show, fix lime or gypsum first so nutrients can work. Weed, pest, or disease lines mean spray (or weed mechanically) before you expect a full crop.\n\nStart with the weakest Status, open Treatment, follow Next, then the rest of the list."))
+                "Soil Fertilizer\n\nThis screen shows the soil on your owned fields. Each line is one field. Press X HELP for the full Field Guide.\n\nThe table shows Field, Area, N, P, K, pH, Status, FERT, Weeds, Pests, and Disease. Status is Good, Fair, or Poor from the worst nutrient or pressure. Work the weakest Status first. When FERT says IN NEED, that field needs fertilizer.\n\nClick a field to open Treatment. PRODUCTS lists what to use, top first. RATE is per area. TOTAL is for the whole field. Next is the first job. Target is healthy. Fix lime or gypsum before nutrients. Dry goes in a spreader. Liquid goes in a sprayer. High Weeds, Pests, or Disease means spray first.\n\nWhat-if lets you try the next crop. Field plan and rotation are on the cards. N falls every harvest. P and K move slower. Organic matter builds over seasons. Aim for pH 6.5 to 7.0. Check worst fields, treat top-down, recheck.\n\nLime raises acid soil. Gypsum lowers alkaline soil. Use N often. Use P and K every few seasons. Press X HELP for lists, HUD tips, and FAQ."))
         elseif isCs then
             self.rfSideInfoBody:setText(tr("rf_pda_side_info_crop_stress",
-                "Crop Stress\n\nThis table lists every field you own. One row = one field.\n\nColumns: Field # / Crop, Moisture (how wet the soil is), Stress (how hard the crop is fighting dry spells), Irrigation (water help covering this field), Status (Healthy / Warning / Critical).\n\nClick a row. The strip below names the field, then Next says what to do first:\n- Critical or Warning Moisture → water that field (turn on irrigation if covered, or spray WATER / place coverage)\n- High Stress or a sensitive growth window → protect now; stress today cuts harvest later\n- Looking fine → recheck later; worse fields first\n\nIrrigation: Yes means a system can cover this field. The strip under the table shows this field's schedule, water rate, yield keep, and air dry-pull. Edit systems on Farm Tablet / Crop Consultant when you need to change them.\n\nIf Soil Fertilizer is also loaded, check nutrients there too. Dry soil drains faster when soil health is poor.\n\nStart with Critical Status, follow Next, then work up the list."))
-        elseif isMd then
-            self.rfSideInfoBody:setText(tr("rf_pda_side_info_market_dynamics",
-                "Market Dynamics\n\nThis is a pause market glance, not the full Market desk.\n\nGraph = price path for the crop you pick.\n\nMovers = biggest swings right now. Click one to change the graph.\n\nEvents = world events still driving prices. Empty means nothing active (normal).\n\nBottom strip = facts for the crop you selected.\n\nContracts line = open count only. Full contracts live deeper.\n\nOpen full Market when you need Prices / Events / Contracts admin."))
+                "Crop Stress\n\nThis screen is the Crop Stress desk. Each line is one field you own.\n\nThe table shows Field, Crop, Moisture, Stress, Irrigated, and Status. Moisture is how wet the soil is. Stress is how hard the crop is fighting dry spells. Irrigated says a system can reach this field. Status is Healthy, Warning, or Critical.\n\nClick a row. Field Detail on the left coaches that field and Next says the first job. AGRONOMIST on the right lists the top risk fields. PIVOT below drives the irrigation system for the selected field.\n\nOn PIVOT, grey remotes are locked until the step before them is done. Open the door, then power, then the rest. An empty seat means no pivot covers this field.\n\nStart with Critical Status, follow Next, then work up the list.\n\nIrrigator kit (shop): pump + Rainstar + pull bar. Unfold, pull the gun out, turn it on over a field."))
         else
             self.rfSideInfoBody:setText("")
         end
@@ -1032,33 +1434,77 @@ function RfPdaMenuPage:_syncHostGuestChrome(activeId)
     local isCs = activeId == "seasonalCropStress"
     local isWc = activeId == "workerCosts"
     local isMd = activeId == "marketDynamics"
+    local isFw = activeId == "income" or activeId == "tax" or activeId == "dairy"
+            or activeId == "npcFavor" or activeId == "fertilizerDepot"
+    local isFwStatus = activeId == "tax"
+    local isFwTable = activeId == "income" or activeId == "dairy" or activeId == "npcFavor" or activeId == "fertilizerDepot"
     local function setVis(el, visible)
         if el ~= nil and type(el.setVisible) == "function" then
             el:setVisible(visible)
         end
     end
     setVis(self.rfHostTableRegion, isCs)
+    -- Action bar rides the CS module only; the guest decides the two buttons.
+    setVis(self.csActionBar, isCs)
+    if not isCs then
+        setVis(self.csBtnSchedule, false)
+        setVis(self.csDetailNoCoverage, false)
+        setVis(self.csConsultPanel, false)
+        setVis(self.csPivotCard, false)
+        setVis(self.csAgronomistCard, false)
+        self._csConsultOpen = false
+    else
+        -- BUILD 18:48: the table-hiding consultant view is dead (George HARD VETO).
+        -- csConsultPanel is never shown again; the agronomist content moved into the
+        -- ROTATION-seat card, and the field table stays visible on every CS subpage.
+        -- rfHostTableRegion is still gated above by module id only, which is the gate
+        -- George kept; what is banned is the intra-CS swap that emptied the table slot.
+        setVis(self.csConsultPanel, false)
+        self._csConsultOpen = false
+        -- BUILD 21:06: no subnav seeding. _syncCsSubPageVisibility stays because it is
+        -- what makes AGRONOMIST and PIVOT co-visible; it never gated on the index.
+        self:_syncCsSubPageVisibility()
+    end
     setVis(self.csFieldOverviewList, isCs)
     setVis(self.csDetailStrip, isCs)
-    setVis(self.mdGraphRegion, isMd)
-    setVis(self.mdDetailStrip, isMd)
-    setVis(self.mdMoverSelector, isMd)
-    setVis(self.mdOpenMarketBtn, isMd)
+    -- MDM three-page chrome (TOP table + BOTTOM bands + secondary subnav).
+    setVis(self.mdTableRegion, isMd)
+    setVis(self.mdCommodityList, isMd)
+    setVis(self.mdPageBand, isMd)
+    setVis(self.mdGraphRegion, false)
+    setVis(self.mdDetailStrip, false)
+    setVis(self.mdMoverSelector, false)
     if self.mdMoverSelector ~= nil then
-        self.mdMoverSelector.disableButtonsOnSingleText = false
-        self.mdMoverSelector.hideLeftRightButtons = not isMd
+        self.mdMoverSelector.hideLeftRightButtons = true
         if type(self.mdMoverSelector.setDisabled) == "function" then
-            self.mdMoverSelector:setDisabled(not isMd)
+            self.mdMoverSelector:setDisabled(true)
         end
-        if isMd and type(self._ensureMtoArrowsVisible) == "function" then
-            self:_ensureMtoArrowsVisible(self.mdMoverSelector)
+    end
+    if isMd then
+        if self.mdTableRegion ~= nil and type(self.mdTableRegion.updateAbsolutePosition) == "function" then
+            self.mdTableRegion:updateAbsolutePosition()
         end
-        if isMd and self.mdGraphRegion ~= nil and type(self.mdGraphRegion.updateAbsolutePosition) == "function" then
-            self.mdGraphRegion:updateAbsolutePosition()
+        if self.mdPageBand ~= nil and type(self.mdPageBand.updateAbsolutePosition) == "function" then
+            self.mdPageBand:updateAbsolutePosition()
         end
-        if isMd and self.mdGraphArea ~= nil and type(self.mdGraphArea.updateAbsolutePosition) == "function" then
+        if self.mdGraphArea ~= nil and type(self.mdGraphArea.updateAbsolutePosition) == "function" then
             self.mdGraphArea:updateAbsolutePosition()
         end
+        if type(self._seedMdSubnavTexts) == "function" then
+            self:_seedMdSubnavTexts()
+        end
+        if type(self._syncMdSubPageVisibility) == "function" then
+            self:_syncMdSubPageVisibility()
+        end
+    else
+        setVis(self.mdPricesBand, false)
+        setVis(self.mdEventsBand, false)
+        setVis(self.mdContractsBand, false)
+        setVis(self.mdOpenMarketBtn, false)
+        local btnE = self:getDescendantById("mdOpenMarketBtnEvents")
+        local btnC = self:getDescendantById("mdOpenMarketBtnContracts")
+        setVis(btnE, false)
+        setVis(btnC, false)
     end
     if not isCs then
         setVis(self.csFieldsEmptyHint, false)
@@ -1067,6 +1513,76 @@ function RfPdaMenuPage:_syncHostGuestChrome(activeId)
     setVis(self.wcSubnavShell, isWc)
     setVis(self.wcSubnavSelector, isWc)
     setVis(self.wcSubnavDotBox, isWc)
+    -- MDM subnav twin (Prices | Events | Contracts); exclusive with WC subnav.
+    setVis(self.mdSubnavShell, isMd)
+    setVis(self.mdSubnavSelector, isMd)
+    setVis(self.mdSubnavDotBox, isMd)
+    if self.mdSubnavSelector ~= nil then
+        if isMd then
+            self.mdSubnavSelector.disableButtonsOnSingleText = false
+            self.mdSubnavSelector.hideLeftRightButtons = false
+            if type(self.mdSubnavSelector.setDisabled) == "function" then
+                self.mdSubnavSelector:setDisabled(false)
+            end
+            if type(self.mdSubnavSelector.setCanChangeState) == "function" then
+                self.mdSubnavSelector:setCanChangeState(true)
+            end
+            if self.mdSubnavShell ~= nil and type(self.mdSubnavShell.updateAbsolutePosition) == "function" then
+                self.mdSubnavShell:updateAbsolutePosition()
+            end
+            if type(self.mdSubnavSelector.updateAbsolutePosition) == "function" then
+                self.mdSubnavSelector:updateAbsolutePosition()
+            end
+            if type(self._ensureMdSubnavArrowsVisible) == "function" then
+                self:_ensureMdSubnavArrowsVisible()
+            end
+        else
+            self.mdSubnavSelector.hideLeftRightButtons = true
+            if type(self.mdSubnavSelector.setDisabled) == "function" then
+                self.mdSubnavSelector:setDisabled(true)
+            end
+            if type(self.mdSubnavSelector.setCanChangeState) == "function" then
+                self.mdSubnavSelector:setCanChangeState(false)
+            end
+            self._mdSubnavSeeded = false
+        end
+    end
+    -- BUILD 21:06: CS subnav RETIRED. Crop Stress is one desk - table, Field Detail,
+    -- AGRONOMIST and PIVOT are co-visible - so a Fields | Pivot selector selects nothing.
+    -- Never setVisible(true) for CS. WC and MDM subnavs are untouched.
+    setVis(self.csSubnavShell, false)
+    setVis(self.csSubnavSelector, false)
+    setVis(self.csSubnavDotBox, false)
+    if self.csSubnavSelector ~= nil then
+        if false then
+            self.csSubnavSelector.disableButtonsOnSingleText = false
+            self.csSubnavSelector.hideLeftRightButtons = false
+            if type(self.csSubnavSelector.setDisabled) == "function" then
+                self.csSubnavSelector:setDisabled(false)
+            end
+            if type(self.csSubnavSelector.setCanChangeState) == "function" then
+                self.csSubnavSelector:setCanChangeState(true)
+            end
+            if self.csSubnavShell ~= nil and type(self.csSubnavShell.updateAbsolutePosition) == "function" then
+                self.csSubnavShell:updateAbsolutePosition()
+            end
+            if type(self.csSubnavSelector.updateAbsolutePosition) == "function" then
+                self.csSubnavSelector:updateAbsolutePosition()
+            end
+            if type(self._ensureCsSubnavArrowsVisible) == "function" then
+                self:_ensureCsSubnavArrowsVisible()
+            end
+        else
+            self.csSubnavSelector.hideLeftRightButtons = true
+            if type(self.csSubnavSelector.setDisabled) == "function" then
+                self.csSubnavSelector:setDisabled(true)
+            end
+            if type(self.csSubnavSelector.setCanChangeState) == "function" then
+                self.csSubnavSelector:setCanChangeState(false)
+            end
+            self._csSubnavSeeded = false
+        end
+    end
     if self.wcSubnavSelector ~= nil then
         if isWc then
             self.wcSubnavSelector.disableButtonsOnSingleText = false
@@ -1112,28 +1628,71 @@ function RfPdaMenuPage:_syncHostGuestChrome(activeId)
     setVis(self.wcPageSelector, false)
     setVis(self.wcSideInfoShell, isWc)
     setVis(self.wcSideVersion, false)
-    setVis(self.rfSideInfoShell, isSoil or isCs or isMd)
+    setVis(self.mdSideInfoShell, isMd)
+    -- Keep framework (Income/Depot/etc) side shell; dots always visible per origin/development tip.
+    -- BUILD 21:06b (Ash note): this pair used to disagree with _refreshSideInfo below, which
+    -- then corrected it 30 lines later. Harmless today - I checked, there is no early return
+    -- between here and that call - but two sites stating opposite truths about the same two
+    -- elements is a trap waiting for the first person to add one. They agree now.
+    setVis(self.rfSideInfoShell, isSoil or isCs or isFw)
+    setVis(self.csSideInfoShell, false)
     -- Module page dots always visible (umbrella: dots = N, chrome geometry unchanged).
     setVis(self.rfPanelDotBox, true)
     setVis(self.rfDotLegend, false)
     setVis(self.rfSuiteHint, false)
     setVis(self.rfSideMidSeparator, false)
     setVis(self.wcPageShell, isWc)
+    setVis(self.rfFrameworkGlanceShell, isFw)
+    setVis(self.rfFwStatusBlock, isFw and isFwStatus)
+    setVis(self.rfFwTableBlock, isFw and isFwTable)
+    -- Duplex title kill: rfPageTitle owns module name (George 2026-08-05).
+    -- Income / Depot densify: rfFwTableTitle is the summary band; do not blank/hide for those panels.
+    local fwStatusTitle = self:getDescendantById("rfFwStatusTitle")
+    local fwTableTitle = self:getDescendantById("rfFwTableTitle")
+    setVis(fwStatusTitle, false)
+    if activeId ~= "income" and activeId ~= "fertilizerDepot" then
+        setVis(fwTableTitle, false)
+    end
+    if fwStatusTitle ~= nil and type(fwStatusTitle.setText) == "function" then
+        fwStatusTitle:setText("")
+    end
+    if activeId ~= "income" and activeId ~= "fertilizerDepot" and fwTableTitle ~= nil and type(fwTableTitle.setText) == "function" then
+        fwTableTitle:setText("")
+    end
+    -- Framework overlap FAILFIX: hide page blurb on fw doors (side About owns story).
+    setVis(self.rfPageBlurb, not isFw)
+    if isFw and self.rfPageBlurb ~= nil and type(self.rfPageBlurb.setText) == "function" then
+        self.rfPageBlurb:setText("")
+    end
     setVis(self.wcGlanceShell, false)
     self:_refreshSideInfo(activeId)
-    -- CS: hide host body so table+detail get room (not isWc alone — body was still on for CS).
-    setVis(self.rfHostBody, not isWc and not isCs and not isMd)
+    -- CS: hide host body so table+detail get room (not isWc alone - body was still on for CS).
+    setVis(self.rfHostBody, not isWc and not isCs and not isMd and not isFw)
     -- Keep right hero title/blurb; hide duplicate host title/blurb on WC, MDM and CS.
-    setVis(self.rfHostTitle, not isWc and not isMd and not isCs)
-    setVis(self.rfHostBlurb, not isWc and not isMd and not isCs)
-    if (isWc or isCs or isMd) and self.rfHostBody and self.rfHostBody.setText then
+    setVis(self.rfHostTitle, not isWc and not isMd and not isCs and not isFw)
+    setVis(self.rfHostBlurb, not isWc and not isMd and not isCs and not isFw)
+    if (isWc or isCs or isMd or isFw) and self.rfHostBody and self.rfHostBody.setText then
         self.rfHostBody:setText("")
     end
-    -- Bottom bar: SPACE opens the Worker Manager deep desk while WC is active.
-    if isWc and self.btnOpenWorkerManager ~= nil then
+    -- Bottom bar: SPACE opens full Market while MDM is active.
+    if isMd and self.btnOpenMarket ~= nil then
+        self.menuButtonInfo = { self.btnBack, self.btnOpenMarket }
+        local trFn = self._rfTr
+        if type(trFn) == "function" then
+            self.btnOpenMarket.text = trFn("md_rf_pda_open_market", "Open full Market")
+        end
+    elseif isWc and self.btnOpenWorkerManager ~= nil then
         self.menuButtonInfo = { self.btnBack, self.btnOpenWorkerManager }
+    elseif isCs then
+        -- BUILD 18:48: SPACE no longer swaps panes. The consultant button owned the
+        -- table-hiding path, so it comes off the CS footer entirely rather than being
+        -- left pointing at a no-op the player can still press.
+        self.menuButtonInfo = { self.btnBack }
     elseif isSoil then
-        self.menuButtonInfo = { self.btnBack, self.btnHelp, self.btnRotationPlanner, self.btnFieldDetail }
+        -- BUILD 18:52: Rotation Planner and Field Detail come off the Soil footer.
+        -- Both dialogs stay registered and still open from the PDA/joiner; only the
+        -- duplicate bottom-bar buttons go, since the cards now carry that content.
+        self.menuButtonInfo = { self.btnBack, self.btnHelp }
     else
         self.menuButtonInfo = { self.btnBack }
     end
@@ -1174,8 +1733,32 @@ function RfPdaMenuPage:_syncHostGuestChrome(activeId)
             shell:setVisible(true)
         end
     end
-    if isWc and self.wcPageShell ~= nil and self.wcPageShell.updateAbsolutePosition then
+    -- Rank 1 containment (George 2026-08-06): force abs after show so shell/gray rect match Texts.
+    if self.rfHostPlaceholder ~= nil and type(self.rfHostPlaceholder.updateAbsolutePosition) == "function" then
+        self.rfHostPlaceholder:updateAbsolutePosition()
+    end
+    if isFw then
+        if self.rfFrameworkGlanceShell ~= nil and type(self.rfFrameworkGlanceShell.updateAbsolutePosition) == "function" then
+            self.rfFrameworkGlanceShell:updateAbsolutePosition()
+        end
+        if isFwStatus and self.rfFwStatusBlock ~= nil and type(self.rfFwStatusBlock.updateAbsolutePosition) == "function" then
+            self.rfFwStatusBlock:updateAbsolutePosition()
+        end
+        if isFwTable and self.rfFwTableBlock ~= nil and type(self.rfFwTableBlock.updateAbsolutePosition) == "function" then
+            self.rfFwTableBlock:updateAbsolutePosition()
+        end
+    end
+    if isWc and self.wcPageShell ~= nil and type(self.wcPageShell.updateAbsolutePosition) == "function" then
         self.wcPageShell:updateAbsolutePosition()
+        for _, pid in ipairs({"wcPageDashboard", "wcPageWages", "wcPageWorkers"}) do
+            local pe = self[pid] or (self.getDescendantById and self:getDescendantById(pid))
+            if pe ~= nil and type(pe.updateAbsolutePosition) == "function" and pe.visible ~= false then
+                pe:updateAbsolutePosition()
+            end
+        end
+    end
+    if isCs and self.rfHostTableRegion ~= nil and type(self.rfHostTableRegion.updateAbsolutePosition) == "function" then
+        self.rfHostTableRegion:updateAbsolutePosition()
     end
     if not isWc then
         self._wcSubnavSeeded = false
@@ -1223,7 +1806,7 @@ function RfPdaMenuPage:_seedWcSubnavTexts()
     if idx < 1 then idx = 1 end
     if idx > 3 then idx = 3 end
     self.wcSubPageIndex = idx
-    -- George arrow-crash FAIL-FIX: forceEvent=false — setState(true) re-enters onClick.
+    -- George arrow-crash FAIL-FIX: forceEvent=false - setState(true) re-enters onClick.
     if sel.setState then
         sel:setState(idx, false)
     end
@@ -1347,7 +1930,179 @@ function RfPdaMenuPage:_syncWcSubPageVisibility()
     setVis(self.wcPageAbout, false)
 end
 
---- Sibling-shell page MTO. Page index only â€” never Brand / selectPanel.
+--- MDM page selector = sibling left shell under Brand (WC twin).
+function RfPdaMenuPage:_mdPageSel()
+    return self.mdSubnavSelector
+end
+
+function RfPdaMenuPage:_ensureMdSubnavArrowsVisible()
+    self:_ensureMtoArrowsVisible(self:_mdPageSel())
+end
+
+--- Host-seed MDM page labels once on MDM enter (never forceEvent).
+function RfPdaMenuPage:_seedMdSubnavTexts()
+    local sel = self:_mdPageSel()
+    if sel == nil then
+        return
+    end
+    if self._mdSubnavSeeded then
+        return
+    end
+    local trFn = self._rfTr
+    local function t(key, fb)
+        if type(trFn) == "function" then
+            return trFn(key, fb)
+        end
+        return fb
+    end
+    if sel.setVisible then
+        sel:setVisible(true)
+    end
+    sel.disableButtonsOnSingleText = false
+    sel.hideLeftRightButtons = false
+    if sel.setCanChangeState then
+        sel:setCanChangeState(true)
+    end
+    if sel.setDisabled then
+        sel:setDisabled(false)
+    end
+    local texts = {
+        t("md_rf_pda_page_prices", "Prices"),
+        t("md_rf_pda_page_events", "Events"),
+        t("md_rf_pda_page_contracts", "Contracts"),
+    }
+    self._mdSubnavSeeding = true
+    if sel.setTexts then
+        sel:setTexts(texts)
+    end
+    local idx = tonumber(self.mdSubPageIndex) or 1
+    if idx < 1 then idx = 1 end
+    if idx > 3 then idx = 3 end
+    self.mdSubPageIndex = idx
+    if sel.setState then
+        sel:setState(idx, false)
+    end
+    self._mdSubnavSeeding = false
+    self._mdSubnavSeeded = true
+    self:_ensureMdSubnavArrowsVisible()
+    self:_rebuildMdSubnavDots(3)
+    if self.mdSubnavShell ~= nil and self.mdSubnavShell.updateAbsolutePosition then
+        self.mdSubnavShell:updateAbsolutePosition()
+    end
+    if sel.updateAbsolutePosition then
+        sel:updateAbsolutePosition()
+    end
+end
+
+function RfPdaMenuPage:_rebuildMdSubnavDots(count)
+    local dotBox = self.mdSubnavDotBox
+    if dotBox == nil or dotBox.elements == nil or #dotBox.elements == 0 then
+        return
+    end
+    if type(dotBox.setVisible) == "function" then
+        dotBox:setVisible(true)
+    end
+    local elements = dotBox.elements
+    local expectedCount = math.max(1, count or 1)
+    while #elements < expectedCount do
+        local seed = elements[1]
+        if seed == nil or seed.clone == nil then
+            break
+        end
+        local ok, clone = pcall(function()
+            return seed:clone(dotBox)
+        end)
+        if not ok or clone == nil then
+            break
+        end
+        if FocusManager and FocusManager.loadElementFromCustomValues then
+            pcall(FocusManager.loadElementFromCustomValues, FocusManager, clone)
+        end
+        elements = dotBox.elements
+    end
+    while #elements > expectedCount do
+        local last = elements[#elements]
+        if last ~= nil and last.delete then
+            last:delete()
+        end
+        elements = dotBox.elements
+    end
+    for i, dot in ipairs(dotBox.elements) do
+        local index = i
+        function dot.getIsSelected()
+            local sel = self:_mdPageSel()
+            if sel == nil or sel.getState == nil then
+                return index == 1
+            end
+            return sel:getState() == index
+        end
+        if dot.setVisible then
+            dot:setVisible(true)
+        end
+    end
+    if dotBox.invalidateLayout then
+        dotBox:invalidateLayout()
+    end
+    if type(dotBox.updateAbsolutePosition) == "function" then
+        dotBox:updateAbsolutePosition()
+    end
+end
+
+--- Apply MDM secondary page visibility from self.mdSubPageIndex (1..3).
+--- TOP mdTableRegion stays visible; only BOTTOM bands swap.
+function RfPdaMenuPage:_syncMdSubPageVisibility()
+    local idx = tonumber(self.mdSubPageIndex) or 1
+    if idx < 1 then idx = 1 end
+    if idx > 3 then idx = 3 end
+    self.mdSubPageIndex = idx
+    local function setVis(el, visible)
+        if el ~= nil and type(el.setVisible) == "function" then
+            el:setVisible(visible)
+        end
+    end
+    setVis(self.mdPricesBand, idx == 1)
+    setVis(self.mdEventsBand, idx == 2)
+    setVis(self.mdContractsBand, idx == 3)
+    setVis(self.mdOpenMarketBtn, idx == 1)
+    local btnE = self:getDescendantById("mdOpenMarketBtnEvents")
+    local btnC = self:getDescendantById("mdOpenMarketBtnContracts")
+    setVis(btnE, idx == 2)
+    setVis(btnC, idx == 3)
+    if idx == 1 and self.mdGraphArea ~= nil and type(self.mdGraphArea.updateAbsolutePosition) == "function" then
+        self.mdGraphArea:updateAbsolutePosition()
+    end
+end
+
+--- Sibling-shell MDM page MTO. Page index only - never Brand / selectPanel.
+function RfPdaMenuPage:onClickMdSubnavSelector()
+    if self._mdSubnavSeeding then
+        return
+    end
+    local sel = self:_mdPageSel()
+    if sel == nil or sel.getState == nil then
+        return
+    end
+    if sel ~= self.mdSubnavSelector then
+        return
+    end
+    self:_ensureMdSubnavArrowsVisible()
+    local idx = sel:getState() or 1
+    if idx < 1 then idx = 1 end
+    if idx > 3 then idx = 3 end
+    self.mdSubPageIndex = idx
+    if sel.setState and sel:getState() ~= idx then
+        sel:setState(idx, false)
+    end
+    self:_syncMdSubPageVisibility()
+    local host = self:_getHost()
+    local active = host and host:getActivePanel()
+    if active ~= nil and active.id == "marketDynamics" and type(active.onShow) == "function" then
+        pcall(active.onShow, self.rfHostPlaceholder, true)
+    end
+end
+
+
+--- Sibling-shell page MTO. Page index only - never Brand / selectPanel.
 function RfPdaMenuPage:onClickWcSubnavSelector()
     if self._wcWageRefreshing or self._wcSubnavSeeding then
         return
@@ -1427,6 +2182,246 @@ function RfPdaMenuPage:onClickWcWageReset()
     end
 end
 
+
+--- Esc Crop Stress actions. The host never speaks CsDialogLoader (SCS-env-scoped,
+--- George binding); it delegates to the active guest, which routes through the
+--- CropStress manager. Same shape as onClickWcWageReset.
+--- Toggle the inline consultant readout against the field table. Exactly one of
+--- {csConsultPanel, rfHostTableRegion} is visible; the host never unloads either,
+--- it only flips setVisible, so no list rebuild and no reloadData thrash.
+--- Closing consultant restores the same field-row selection (SoT) + PIVOT card.
+--- BUILD 18:48: dead by design, kept callable.
+--- George HARD VETO on any path that hides rfHostTableRegion to paint consultant
+--- content in the main pane. This used to be that path. It is not deleted because
+--- the SCS guest still calls it on show and wraps it, and a nil call there would
+--- take the whole Crop Stress paint down with it. It now always leaves the field
+--- table visible and the old consult panel hidden, whatever it is passed.
+function RfPdaMenuPage:setCsConsultView(_open)
+    self._csConsultOpen = false
+    if self.csConsultPanel ~= nil and self.csConsultPanel.setVisible then
+        self.csConsultPanel:setVisible(false)
+    end
+    if self.rfHostTableRegion ~= nil and self.rfHostTableRegion.setVisible then
+        self.rfHostTableRegion:setVisible(true)
+    end
+    self:_syncCsSubPageVisibility()
+end
+
+--- Kept so any stale binding resolves to something inert rather than erroring.
+function RfPdaMenuPage:onClickCsConsultant()
+    return
+end
+
+function RfPdaMenuPage:_csPageSel()
+    return self.csSubnavSelector
+end
+
+function RfPdaMenuPage:_ensureCsSubnavArrowsVisible()
+    self:_ensureMtoArrowsVisible(self:_csPageSel())
+end
+
+--- RETIRED BUILD 21:06. Kept as a no-op because callers may still reference it and
+--- because its body called sel:setVisible(true) itself - leaving it live would have
+--- re-shown the selector from behind the visibility gate above.
+function RfPdaMenuPage:_seedCsSubnavTexts()
+    do return end
+    local sel = self:_csPageSel()
+    if sel == nil then
+        return
+    end
+    if self._csSubnavSeeded then
+        return
+    end
+    local trFn = self._rfTr
+    local function t(key, fb)
+        if type(trFn) == "function" then
+            return trFn(key, fb)
+        end
+        return fb
+    end
+    if sel.setVisible then
+        sel:setVisible(true)
+    end
+    sel.disableButtonsOnSingleText = false
+    sel.hideLeftRightButtons = false
+    if sel.setCanChangeState then
+        sel:setCanChangeState(true)
+    end
+    if sel.setDisabled then
+        sel:setDisabled(false)
+    end
+    local texts = {
+        t("cs_rf_pda_page_fields", "Fields"),
+        t("cs_rf_pda_page_pivot", "Pivot"),
+    }
+    self._csSubnavSeeding = true
+    if sel.setTexts then
+        sel:setTexts(texts)
+    end
+    local idx = tonumber(self.csSubPageIndex) or 1
+    if idx < 1 then idx = 1 end
+    if idx > 2 then idx = 2 end
+    self.csSubPageIndex = idx
+    if sel.setState then
+        sel:setState(idx, false)
+    end
+    self._csSubnavSeeding = false
+    self._csSubnavSeeded = true
+    self:_ensureCsSubnavArrowsVisible()
+    self:_rebuildCsSubnavDots(2)
+    if self.csSubnavShell ~= nil and self.csSubnavShell.updateAbsolutePosition then
+        self.csSubnavShell:updateAbsolutePosition()
+    end
+    if sel.updateAbsolutePosition then
+        sel:updateAbsolutePosition()
+    end
+end
+
+function RfPdaMenuPage:_rebuildCsSubnavDots(count)
+    local dotBox = self.csSubnavDotBox
+    if dotBox == nil or dotBox.elements == nil or #dotBox.elements == 0 then
+        return
+    end
+    if type(dotBox.setVisible) == "function" then
+        dotBox:setVisible(true)
+    end
+    local elements = dotBox.elements
+    local expectedCount = math.max(1, count or 1)
+    while #elements < expectedCount do
+        local seed = elements[1]
+        if seed == nil or seed.clone == nil then
+            break
+        end
+        local ok, clone = pcall(function()
+            return seed:clone(dotBox)
+        end)
+        if not ok or clone == nil then
+            break
+        end
+        if FocusManager and FocusManager.loadElementFromCustomValues then
+            pcall(FocusManager.loadElementFromCustomValues, FocusManager, clone)
+        end
+        elements = dotBox.elements
+    end
+    while #elements > expectedCount do
+        local last = elements[#elements]
+        if last ~= nil and last.delete then
+            last:delete()
+        end
+        elements = dotBox.elements
+    end
+    for i, dot in ipairs(dotBox.elements) do
+        local index = i
+        function dot.getIsSelected()
+            local sel = self:_csPageSel()
+            if sel == nil or sel.getState == nil then
+                return index == 1
+            end
+            return sel:getState() == index
+        end
+        if dot.setVisible then
+            dot:setVisible(true)
+        end
+    end
+    if dotBox.invalidateLayout then
+        dotBox:invalidateLayout()
+    end
+    if type(dotBox.updateAbsolutePosition) == "function" then
+        dotBox:updateAbsolutePosition()
+    end
+end
+
+--- Esc CS breath (2026-08-09): Agronomist (upper-right) + Pivot (lower-right) are
+--- both visible on the CS bottom band. Subnav may still track Fields|Pivot focus,
+--- but must not exclusive-hide either card. Table + detail strip stay up; never
+--- touch rfHostTableRegion here (table-hide consult remains VETO).
+function RfPdaMenuPage:_syncCsSubPageVisibility()
+    local idx = tonumber(self.csSubPageIndex) or 1
+    if idx < 1 then idx = 1 end
+    if idx > 2 then idx = 2 end
+    self.csSubPageIndex = idx
+    local function setVis(el, visible)
+        if el ~= nil and type(el.setVisible) == "function" then
+            el:setVisible(visible)
+        end
+    end
+    setVis(self.csAgronomistCard, true)
+    setVis(self.csPivotCard, true)
+end
+
+--- Sibling-shell CS page MTO. Page index only - never Brand / selectPanel.
+--- setState(idx, false): forceEvent re-entry is the WC arrow-crash shape.
+function RfPdaMenuPage:onClickCsSubnavSelector()
+    -- RETIRED BUILD 21:06: the selector is never visible, so this can only fire from a
+    -- stale binding. No-op rather than removed, so the XML onClick target still resolves.
+    do return end
+    if self._csSubnavSeeding then
+        return
+    end
+    local sel = self:_csPageSel()
+    if sel == nil or sel.getState == nil then
+        return
+    end
+    if sel ~= self.csSubnavSelector then
+        return
+    end
+    self:_ensureCsSubnavArrowsVisible()
+    local idx = sel:getState() or 1
+    if idx < 1 then idx = 1 end
+    if idx > 2 then idx = 2 end
+    self.csSubPageIndex = idx
+    if sel.setState and sel:getState() ~= idx then
+        sel:setState(idx, false)
+    end
+    self:_syncCsSubPageVisibility()
+    -- Light onShow only: a full seed here would rebuild the field SmoothList on
+    -- every page flick, which is the reload thrash the hang fences ban.
+    local host = self:_getHost()
+    local active = host and host:getActivePanel()
+    if active ~= nil and active.id == "seasonalCropStress" and type(active.onShow) == "function" then
+        pcall(active.onShow, self.rfHostPlaceholder, true)
+    end
+end
+
+function RfPdaMenuPage:onClickCsSchedule()
+    local host = self:_getHost()
+    local active = host and host:getActivePanel()
+    if active ~= nil and type(active.onOpenSchedule) == "function" then
+        pcall(active.onOpenSchedule, self.rfHostPlaceholder)
+    end
+end
+
+--- Esc PIVOT remote clicks → guest → CropStressPivotRemoteEvent (server authority).
+local function _csPivotRemote(self, action)
+    local host = self:_getHost()
+    local active = host and host:getActivePanel()
+    if active ~= nil and type(active.onPivotRemote) == "function" then
+        pcall(active.onPivotRemote, self.rfHostPlaceholder, action)
+    else
+        -- BUILD 12:59: resolved rather than bare, so the CS pivot fallback survives a
+        -- foreign door the same way the MDM paths do.
+        local csGuest = (type(mdResolve) == "function")
+                and mdResolve(CsRfPdaGuest, "CsRfPdaGuest") or CsRfPdaGuest
+        if csGuest ~= nil and type(csGuest.onPivotRemote) == "function" then
+            pcall(csGuest.onPivotRemote, self.rfHostPlaceholder, action)
+        end
+    end
+end
+
+function RfPdaMenuPage:onClickCsPivotDoor()    _csPivotRemote(self, "DOOR_TOGGLE") end
+function RfPdaMenuPage:onClickCsPivotPower()   _csPivotRemote(self, "POWER_TOGGLE") end
+function RfPdaMenuPage:onClickCsPivotSpray()   _csPivotRemote(self, "SPRAY_TOGGLE") end
+function RfPdaMenuPage:onClickCsPivotEndGun()  _csPivotRemote(self, "END_GUN_TOGGLE") end
+function RfPdaMenuPage:onClickCsPivotSpeed()   _csPivotRemote(self, "SPEED_CYCLE") end
+function RfPdaMenuPage:onClickCsPivotStart()   _csPivotRemote(self, "AUTO_START") end
+function RfPdaMenuPage:onClickCsPivotStop()    _csPivotRemote(self, "AUTO_STOP") end
+function RfPdaMenuPage:onClickCsPivotMinUp()   _csPivotRemote(self, "SWEEP_MIN_UP") end
+function RfPdaMenuPage:onClickCsPivotMinDn()   _csPivotRemote(self, "SWEEP_MIN_DN") end
+function RfPdaMenuPage:onClickCsPivotMaxUp()   _csPivotRemote(self, "SWEEP_MAX_UP") end
+function RfPdaMenuPage:onClickCsPivotMaxDn()   _csPivotRemote(self, "SWEEP_MAX_DN") end
+function RfPdaMenuPage:onClickCsPivotArmPlus() _csPivotRemote(self, "ARM_STEP_PLUS") end
+function RfPdaMenuPage:onClickCsPivotArmMinus() _csPivotRemote(self, "ARM_STEP_MINUS") end
+
 --- @param rebuildLists boolean|nil when true (default), rebuild field SmoothList data
 function RfPdaMenuPage:refreshContent(rebuildLists)
     if rebuildLists == nil then
@@ -1440,8 +2435,18 @@ function RfPdaMenuPage:refreshContent(rebuildLists)
     local prevId = self._lastShownPanelId
     local enteringSoil = isSoil and prevId ~= "soilFertilizer"
     local enteringCs = panelId == "seasonalCropStress" and prevId ~= "seasonalCropStress"
+    local enteringMd = panelId == "marketDynamics" and prevId ~= "marketDynamics"
     local doSoilListRebuild = rebuildLists or enteringSoil
     local doCsListRebuild = rebuildLists or enteringCs
+    local doMdListRebuild = rebuildLists or enteringMd
+
+    -- Crop Stress home = field table + AGRONOMIST card (Samantha DESIGN 18:48).
+    -- Entering CS always lands on subpage 1; PIVOT is never a sticky home.
+    if enteringCs then
+        self._csConsultOpen = false
+        self.csSubPageIndex = 1
+        self._csSubnavSeeded = false
+    end
 
     self:_refreshPageHeader(active)
     self:_applyChromeL10n()
@@ -1459,7 +2464,7 @@ function RfPdaMenuPage:refreshContent(rebuildLists)
         if panel == nil then
             if not self._rfSoilPanelMissingWarned then
                 self._rfSoilPanelMissingWarned = true
-                local msg = "[RfEsc] RfPdaSoilPanel missing — Soil table cannot rebuild (cross-mod env)"
+                local msg = "[RfEsc] RfPdaSoilPanel missing - Soil table cannot rebuild (cross-mod env)"
                 if Logging ~= nil and type(Logging.warning) == "function" then
                     Logging.warning("%s", msg)
                 else
@@ -1475,7 +2480,7 @@ function RfPdaMenuPage:refreshContent(rebuildLists)
                 end
                 panel.reloadFieldList(self)
             elseif self.fieldData == nil or #self.fieldData == 0 then
-                -- Safety: empty table after soft refresh — force one rebuild.
+                -- Safety: empty table after soft refresh - force one rebuild.
                 panel.rebuildFieldData(self)
                 if self.selectedFieldId == nil and self.fieldData[1] ~= nil then
                     self.selectedFieldId = self.fieldData[1].fieldId
@@ -1532,10 +2537,56 @@ function RfPdaMenuPage:refreshContent(rebuildLists)
                 self:_ensureWcWageArrowsVisible()
             end
         end
+        -- BUILD 23:43: subnav seed / visibility sync are enter-and-rebuild work. Running
+        -- them on every soft refresh was part of the same churn as the fat onShow.
+        if active ~= nil and active.id == "marketDynamics" and doMdListRebuild then
+            self:_seedMdSubnavTexts()
+            self:_syncMdSubPageVisibility()
+            self:_ensureMdSubnavArrowsVisible()
+            self:_ensureSelectorArrowsVisible()
+            -- BUILD 00:10: lay the graph box out on ENTER. draw() only ever retried it
+            -- mid-frame, so a band that had not been positioned yet gave a zero-size area
+            -- and the abs gate refused for as long as that lasted. Enter is a full show,
+            -- so this is the right place for it and it is not on any light path.
+            for _, id in ipairs({"mdPricesBand", "mdGraphArea"}) do
+                local el = self:getDescendantById(id)
+                if el ~= nil and type(el.updateAbsolutePosition) == "function" then
+                    pcall(function() el:updateAbsolutePosition() end)
+                end
+            end
+        end
         if active ~= nil and type(active.onShow) == "function" then
             if active.id == "seasonalCropStress" then
                 -- Full CS field list reload only on enter / rebuildLists (lightOnly otherwise).
+                -- Guest onShow paints consultant when entering (default-home lock).
                 pcall(active.onShow, self.rfHostPlaceholder, not doCsListRebuild)
+            elseif active.id == "marketDynamics" then
+                -- BUILD 23:43: a soft refreshContent(false) now runs the guest LIGHT tick, not
+                -- a lightOnly onShow. lightOnly still re-laid out the table, band and graph and
+                -- re-asserted the selection, which is the scroll jump. Enter and explicit
+                -- rebuilds keep the full onShow(false).
+                if doMdListRebuild then
+                    pcall(active.onShow, self.rfHostPlaceholder, false)
+                else
+                    -- BUILD 23:51 belt: prefer the registered handler, but fall back to the
+                    -- guest directly if the registry dropped it. Vera found exactly that -
+                    -- active.onLightTick was nil, so the soft path took the fat onShow and
+                    -- 23:43 changed nothing where it counted. Never the fat onShow while a
+                    -- light tick exists anywhere we can reach it.
+                    local light = active.onLightTick
+                    if type(light) ~= "function" then
+                        local lg = (type(mdResolve) == "function")
+                                and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+                        if lg ~= nil and type(lg.onLightTick) == "function" then
+                            light = lg.onLightTick
+                        end
+                    end
+                    if type(light) == "function" then
+                        pcall(light, self.rfHostPlaceholder)
+                    else
+                        pcall(active.onShow, self.rfHostPlaceholder, true)
+                    end
+                end
             else
                 pcall(active.onShow, self.rfHostPlaceholder)
             end
@@ -1562,6 +2613,9 @@ function RfPdaMenuPage:getNumberOfItemsInSection(list, section)
     if list == self.csFieldOverviewList then
         return #(self.csFieldData or {})
     end
+    if list == self.mdCommodityList then
+        return #(self.mdCommodityData or {})
+    end
     if list == self.moduleList then
         return #self._panelCache
     end
@@ -1577,10 +2631,67 @@ function RfPdaMenuPage:populateCellForItemInSection(list, section, index, cell)
         end
     elseif list == self.csFieldOverviewList then
         self:_populateCsFieldRow(index, cell)
+    elseif list == self.mdCommodityList then
+        self:_populateMdCommodityRow(index, cell)
     elseif list == self.moduleList then
         self:_populateModuleRow(index, cell)
     end
 end
+
+function RfPdaMenuPage:_populateMdCommodityRow(index, cell)
+    local entry = (self.mdCommodityData or {})[index]
+    if entry == nil then return end
+    -- Deep Market twin: Bitmap cropIcon from fillType.hudOverlayFilename; hide if empty (no purple).
+    local iconEl = cell:getDescendantByName("cropIcon")
+    local nameEl = cell:getDescendantByName("mdCropRowName")
+    local priceEl = cell:getDescendantByName("mdCropRowPrice")
+    local changeEl = cell:getDescendantByName("mdCropRowChange")
+    if iconEl ~= nil then
+        local overlay = entry.hudOverlay
+        if type(overlay) == "string" and overlay ~= "" then
+            if type(iconEl.setImageFilename) == "function" then
+                iconEl:setImageFilename(overlay)
+            end
+            if type(iconEl.setVisible) == "function" then
+                iconEl:setVisible(true)
+            end
+        else
+            if type(iconEl.setVisible) == "function" then
+                iconEl:setVisible(false)
+            end
+        end
+    end
+    if nameEl then nameEl:setText(entry.title or "-") end
+    local priceText = "-"
+    if entry.price ~= nil then
+        if g_i18n and g_i18n.formatMoney then
+            priceText = g_i18n:formatMoney(entry.price, 0, true, true)
+        else
+            priceText = string.format("%.0f", entry.price)
+        end
+    end
+    if priceEl then priceEl:setText(priceText) end
+    local pct = tonumber(entry.changePct) or 0
+    local changeText
+    if pct > 0 then
+        changeText = string.format("+%.1f%%", pct)
+    else
+        changeText = string.format("%.1f%%", pct)
+    end
+    if changeEl then
+        changeEl:setText(changeText)
+        if type(changeEl.setTextColor) == "function" then
+            if pct > 0.5 then
+                changeEl:setTextColor(0.30, 0.80, 0.35, 1)
+            elseif pct < -0.5 then
+                changeEl:setTextColor(0.90, 0.25, 0.20, 1)
+            else
+                changeEl:setTextColor(0.70, 0.72, 0.75, 1)
+            end
+        end
+    end
+end
+
 
 function RfPdaMenuPage:_populateCsFieldRow(index, cell)
     local entry = (self.csFieldData or {})[index]
@@ -1658,6 +2769,28 @@ function RfPdaMenuPage:onListSelectionChanged(list, section, index)
             self.csSelectedIndex = index
             self.csSelectedFieldId = entry.fieldId
             self:_refreshGuestDetail()
+        end
+    elseif list == self.mdCommodityList and index ~= nil and index > 0 then
+        -- Keyboard / controller selection routes through the same real handler as a
+        -- click. No highlight-only path on either.
+        --
+        -- BUILD 13:06 (Vera F1): `active` does not exist in this function - I copied the
+        -- registry-first block out of onClickMdCommodityRow, which defines it, and left the
+        -- two lines that produce it behind. Worse than a miss: `type(active.selectCommodityIndex)`
+        -- INDEXES nil, so arrows and list selection threw every time instead of quietly
+        -- falling through. The click path was fine, which is exactly why it read as working.
+        local host = self:_getHost()
+        local active = host and host.getActivePanel and host:getActivePanel()
+        -- Registry first: a guest that registered the callback needs no resolving.
+        if active ~= nil and type(active.selectCommodityIndex) == "function" then
+            pcall(active.selectCommodityIndex, index)
+        else
+            local mdGuest = (type(mdResolve) == "function")
+                    and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+            self:_mdLogGuestBelt(mdGuest)
+            if mdGuest ~= nil and type(mdGuest.selectCommodityIndex) == "function" then
+                pcall(mdGuest.selectCommodityIndex, index)
+            end
         end
     elseif list == self.moduleList then
         -- Highlight-only: SmoothList ↑↓ must NOT switch modules.
@@ -1769,23 +2902,89 @@ function RfPdaMenuPage.toggle()
 end
 
 
---- Empty bind stubs for frozen MDM chrome nodes under a non-MDM door (partial installs).
-function RfPdaMenuPage:onClickMdSubnavSelector()
-end
-
-function RfPdaMenuPage:onClickMdCommodityRow(element)
-end
-
 function RfPdaMenuPage:onClickMdMoverSelector()
-    if MdRfPdaGuest ~= nil and type(MdRfPdaGuest.onMoverChanged) == "function" then
-        MdRfPdaGuest.onMoverChanged(self.rfHostPlaceholder or self)
+    -- Retired movers MTO (kept for nil-safe onClick binding).
+    return
+end
+
+--- Mirror onClickCsFieldRow for MDM commodities: select row, refresh Prices bottom.
+function RfPdaMenuPage:onClickMdCommodityRow(element)
+    local index = resolveListRowIndex(element)
+    if index == nil or index < 1 then
+        return
     end
+    -- BUILD 12:32: the optimistic highlight is gone. SmoothListElement publishes no
+    -- setSelectedIndex (established 21:41), so this call never did anything - but it read
+    -- as if the click were handled even when the real handler was missing, which is
+    -- exactly the wrong impression while the trend was not following the pick.
+    local host = self:_getHost()
+    local active = host and host.getActivePanel and host:getActivePanel()
+    if active ~= nil and type(active.selectCommodityIndex) == "function" then
+        pcall(active.selectCommodityIndex, index)
+        return
+    end
+    local mdGuest = (type(mdResolve) == "function")
+            and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+    self:_mdLogGuestBelt(mdGuest)
+    if mdGuest ~= nil and type(mdGuest.selectCommodityIndex) == "function" then
+        pcall(mdGuest.selectCommodityIndex, index)
+    end
+end
+
+--- One-shot: name the belt the guest resolved through, or say it did not resolve.
+--- Same shape as the graph GATE line, because the graph turned out to be findable only
+--- once MarketDynamics published it - the guest was one build behind the same lesson.
+function RfPdaMenuPage:_mdLogGuestBelt(mdGuest)
+    if self._mdGuestBeltLogged then
+        return
+    end
+    self._mdGuestBeltLogged = true
+    local via = "nil"
+    if mdGuest ~= nil then
+        if MdRfPdaGuest ~= nil then
+            via = "in-env"
+        elseif g_modEnvironments ~= nil and g_modEnvironments["FS25_MarketDynamics"] ~= nil
+                and g_modEnvironments["FS25_MarketDynamics"].MdRfPdaGuest ~= nil then
+            via = "modEnv-named"
+        else
+            local okE, rootE = pcall(getfenv, 0)
+            if okE and type(rootE) == "table" and rootE.MdRfPdaGuest ~= nil then
+                via = "getfenv0"
+            elseif g_currentMission ~= nil and g_currentMission.MdRfPdaGuest ~= nil then
+                via = "mission"
+            else
+                via = "modEnv-scan"
+            end
+        end
+    end
+    print(string.format(
+        "[MarketDynamics] Esc guest: resolved=%s via=%s selectCommodityIndex=%s",
+        tostring(mdGuest ~= nil), via,
+        tostring(mdGuest ~= nil and type(mdGuest.selectCommodityIndex) == "function")))
 end
 
 function RfPdaMenuPage:onClickMdOpenMarket()
-    if MdRfPdaGuest ~= nil and type(MdRfPdaGuest.onOpenFullMarket) == "function" then
-        MdRfPdaGuest.onOpenFullMarket()
-    elseif MDMMarketScreen ~= nil and type(MDMMarketScreen.show) == "function" then
-        MDMMarketScreen.show()
+    -- BUILD 12:59: was the last bare cross-mod read in this file. Under a foreign door
+    -- both names were nil, so the button did nothing at all - silently, which is the
+    -- worst version. Registry first, then the resolver, and it cannot throw.
+    local host = self:_getHost()
+    local active = host and host.getActivePanel and host:getActivePanel()
+    if active ~= nil and type(active.onOpenFullMarket) == "function" then
+        pcall(active.onOpenFullMarket)
+        return
     end
+    local guest = (type(mdResolve) == "function")
+            and mdResolve(MdRfPdaGuest, "MdRfPdaGuest") or MdRfPdaGuest
+    if guest ~= nil and type(guest.onOpenFullMarket) == "function" then
+        pcall(guest.onOpenFullMarket)
+        return
+    end
+    local screen = (type(mdResolve) == "function")
+            and mdResolve(MDMMarketScreen, "MDMMarketScreen") or MDMMarketScreen
+    if screen ~= nil and type(screen.show) == "function" then
+        pcall(screen.show)
+    end
+    -- Companion absent: quiet no-op. "Works alone" means a missing peer is silence,
+    -- not an error out of a click handler.
 end
+

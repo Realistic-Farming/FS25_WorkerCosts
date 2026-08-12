@@ -102,7 +102,7 @@ function WCSalaryDialog:populateUI()
     if self.txtWorkerList then
         local lines = {}
         for _, entry in ipairs(self.salaryEntries) do
-            table.insert(lines, string.format("%s    $%d", entry.name, entry.amount))
+            local aStr = (g_i18n and g_i18n:formatMoney(entry.amount, 0, true, false) or tostring(entry.amount)); table.insert(lines, string.format("%s    %s", entry.name, aStr))
         end
         if #lines == 0 then
             table.insert(lines, "(No workers were active this month)")
@@ -111,11 +111,11 @@ function WCSalaryDialog:populateUI()
     end
 
     if self.txtTotal then
-        self.txtTotal:setText(string.format("$%d", self.totalAmount))
+        self.txtTotal:setText(g_i18n and g_i18n:formatMoney(self.totalAmount, 0, true, false) or tostring(self.totalAmount))
     end
 
     if self.txtBtnPay then
-        self.txtBtnPay:setText(string.format("Pay  $%d", self.totalAmount))
+        local pStr = (g_i18n and g_i18n:formatMoney(self.totalAmount, 0, true, false) or tostring(self.totalAmount)); self.txtBtnPay:setText("Pay  " .. pStr)
     end
 
     -- Show the penalty warning on the Decline button only when a penalty is actually active

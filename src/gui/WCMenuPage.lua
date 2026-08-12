@@ -91,9 +91,9 @@ function WCMenuPage:refresh()
     if self.txtWageRate then
         local rate = settings:getWageRate()
         if settings.costMode == Settings.COST_MODE_HOURLY then
-            self.txtWageRate:setText(string.format("$%d / h", rate))
+            self.txtWageRate:setText((g_i18n and g_i18n:formatMoney(rate, 0, true, false) or tostring(rate)) .. " / h")
         else
-            self.txtWageRate:setText(string.format("$%d / ha", rate))
+            self.txtWageRate:setText((g_i18n and g_i18n:formatMoney(rate, 0, true, false) or tostring(rate)) .. " / ha")
         end
     end
 

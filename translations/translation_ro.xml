@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+        <!-- BUILD 11:27 F155 Esc RF button labels -->
+        <text name="wc_rf_pda_open_manager" text="Deschide managerul de muncitori" />
+        <text name="sf_pda_btn_rotation_planner" text="Planificator de rotație" />
+        <text name="sf_pda_btn_field_detail" text="Detaliu câmp" />
+    </texts>
+</l10n>

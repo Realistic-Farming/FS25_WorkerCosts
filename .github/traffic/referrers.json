@@ -3270,13 +3270,13 @@
   "2026-08-13": [
     {
       "referrer": "github.com",
-      "count": 71,
-      "uniques": 44
+      "count": 73,
+      "uniques": 45
     },
     {
       "referrer": "Google",
-      "count": 39,
-      "uniques": 24
+      "count": 42,
+      "uniques": 25
     },
     {
       "referrer": "kingmods.net",
@@ -3285,8 +3285,8 @@
     },
     {
       "referrer": "Bing",
-      "count": 3,
-      "uniques": 2
+      "count": 4,
+      "uniques": 3
     },
     {
       "referrer": "forbidden-mods.de",

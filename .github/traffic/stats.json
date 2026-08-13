@@ -29408,26 +29408,26 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-13T06:10:48Z",
+    "timestamp": "2026-08-13T12:53:06Z",
     "date": "2026-08-13",
     "views": {
-      "count": 170,
-      "uniques": 84
+      "count": 178,
+      "uniques": 86
     },
     "clones": {
-      "count": 406,
-      "uniques": 114
+      "count": 419,
+      "uniques": 121
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 71,
-        "uniques": 44
+        "count": 73,
+        "uniques": 45
       },
       {
         "referrer": "Google",
-        "count": 39,
-        "uniques": 24
+        "count": 42,
+        "uniques": 25
       },
       {
         "referrer": "kingmods.net",
@@ -29436,8 +29436,8 @@
       },
       {
         "referrer": "Bing",
-        "count": 3,
-        "uniques": 2
+        "count": 4,
+        "uniques": 3
       },
       {
         "referrer": "forbidden-mods.de",
@@ -29459,19 +29459,19 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 96,
-        "uniques": 80
+        "count": 101,
+        "uniques": 83
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 27,
-        "uniques": 21
+        "count": 29,
+        "uniques": 22
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 17,
+        "count": 18,
         "uniques": 10
       },
       {
@@ -29481,14 +29481,14 @@
         "uniques": 2
       },
       {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/issues/54",
-        "title": "/issues/54",
-        "count": 3,
-        "uniques": 2
-      },
-      {
         "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md",
         "title": "/blob/main/README.md",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/issues/54",
+        "title": "/issues/54",
         "count": 2,
         "uniques": 1
       },
@@ -29521,7 +29521,7 @@
       {
         "assets": [
           {
-            "downloads": 93,
+            "downloads": 94,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

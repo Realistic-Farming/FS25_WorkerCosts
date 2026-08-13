@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-08-13T06:11:11Z
-**Days tracked:** 115 | **Download snapshots:** 479 (hourly)
+**Last updated:** 2026-08-13T12:53:26Z
+**Days tracked:** 115 | **Download snapshots:** 481 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 170 | 84 |
-| Git Clones | 406 | 114 |
+| Page Views | 178 | 86 |
+| Git Clones | 419 | 121 |
 
 > **Engagement:** 2.0 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 718 of 84 visitors cloned or downloaded (**854.7%**)
+> **14-day conversion:** 726 of 86 visitors cloned or downloaded (**844.1%**)
 >
-> Unique cloners: 114 | Release downloads: 604
+> Unique cloners: 121 | Release downloads: 605
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 604 |
-| Git Clones (14-day) | 406 |
-| **Total Acquisitions** | **1010** |
+| Zip Downloads | 605 |
+| Git Clones (14-day) | 419 |
+| **Total Acquisitions** | **1024** |
 
 ---
 
@@ -54,10 +54,10 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 71 | 44 |
-| Google | 39 | 24 |
+| github.com | 73 | 45 |
+| Google | 42 | 25 |
 | kingmods.net | 5 | 4 |
-| Bing | 3 | 2 |
+| Bing | 4 | 3 |
 | forbidden-mods.de | 2 | 1 |
 | ya.ru | 2 | 1 |
 | DuckDuckGo | 1 | 1 |
@@ -80,12 +80,12 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 96 | 80 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 27 | 21 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 17 | 10 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 101 | 83 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 29 | 22 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 18 | 10 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues` | 12 | 2 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 3 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md` | 2 | 1 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 2 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues/55` | 2 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/pull/96` | 2 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/src/WorkerManager.lua` | 1 | 1 |

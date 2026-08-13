@@ -3,6 +3,9 @@
     <texts>
         <!-- BUILD 11:27 F155 Esc RF button labels -->
         <text name="wc_rf_pda_open_manager" text="Apri gestore operai" />
+        <text name="wc_rf_pda_page_dashboard" text="Pannello"/>
+        <text name="wc_rf_pda_page_wages" text="Salari"/>
+        <text name="wc_rf_pda_page_workers" text="Operai"/>
         <text name="sf_pda_btn_rotation_planner" text="Pianificatore rotazioni" />
         <text name="sf_pda_btn_field_detail" text="Dettaglio campo" />
     </texts>

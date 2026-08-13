@@ -3,6 +3,9 @@
     <texts>
         <!-- BUILD 11:27 F155 Esc RF button labels -->
         <text name="wc_rf_pda_open_manager" text="Dolgozókezelő megnyitása" />
+        <text name="wc_rf_pda_page_dashboard" text="Áttekintés"/>
+        <text name="wc_rf_pda_page_wages" text="Bérek"/>
+        <text name="wc_rf_pda_page_workers" text="Dolgozók"/>
         <text name="sf_pda_btn_rotation_planner" text="Vetésforgó-tervező" />
         <text name="sf_pda_btn_field_detail" text="Táblarészletek" />
     </texts>

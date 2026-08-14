@@ -6,26 +6,26 @@
     <title>
         <en>Realistic Worker Costs</en>
         <de>Realistische Arbeiterkosten</de>
-        <fr>CoÃƒÆ’Ã‚Â»ts RÃƒÆ’Ã‚Â©alistes des Ouvriers</fr>
-        <pl>Realistyczne Koszty PracownikÃƒÆ’Ã‚Â³w</pl>
+        <fr>CoÃƒÂ»ts RÃƒÂ©alistes des Ouvriers</fr>
+        <pl>Realistyczne Koszty PracownikÃƒÂ³w</pl>
         <es>Costos Realistas de Trabajadores</es>
         <it>Costi Realistici Operai</it>
-        <cz>RealistickÃƒÆ’Ã‚Â© NÃƒÆ’Ã‚Â¡klady na PracovnÃƒÆ’Ã‚Â­ky</cz>
+        <cz>RealistickÃƒÂ© NÃƒÂ¡klady na PracovnÃƒÂ­ky</cz>
         <br>Custos Realistas de Trabalhadores</br>
-        <uk>ÃƒÂÃ‚Â ÃƒÂÃ‚ÂµÃƒÂÃ‚Â°ÃƒÂÃ‚Â»Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â½Ãƒâ€˜Ã¢â‚¬â€œ ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²</uk>
-        <ru>ÃƒÂÃ‚Â ÃƒÂÃ‚ÂµÃƒÂÃ‚Â°ÃƒÂÃ‚Â»ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â½Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Âµ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¦ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´Ãƒâ€˜Ã¢â‚¬Â¹ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²</ru>
+        <uk>ÃÂ ÃÂµÃÂ°ÃÂ»Ã‘â€“Ã‘ÂÃ‘â€šÃÂ¸Ã‘â€¡ÃÂ½Ã‘â€“ ÃÂ²ÃÂ¸Ã‘â€šÃ‘â‚¬ÃÂ°Ã‘â€šÃÂ¸ ÃÂ½ÃÂ° ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃ‘â€“ÃÂ²</uk>
+        <ru>ÃÂ ÃÂµÃÂ°ÃÂ»ÃÂ¸Ã‘ÂÃ‘â€šÃÂ¸Ã‘â€¡ÃÂ½Ã‘â€¹ÃÂµ Ã‘â‚¬ÃÂ°Ã‘ÂÃ‘â€¦ÃÂ¾ÃÂ´Ã‘â€¹ ÃÂ½ÃÂ° Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ¾ÃÂ²</ru>
     </title>
     <description>
         <en>Adds hourly wages for workers with skill-based pricing and configurable rates.</en>
-        <de>FÃƒÆ’Ã‚Â¼gt stÃƒÆ’Ã‚Â¼ndliche LÃƒÆ’Ã‚Â¶hne fÃƒÆ’Ã‚Â¼r Arbeiter mit fÃƒÆ’Ã‚Â¤higkeitsbasierten Preisen und konfigurierbaren SÃƒÆ’Ã‚Â¤tzen hinzu.</de>
-        <fr>Ajoute des salaires horaires pour les ouvriers avec tarification basÃƒÆ’Ã‚Â©e sur les compÃƒÆ’Ã‚Â©tences et taux configurables.</fr>
-        <pl>Dodaje godzinowe stawki dla pracownikÃƒÆ’Ã‚Â³w z cenami opartymi na umiejÃƒâ€žÃ¢â€žÂ¢tnoÃƒâ€¦Ã¢â‚¬Âºciach i konfigurowalnymi stawkami.</pl>
-        <es>AÃƒÆ’Ã‚Â±ade salarios por hora para trabajadores con precios basados en habilidades y tarifas configurables.</es>
-        <it>Aggiunge salari orari per operai con prezzi basati su abilitÃƒÆ’Ã‚Â  e tariffe configurabili.</it>
-        <cz>PÃƒâ€¦Ã¢â€žÂ¢idÃƒÆ’Ã‚Â¡vÃƒÆ’Ã‚Â¡ hodinovÃƒÆ’Ã‚Â© mzdy pro pracovnÃƒÆ’Ã‚Â­ky s cenami zaloÃƒâ€¦Ã‚Â¾enÃƒÆ’Ã‚Â½mi na dovednostech a konfigurovatelnÃƒÆ’Ã‚Â½mi sazbami.</cz>
-        <br>Adiciona salÃƒÆ’Ã‚Â¡rios por hora para trabalhadores com preÃƒÆ’Ã‚Â§os baseados em habilidades e taxas configurÃƒÆ’Ã‚Â¡veis.</br>
-        <uk>ÃƒÂÃ¢â‚¬ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™ ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã†â€™ ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°ÃƒÂÃ‚Â¼ ÃƒÂÃ‚Â· Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾Ãƒâ€˜Ã…Â½ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â¾Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¾ÃƒÂÃ‚Âº Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â° ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾Ãƒâ€˜Ã…Â½ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¸ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¸.</uk>
-        <ru>ÃƒÂÃ¢â‚¬ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Â±ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚Â»Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â‚¬Å¡ ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã…Â½ ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã†â€™ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°ÃƒÂÃ‚Â¼ Ãƒâ€˜Ã‚Â Ãƒâ€˜Ã¢â‚¬Â ÃƒÂÃ‚ÂµÃƒÂÃ‚Â½ÃƒÂÃ‚Â°ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â¾Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Âµ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â² ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¼Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¸ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¸.</ru>
+        <de>FÃƒÂ¼gt stÃƒÂ¼ndliche LÃƒÂ¶hne fÃƒÂ¼r Arbeiter mit fÃƒÂ¤higkeitsbasierten Preisen und konfigurierbaren SÃƒÂ¤tzen hinzu.</de>
+        <fr>Ajoute des salaires horaires pour les ouvriers avec tarification basÃƒÂ©e sur les compÃƒÂ©tences et taux configurables.</fr>
+        <pl>Dodaje godzinowe stawki dla pracownikÃƒÂ³w z cenami opartymi na umiejÃ„â„¢tnoÃ…â€ºciach i konfigurowalnymi stawkami.</pl>
+        <es>AÃƒÂ±ade salarios por hora para trabajadores con precios basados en habilidades y tarifas configurables.</es>
+        <it>Aggiunge salari orari per operai con prezzi basati su abilitÃƒÂ  e tariffe configurabili.</it>
+        <cz>PÃ…â„¢idÃƒÂ¡vÃƒÂ¡ hodinovÃƒÂ© mzdy pro pracovnÃƒÂ­ky s cenami zaloÃ…Â¾enÃƒÂ½mi na dovednostech a konfigurovatelnÃƒÂ½mi sazbami.</cz>
+        <br>Adiciona salÃƒÂ¡rios por hora para trabalhadores com preÃƒÂ§os baseados em habilidades e taxas configurÃƒÂ¡veis.</br>
+        <uk>Ãâ€ÃÂ¾ÃÂ´ÃÂ°Ã‘â€ ÃÂ¿ÃÂ¾ÃÂ³ÃÂ¾ÃÂ´ÃÂ¸ÃÂ½ÃÂ½Ã‘Æ’ ÃÂ¾ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘Æ’ ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃÂ°ÃÂ¼ ÃÂ· Ã‘â€ Ã‘â€“ÃÂ½ÃÂ¾Ã‘Å½ ÃÂ½ÃÂ° ÃÂ¾Ã‘ÂÃÂ½ÃÂ¾ÃÂ²Ã‘â€“ ÃÂ½ÃÂ°ÃÂ²ÃÂ¸Ã‘â€¡ÃÂ¾ÃÂº Ã‘â€šÃÂ° ÃÂ½ÃÂ°Ã‘ÂÃ‘â€šÃ‘â‚¬ÃÂ¾Ã‘Å½ÃÂ²ÃÂ°ÃÂ½ÃÂ¸ÃÂ¼ÃÂ¸ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃÂ°ÃÂ¼ÃÂ¸.</uk>
+        <ru>Ãâ€ÃÂ¾ÃÂ±ÃÂ°ÃÂ²ÃÂ»Ã‘ÂÃÂµÃ‘â€š ÃÂ¿ÃÂ¾Ã‘â€¡ÃÂ°Ã‘ÂÃÂ¾ÃÂ²Ã‘Æ’Ã‘Å½ ÃÂ¾ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘Æ’ Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ°ÃÂ¼ Ã‘Â Ã‘â€ ÃÂµÃÂ½ÃÂ°ÃÂ¼ÃÂ¸ ÃÂ½ÃÂ° ÃÂ¾Ã‘ÂÃÂ½ÃÂ¾ÃÂ²ÃÂµ ÃÂ½ÃÂ°ÃÂ²Ã‘â€¹ÃÂºÃÂ¾ÃÂ² ÃÂ¸ ÃÂ½ÃÂ°Ã‘ÂÃ‘â€šÃ‘â‚¬ÃÂ°ÃÂ¸ÃÂ²ÃÂ°ÃÂµÃÂ¼Ã‘â€¹ÃÂ¼ÃÂ¸ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃÂ°ÃÂ¼ÃÂ¸.</ru>
     </description>
     <iconFilename>icon.dds</iconFilename>
     
@@ -43,43 +43,43 @@
         <text name="wc_section">
             <en>Worker Costs Mod</en>
             <de>Arbeiterkosten-Mod</de>
-            <fr>Module CoÃƒÆ’Ã‚Â»ts Ouvriers</fr>
-            <pl>Mod KosztÃƒÆ’Ã‚Â³w PracownikÃƒÆ’Ã‚Â³w</pl>
+            <fr>Module CoÃƒÂ»ts Ouvriers</fr>
+            <pl>Mod KosztÃƒÂ³w PracownikÃƒÂ³w</pl>
             <es>Mod Costos Trabajadores</es>
             <it>Mod Costi Operai</it>
-            <cz>Mod NÃƒÆ’Ã‚Â¡kladÃƒâ€¦Ã‚Â¯ na PracovnÃƒÆ’Ã‚Â­ky</cz>
+            <cz>Mod NÃƒÂ¡kladÃ…Â¯ na PracovnÃƒÂ­ky</cz>
             <br>Mod Custos Trabalhadores</br>
-            <uk>ÃƒÂÃ…â€œÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²</uk>
-            <ru>ÃƒÂÃ…â€œÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¦ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â² ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²</ru>
+            <uk>ÃÅ“ÃÂ¾ÃÂ´ ÃÂ²ÃÂ¸Ã‘â€šÃ‘â‚¬ÃÂ°Ã‘â€š ÃÂ½ÃÂ° ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃ‘â€“ÃÂ²</uk>
+            <ru>ÃÅ“ÃÂ¾ÃÂ´ Ã‘â‚¬ÃÂ°Ã‘ÂÃ‘â€¦ÃÂ¾ÃÂ´ÃÂ¾ÃÂ² ÃÂ½ÃÂ° Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ¾ÃÂ²</ru>
         
             <da>Mod til medarbejderomkostninger</da>
         </text>
 
         <text name="input_WC_OPEN_ROSTER">
             <en>Open Worker Roster</en>
-            <de>Arbeiterliste ÃƒÆ’Ã‚Â¶ffnen</de>
+            <de>Arbeiterliste ÃƒÂ¶ffnen</de>
             <fr>Ouvrir la liste des ouvriers</fr>
-            <pl>OtwÃƒÆ’Ã‚Â³rz listÃƒâ€žÃ¢â€žÂ¢ pracownikÃƒÆ’Ã‚Â³w</pl>
+            <pl>OtwÃƒÂ³rz listÃ„â„¢ pracownikÃƒÂ³w</pl>
             <es>Abrir lista de trabajadores</es>
             <it>Apri elenco operai</it>
-            <cz>OtevÃƒâ€¦Ã¢â€žÂ¢ÃƒÆ’Ã‚Â­t seznam pracovnÃƒÆ’Ã‚Â­kÃƒâ€¦Ã‚Â¯</cz>
+            <cz>OtevÃ…â„¢ÃƒÂ­t seznam pracovnÃƒÂ­kÃ…Â¯</cz>
             <br>Abrir lista de trabalhadores</br>
-            <uk>ÃƒÂÃ¢â‚¬â„¢Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â´ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Âº ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²</uk>
-            <ru>ÃƒÂÃ…Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â€šÂ¬Ãƒâ€˜Ã¢â‚¬Â¹Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Âº Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²</ru>
-            <da>ÃƒÆ’Ã¢â‚¬Â¦bn medarbejderliste</da>
+            <uk>Ãâ€™Ã‘â€“ÃÂ´ÃÂºÃ‘â‚¬ÃÂ¸Ã‘â€šÃÂ¸ Ã‘ÂÃÂ¿ÃÂ¸Ã‘ÂÃÂ¾ÃÂº ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃ‘â€“ÃÂ²</uk>
+            <ru>ÃÅ¾Ã‘â€šÃÂºÃ‘â‚¬Ã‘â€¹Ã‘â€šÃ‘Å’ Ã‘ÂÃÂ¿ÃÂ¸Ã‘ÂÃÂ¾ÃÂº Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ¾ÃÂ²</ru>
+            <da>Ãƒâ€¦bn medarbejderliste</da>
         </text>
 
         <text name="wc_enabled_short">
             <en>Enable Mod</en>
             <de>Mod aktivieren</de>
             <fr>Activer le mod</fr>
-            <pl>WÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz mod</pl>
+            <pl>WÃ…â€šÃ„â€¦cz mod</pl>
             <es>Activar mod</es>
             <it>Attiva mod</it>
             <cz>Povolit mod</cz>
             <br>Ativar mod</br>
-            <uk>ÃƒÂÃ‚Â£ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´</uk>
-            <ru>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´</ru>
+            <uk>ÃÂ£ÃÂ²Ã‘â€“ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸ ÃÂ¼ÃÂ¾ÃÂ´</uk>
+            <ru>Ãâ€™ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’ ÃÂ¼ÃÂ¾ÃÂ´</ru>
         
             <da>Aktiver Mod</da>
         </text>
@@ -87,16 +87,16 @@
         <text name="wc_enabled_long">
             <en>Enable or disable the worker costs mod</en>
             <de>Arbeiterkosten-Mod aktivieren oder deaktivieren</de>
-            <fr>Activer ou dÃƒÆ’Ã‚Â©sactiver le module de coÃƒÆ’Ã‚Â»ts des ouvriers</fr>
-            <pl>WÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz lub wyÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz mod kosztÃƒÆ’Ã‚Â³w pracownikÃƒÆ’Ã‚Â³w</pl>
-            <es>Activar o desactivar el mÃƒÆ’Ã‚Â³dulo de costos de trabajadores</es>
+            <fr>Activer ou dÃƒÂ©sactiver le module de coÃƒÂ»ts des ouvriers</fr>
+            <pl>WÃ…â€šÃ„â€¦cz lub wyÃ…â€šÃ„â€¦cz mod kosztÃƒÂ³w pracownikÃƒÂ³w</pl>
+            <es>Activar o desactivar el mÃƒÂ³dulo de costos de trabajadores</es>
             <it>Attiva o disattiva il modulo dei costi degli operai</it>
-            <cz>Povolit nebo zakÃƒÆ’Ã‚Â¡zat mod nÃƒÆ’Ã‚Â¡kladÃƒâ€¦Ã‚Â¯ na pracovnÃƒÆ’Ã‚Â­ky</cz>
+            <cz>Povolit nebo zakÃƒÂ¡zat mod nÃƒÂ¡kladÃ…Â¯ na pracovnÃƒÂ­ky</cz>
             <br>Ativar ou desativar o mod de custos de trabalhadores</br>
-            <uk>ÃƒÂÃ‚Â£ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²</uk>
-            <ru>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â»ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¦ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â² ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²</ru>
+            <uk>ÃÂ£ÃÂ²Ã‘â€“ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸ ÃÂ°ÃÂ±ÃÂ¾ ÃÂ²ÃÂ¸ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸ ÃÂ¼ÃÂ¾ÃÂ´ ÃÂ²ÃÂ¸Ã‘â€šÃ‘â‚¬ÃÂ°Ã‘â€š ÃÂ½ÃÂ° ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃ‘â€“ÃÂ²</uk>
+            <ru>Ãâ€™ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’ ÃÂ¸ÃÂ»ÃÂ¸ ÃÂ²Ã‘â€¹ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’ ÃÂ¼ÃÂ¾ÃÂ´ Ã‘â‚¬ÃÂ°Ã‘ÂÃ‘â€¦ÃÂ¾ÃÂ´ÃÂ¾ÃÂ² ÃÂ½ÃÂ° Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ¾ÃÂ²</ru>
         
-            <da>AktivÃƒÆ’Ã‚Â©r eller deaktiver modÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢en for medarbejderomkostninger</da>
+            <da>AktivÃƒÂ©r eller deaktiver modÃ¢â‚¬â„¢en for medarbejderomkostninger</da>
         </text>
         
         <text name="wc_debug_short">
@@ -105,57 +105,57 @@
             <fr>Mode DEBUG</fr>
             <pl>Tryb DEBUG</pl>
             <es>Modo DEBUG</es>
-            <it>ModalitÃƒÆ’Ã‚Â  DEBUG</it>
-            <cz>DEBUG reÃƒâ€¦Ã‚Â¾im</cz>
+            <it>ModalitÃƒÂ  DEBUG</it>
+            <cz>DEBUG reÃ…Â¾im</cz>
             <br>Modo DEBUG</br>
-            <uk>ÃƒÂÃ‚Â ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¶ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ DEBUG</uk>
-            <ru>ÃƒÂÃ‚Â ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¶ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ DEBUG</ru>
+            <uk>ÃÂ ÃÂµÃÂ¶ÃÂ¸ÃÂ¼ DEBUG</uk>
+            <ru>ÃÂ ÃÂµÃÂ¶ÃÂ¸ÃÂ¼ DEBUG</ru>
         
             <da>Debug-tilstand</da>
         </text>
         
         <text name="wc_debug_long">
             <en>Enable/disable debug mode (extra logging)</en>
-            <de>DEBUG-Modus ein-/ausschalten (zusÃƒÆ’Ã‚Â¤tzliche Protokollierung)</de>
-            <fr>Activer/dÃƒÆ’Ã‚Â©sactiver le mode DEBUG (journalisation supplÃƒÆ’Ã‚Â©mentaire)</fr>
-            <pl>WÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz/wyÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz tryb DEBUG (dodatkowe logowanie)</pl>
+            <de>DEBUG-Modus ein-/ausschalten (zusÃƒÂ¤tzliche Protokollierung)</de>
+            <fr>Activer/dÃƒÂ©sactiver le mode DEBUG (journalisation supplÃƒÂ©mentaire)</fr>
+            <pl>WÃ…â€šÃ„â€¦cz/wyÃ…â€šÃ„â€¦cz tryb DEBUG (dodatkowe logowanie)</pl>
             <es>Activar/desactivar modo DEBUG (registro adicional)</es>
-            <it>Attiva/disattiva modalitÃƒÆ’Ã‚Â  DEBUG (registrazione aggiuntiva)</it>
-            <cz>Povolit/zakÃƒÆ’Ã‚Â¡zat DEBUG reÃƒâ€¦Ã‚Â¾im (dodateÃƒâ€žÃ‚ÂnÃƒÆ’Ã‚Â© logovÃƒÆ’Ã‚Â¡nÃƒÆ’Ã‚Â­)</cz>
+            <it>Attiva/disattiva modalitÃƒÂ  DEBUG (registrazione aggiuntiva)</it>
+            <cz>Povolit/zakÃƒÂ¡zat DEBUG reÃ…Â¾im (dodateÃ„ÂnÃƒÂ© logovÃƒÂ¡nÃƒÂ­)</cz>
             <br>Ativar/desativar modo DEBUG (registro adicional)</br>
-            <uk>ÃƒÂÃ‚Â£ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸/ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¶ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ DEBUG (ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Âµ ÃƒÂÃ‚Â»ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â³Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â)</uk>
-            <ru>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™/ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¶ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ DEBUG (ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â»ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚ÂµÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Âµ ÃƒÂÃ‚Â»ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚Âµ)</ru>
+            <uk>ÃÂ£ÃÂ²Ã‘â€“ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸/ÃÂ²ÃÂ¸ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸ Ã‘â‚¬ÃÂµÃÂ¶ÃÂ¸ÃÂ¼ DEBUG (ÃÂ´ÃÂ¾ÃÂ´ÃÂ°Ã‘â€šÃÂºÃÂ¾ÃÂ²ÃÂµ ÃÂ»ÃÂ¾ÃÂ³Ã‘Æ’ÃÂ²ÃÂ°ÃÂ½ÃÂ½Ã‘Â)</uk>
+            <ru>Ãâ€™ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’/ÃÂ²Ã‘â€¹ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’ Ã‘â‚¬ÃÂµÃÂ¶ÃÂ¸ÃÂ¼ DEBUG (ÃÂ´ÃÂ¾ÃÂ¿ÃÂ¾ÃÂ»ÃÂ½ÃÂ¸Ã‘â€šÃÂµÃÂ»Ã‘Å’ÃÂ½ÃÂ¾ÃÂµ ÃÂ»ÃÂ¾ÃÂ³ÃÂ¸Ã‘â‚¬ÃÂ¾ÃÂ²ÃÂ°ÃÂ½ÃÂ¸ÃÂµ)</ru>
         
-            <da>SlÃƒÆ’Ã‚Â¥ debug-tilstand til/fra (ekstra logning)</da>
+            <da>SlÃƒÂ¥ debug-tilstand til/fra (ekstra logning)</da>
         </text>
         
         
         <text name="wc_costmode_long">
             <en>Choose cost calculation: hourly or per hectare</en>
-            <de>WÃƒÆ’Ã‚Â¤hlen Sie die Kostenberechnung: stÃƒÆ’Ã‚Â¼ndlich oder pro Hektar</de>
-            <fr>Choisissez le calcul des coÃƒÆ’Ã‚Â»ts : horaire ou par hectare</fr>
-            <pl>Wybierz obliczanie kosztÃƒÆ’Ã‚Â³w: godzinowe lub za hektar</pl>
-            <es>Elegir cÃƒÆ’Ã‚Â¡lculo de costos: por hora o por hectÃƒÆ’Ã‚Â¡rea</es>
+            <de>WÃƒÂ¤hlen Sie die Kostenberechnung: stÃƒÂ¼ndlich oder pro Hektar</de>
+            <fr>Choisissez le calcul des coÃƒÂ»ts : horaire ou par hectare</fr>
+            <pl>Wybierz obliczanie kosztÃƒÂ³w: godzinowe lub za hektar</pl>
+            <es>Elegir cÃƒÂ¡lculo de costos: por hora o por hectÃƒÂ¡rea</es>
             <it>Scegli calcolo costi: orario o per ettaro</it>
-            <cz>Vyberte vÃƒÆ’Ã‚Â½poÃƒâ€žÃ‚Âet nÃƒÆ’Ã‚Â¡kladÃƒâ€¦Ã‚Â¯: hodinovÃƒÆ’Ã‚Â½ nebo na hektar</cz>
-            <br>Escolher cÃƒÆ’Ã‚Â¡lculo de custos: por hora ou por hectare</br>
-            <uk>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â±ÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â€šÂ¬Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â·Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â¦Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Âº ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡: ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â·ÃƒÂÃ‚Â° ÃƒÂÃ‚Â³ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬</uk>
-            <ru>ÃƒÂÃ¢â‚¬â„¢Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Â±Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â‚¬Å¡ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¦ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²: ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â»ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â·ÃƒÂÃ‚Â° ÃƒÂÃ‚Â³ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬</ru>
+            <cz>Vyberte vÃƒÂ½poÃ„Âet nÃƒÂ¡kladÃ…Â¯: hodinovÃƒÂ½ nebo na hektar</cz>
+            <br>Escolher cÃƒÂ¡lculo de custos: por hora ou por hectare</br>
+            <uk>Ãâ€™ÃÂ¸ÃÂ±ÃÂµÃ‘â‚¬Ã‘â€“Ã‘â€šÃ‘Å’ Ã‘â‚¬ÃÂ¾ÃÂ·Ã‘â‚¬ÃÂ°Ã‘â€¦Ã‘Æ’ÃÂ½ÃÂ¾ÃÂº ÃÂ²ÃÂ¸Ã‘â€šÃ‘â‚¬ÃÂ°Ã‘â€š: ÃÂ¿ÃÂ¾ÃÂ³ÃÂ¾ÃÂ´ÃÂ¸ÃÂ½ÃÂ½ÃÂ¾ ÃÂ°ÃÂ±ÃÂ¾ ÃÂ·ÃÂ° ÃÂ³ÃÂµÃÂºÃ‘â€šÃÂ°Ã‘â‚¬</uk>
+            <ru>Ãâ€™Ã‘â€¹ÃÂ±Ã‘â‚¬ÃÂ°Ã‘â€šÃ‘Å’ Ã‘â‚¬ÃÂ°Ã‘ÂÃ‘â€¡ÃÂµÃ‘â€š Ã‘â‚¬ÃÂ°Ã‘ÂÃ‘â€¦ÃÂ¾ÃÂ´ÃÂ¾ÃÂ²: ÃÂ¿ÃÂ¾Ã‘â€¡ÃÂ°Ã‘ÂÃÂ¾ÃÂ²ÃÂ¾ ÃÂ¸ÃÂ»ÃÂ¸ ÃÂ·ÃÂ° ÃÂ³ÃÂµÃÂºÃ‘â€šÃÂ°Ã‘â‚¬</ru>
         
-            <da>VÃƒÆ’Ã‚Â¦lg beregningsmetode for omkostninger: timebaseret eller pr. hektar</da>
+            <da>VÃƒÂ¦lg beregningsmetode for omkostninger: timebaseret eller pr. hektar</da>
         </text>
         
         <text name="wc_costmode_1">
             <en>Hourly ($/h)</en>
-            <de>StÃƒÆ’Ã‚Â¼ndlich ($/h)</de>
+            <de>StÃƒÂ¼ndlich ($/h)</de>
             <fr>Horaire ($/h)</fr>
             <pl>Godzinowe ($/h)</pl>
             <es>Por hora ($/h)</es>
             <it>Orario ($/h)</it>
-            <cz>HodinovÃƒÆ’Ã‚Â© ($/h)</cz>
+            <cz>HodinovÃƒÂ© ($/h)</cz>
             <br>Por hora ($/h)</br>
-            <uk>ÃƒÂÃ…Â¸ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ ($/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´)</uk>
-            <ru>ÃƒÂÃ…Â¸ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¾ ($/Ãƒâ€˜Ã¢â‚¬Â¡)</ru>
+            <uk>ÃÅ¸ÃÂ¾ÃÂ³ÃÂ¾ÃÂ´ÃÂ¸ÃÂ½ÃÂ½ÃÂ¾ ($/ÃÂ³ÃÂ¾ÃÂ´)</uk>
+            <ru>ÃÅ¸ÃÂ¾Ã‘â€¡ÃÂ°Ã‘ÂÃÂ¾ÃÂ²ÃÂ¾ ($/Ã‘â€¡)</ru>
         
             <da>Timebaseret ($/t)</da>
         </text>
@@ -165,12 +165,12 @@
             <de>Pro Hektar ($/ha)</de>
             <fr>Par hectare ($/ha)</fr>
             <pl>Za hektar ($/ha)</pl>
-            <es>Por hectÃƒÆ’Ã‚Â¡rea ($/ha)</es>
+            <es>Por hectÃƒÂ¡rea ($/ha)</es>
             <it>Per ettaro ($/ha)</it>
             <cz>Na hektar ($/ha)</cz>
             <br>Por hectare ($/ha)</br>
-            <uk>ÃƒÂÃ¢â‚¬â€ÃƒÂÃ‚Â° ÃƒÂÃ‚Â³ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬ ($/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â°)</uk>
-            <ru>ÃƒÂÃ¢â‚¬â€ÃƒÂÃ‚Â° ÃƒÂÃ‚Â³ÃƒÂÃ‚ÂµÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬ ($/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â°)</ru>
+            <uk>Ãâ€”ÃÂ° ÃÂ³ÃÂµÃÂºÃ‘â€šÃÂ°Ã‘â‚¬ ($/ÃÂ³ÃÂ°)</uk>
+            <ru>Ãâ€”ÃÂ° ÃÂ³ÃÂµÃÂºÃ‘â€šÃÂ°Ã‘â‚¬ ($/ÃÂ³ÃÂ°)</ru>
         
             <da>Pr. hektar ($/ha)</da>
         </text>
@@ -179,31 +179,31 @@
             <en>Monthly Salary</en>
             <de>Monatliches Gehalt</de>
             <fr>Salaire Mensuel</fr>
-            <pl>MiesiÃƒâ€žÃ¢â€žÂ¢czne Wynagrodzenie</pl>
+            <pl>MiesiÃ„â„¢czne Wynagrodzenie</pl>
             <es>Salario Mensual</es>
             <it>Stipendio Mensile</it>
-            <cz>MÃƒâ€žÃ¢â‚¬ÂºsÃƒÆ’Ã‚Â­Ãƒâ€žÃ‚ÂnÃƒÆ’Ã‚Â­ plat</cz>
-            <br>SalÃƒÆ’Ã‚Â¡rio Mensal</br>
-            <uk>ÃƒÂÃ‚Â©ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¼Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã‚ÂÃƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â·ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â±Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â° ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°</uk>
-            <ru>ÃƒÂÃ¢â‚¬Â¢ÃƒÂÃ‚Â¶ÃƒÂÃ‚ÂµÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂµÃƒâ€˜Ã‚ÂÃƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â ÃƒÂÃ‚Â·ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°</ru>
+            <cz>MÃ„â€ºsÃƒÂ­Ã„ÂnÃƒÂ­ plat</cz>
+            <br>SalÃƒÂ¡rio Mensal</br>
+            <uk>ÃÂ©ÃÂ¾ÃÂ¼Ã‘â€“Ã‘ÂÃ‘ÂÃ‘â€¡ÃÂ½ÃÂ° ÃÂ·ÃÂ°Ã‘â‚¬ÃÂ¾ÃÂ±Ã‘â€“Ã‘â€šÃÂ½ÃÂ° ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃÂ°</uk>
+            <ru>Ãâ€¢ÃÂ¶ÃÂµÃÂ¼ÃÂµÃ‘ÂÃ‘ÂÃ‘â€¡ÃÂ½ÃÂ°Ã‘Â ÃÂ·ÃÂ°Ã‘â‚¬ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃÂ°</ru>
         
-            <da>MÃƒÆ’Ã‚Â¥nedslÃƒÆ’Ã‚Â¸n</da>
+            <da>MÃƒÂ¥nedslÃƒÂ¸n</da>
         </text>
 
         
         <text name="wc_difficulty_long">
             <en>Set base wage rate: Low=$15/h, Medium=$25/h, High=$40/h</en>
             <de>Grundlohnsatz festlegen: Niedrig=15$/h, Mittel=25$/h, Hoch=40$/h</de>
-            <fr>DÃƒÆ’Ã‚Â©finir le taux de salaire de base : Bas=15$/h, Moyen=25$/h, ÃƒÆ’Ã¢â‚¬Â°levÃƒÆ’Ã‚Â©=40$/h</fr>
-            <pl>Ustaw podstawowÃƒâ€žÃ¢â‚¬Â¦ stawkÃƒâ€žÃ¢â€žÂ¢: Niska=15$/h, Ãƒâ€¦Ã…Â¡rednia=25$/h, Wysoka=40$/h</pl>
+            <fr>DÃƒÂ©finir le taux de salaire de base : Bas=15$/h, Moyen=25$/h, Ãƒâ€°levÃƒÂ©=40$/h</fr>
+            <pl>Ustaw podstawowÃ„â€¦ stawkÃ„â„¢: Niska=15$/h, Ã…Å¡rednia=25$/h, Wysoka=40$/h</pl>
             <es>Establecer tasa salarial base: Baja=15$/h, Media=25$/h, Alta=40$/h</es>
             <it>Imposta tariffa base: Bassa=15$/h, Media=25$/h, Alta=40$/h</it>
-            <cz>Nastavit zÃƒÆ’Ã‚Â¡kladnÃƒÆ’Ã‚Â­ sazbu: NÃƒÆ’Ã‚Â­zkÃƒÆ’Ã‚Â¡=15$/h, StÃƒâ€¦Ã¢â€žÂ¢ednÃƒÆ’Ã‚Â­=25$/h, VysokÃƒÆ’Ã‚Â¡=40$/h</cz>
-            <br>Definir taxa salarial base: Baixa=15$/h, MÃƒÆ’Ã‚Â©dia=25$/h, Alta=40$/h</br>
-            <uk>ÃƒÂÃ¢â‚¬â„¢Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â±ÃƒÂÃ‚Â°ÃƒÂÃ‚Â·ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã†â€™ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒâ€˜Ã†â€™: ÃƒÂÃ‚ÂÃƒÂÃ‚Â¸ÃƒÂÃ‚Â·Ãƒâ€˜Ã…â€™ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°=15$/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´, ÃƒÂÃ‚Â¡ÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚Â´ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â=25$/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´, ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°=40$/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´</uk>
-            <ru>ÃƒÂÃ‚Â£Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â±ÃƒÂÃ‚Â°ÃƒÂÃ‚Â·ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã…Â½ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒâ€˜Ã†â€™: ÃƒÂÃ‚ÂÃƒÂÃ‚Â¸ÃƒÂÃ‚Â·ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â=15$/Ãƒâ€˜Ã¢â‚¬Â¡, ÃƒÂÃ‚Â¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚Â´ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã‚Â=25$/Ãƒâ€˜Ã¢â‚¬Â¡, ÃƒÂÃ¢â‚¬â„¢Ãƒâ€˜Ã¢â‚¬Â¹Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â=40$/Ãƒâ€˜Ã¢â‚¬Â¡</ru>
+            <cz>Nastavit zÃƒÂ¡kladnÃƒÂ­ sazbu: NÃƒÂ­zkÃƒÂ¡=15$/h, StÃ…â„¢ednÃƒÂ­=25$/h, VysokÃƒÂ¡=40$/h</cz>
+            <br>Definir taxa salarial base: Baixa=15$/h, MÃƒÂ©dia=25$/h, Alta=40$/h</br>
+            <uk>Ãâ€™Ã‘ÂÃ‘â€šÃÂ°ÃÂ½ÃÂ¾ÃÂ²ÃÂ¸Ã‘â€šÃÂ¸ ÃÂ±ÃÂ°ÃÂ·ÃÂ¾ÃÂ²Ã‘Æ’ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃ‘Æ’: ÃÂÃÂ¸ÃÂ·Ã‘Å’ÃÂºÃÂ°=15$/ÃÂ³ÃÂ¾ÃÂ´, ÃÂ¡ÃÂµÃ‘â‚¬ÃÂµÃÂ´ÃÂ½Ã‘Â=25$/ÃÂ³ÃÂ¾ÃÂ´, Ãâ€™ÃÂ¸Ã‘ÂÃÂ¾ÃÂºÃÂ°=40$/ÃÂ³ÃÂ¾ÃÂ´</uk>
+            <ru>ÃÂ£Ã‘ÂÃ‘â€šÃÂ°ÃÂ½ÃÂ¾ÃÂ²ÃÂ¸Ã‘â€šÃ‘Å’ ÃÂ±ÃÂ°ÃÂ·ÃÂ¾ÃÂ²Ã‘Æ’Ã‘Å½ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃ‘Æ’: ÃÂÃÂ¸ÃÂ·ÃÂºÃÂ°Ã‘Â=15$/Ã‘â€¡, ÃÂ¡Ã‘â‚¬ÃÂµÃÂ´ÃÂ½Ã‘ÂÃ‘Â=25$/Ã‘â€¡, Ãâ€™Ã‘â€¹Ã‘ÂÃÂ¾ÃÂºÃÂ°Ã‘Â=40$/Ã‘â€¡</ru>
         
-            <da>Angiv basislÃƒÆ’Ã‚Â¸nsats: Lav=$15/t, Mellem=$25/t, HÃƒÆ’Ã‚Â¸j=$40/t</da>
+            <da>Angiv basislÃƒÂ¸nsats: Lav=$15/t, Mellem=$25/t, HÃƒÂ¸j=$40/t</da>
         </text>
         
         <text name="wc_diff_1">
@@ -213,10 +213,10 @@
             <pl>Niska (15$/h)</pl>
             <es>Baja (15$/h)</es>
             <it>Bassa (15$/h)</it>
-            <cz>NÃƒÆ’Ã‚Â­zkÃƒÆ’Ã‚Â¡ (15$/h)</cz>
+            <cz>NÃƒÂ­zkÃƒÂ¡ (15$/h)</cz>
             <br>Baixa (15$/h)</br>
-            <uk>ÃƒÂÃ‚ÂÃƒÂÃ‚Â¸ÃƒÂÃ‚Â·Ãƒâ€˜Ã…â€™ÃƒÂÃ‚ÂºÃƒÂÃ‚Â° (15$/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´)</uk>
-            <ru>ÃƒÂÃ‚ÂÃƒÂÃ‚Â¸ÃƒÂÃ‚Â·ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â (15$/Ãƒâ€˜Ã¢â‚¬Â¡)</ru>
+            <uk>ÃÂÃÂ¸ÃÂ·Ã‘Å’ÃÂºÃÂ° (15$/ÃÂ³ÃÂ¾ÃÂ´)</uk>
+            <ru>ÃÂÃÂ¸ÃÂ·ÃÂºÃÂ°Ã‘Â (15$/Ã‘â€¡)</ru>
         
             <da>Lav ($15/t)</da>
         </text>
@@ -225,13 +225,13 @@
             <en>Medium ($25/h)</en>
             <de>Mittel (25$/h)</de>
             <fr>Moyen (25$/h)</fr>
-            <pl>Ãƒâ€¦Ã…Â¡rednia (25$/h)</pl>
+            <pl>Ã…Å¡rednia (25$/h)</pl>
             <es>Media (25$/h)</es>
             <it>Media (25$/h)</it>
-            <cz>StÃƒâ€¦Ã¢â€žÂ¢ednÃƒÆ’Ã‚Â­ (25$/h)</cz>
-            <br>MÃƒÆ’Ã‚Â©dia (25$/h)</br>
-            <uk>ÃƒÂÃ‚Â¡ÃƒÂÃ‚ÂµÃƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚Â´ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â (25$/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´)</uk>
-            <ru>ÃƒÂÃ‚Â¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚ÂµÃƒÂÃ‚Â´ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã‚Â (25$/Ãƒâ€˜Ã¢â‚¬Â¡)</ru>
+            <cz>StÃ…â„¢ednÃƒÂ­ (25$/h)</cz>
+            <br>MÃƒÂ©dia (25$/h)</br>
+            <uk>ÃÂ¡ÃÂµÃ‘â‚¬ÃÂµÃÂ´ÃÂ½Ã‘Â (25$/ÃÂ³ÃÂ¾ÃÂ´)</uk>
+            <ru>ÃÂ¡Ã‘â‚¬ÃÂµÃÂ´ÃÂ½Ã‘ÂÃ‘Â (25$/Ã‘â€¡)</ru>
         
             <da>Mellem ($25/t)</da>
         </text>
@@ -239,16 +239,16 @@
         <text name="wc_diff_3">
             <en>High ($40/h)</en>
             <de>Hoch (40$/h)</de>
-            <fr>ÃƒÆ’Ã¢â‚¬Â°levÃƒÆ’Ã‚Â© (40$/h)</fr>
+            <fr>Ãƒâ€°levÃƒÂ© (40$/h)</fr>
             <pl>Wysoka (40$/h)</pl>
             <es>Alta (40$/h)</es>
             <it>Alta (40$/h)</it>
-            <cz>VysokÃƒÆ’Ã‚Â¡ (40$/h)</cz>
+            <cz>VysokÃƒÂ¡ (40$/h)</cz>
             <br>Alta (40$/h)</br>
-            <uk>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚ÂºÃƒÂÃ‚Â° (40$/ÃƒÂÃ‚Â³ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â´)</uk>
-            <ru>ÃƒÂÃ¢â‚¬â„¢Ãƒâ€˜Ã¢â‚¬Â¹Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¾ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â (40$/Ãƒâ€˜Ã¢â‚¬Â¡)</ru>
+            <uk>Ãâ€™ÃÂ¸Ã‘ÂÃÂ¾ÃÂºÃÂ° (40$/ÃÂ³ÃÂ¾ÃÂ´)</uk>
+            <ru>Ãâ€™Ã‘â€¹Ã‘ÂÃÂ¾ÃÂºÃÂ°Ã‘Â (40$/Ã‘â€¡)</ru>
         
-            <da>HÃƒÆ’Ã‚Â¸j ($40/t)</da>
+            <da>HÃƒÂ¸j ($40/t)</da>
         </text>
         
         <text name="wc_notifications_short">
@@ -258,10 +258,10 @@
             <pl>Powiadomienia</pl>
             <es>Notificaciones</es>
             <it>Notifiche</it>
-            <cz>UpozornÃƒâ€žÃ¢â‚¬ÂºnÃƒÆ’Ã‚Â­</cz>
-            <br>NotificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes</br>
-            <uk>ÃƒÂÃ‚Â¡ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã¢â‚¬Â°ÃƒÂÃ‚ÂµÃƒÂÃ‚Â½ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â</uk>
-            <ru>ÃƒÂÃ‚Â£ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂµÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â»ÃƒÂÃ‚ÂµÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚Â</ru>
+            <cz>UpozornÃ„â€ºnÃƒÂ­</cz>
+            <br>NotificaÃƒÂ§ÃƒÂµes</br>
+            <uk>ÃÂ¡ÃÂ¿ÃÂ¾ÃÂ²Ã‘â€“Ã‘â€°ÃÂµÃÂ½ÃÂ½Ã‘Â</uk>
+            <ru>ÃÂ£ÃÂ²ÃÂµÃÂ´ÃÂ¾ÃÂ¼ÃÂ»ÃÂµÃÂ½ÃÂ¸Ã‘Â</ru>
         
             <da>Notifikationer</da>
         </text>
@@ -269,29 +269,29 @@
         <text name="wc_notifications_long">
             <en>Enable/disable wage payment notifications</en>
             <de>Lohnzahlungsbenachrichtigungen ein-/ausschalten</de>
-            <fr>Activer/dÃƒÆ’Ã‚Â©sactiver les notifications de paiement des salaires</fr>
-            <pl>WÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz/wyÃƒâ€¦Ã¢â‚¬Å¡Ãƒâ€žÃ¢â‚¬Â¦cz powiadomienia o wypÃƒâ€¦Ã¢â‚¬Å¡atach wynagrodzeÃƒâ€¦Ã¢â‚¬Å¾</pl>
+            <fr>Activer/dÃƒÂ©sactiver les notifications de paiement des salaires</fr>
+            <pl>WÃ…â€šÃ„â€¦cz/wyÃ…â€šÃ„â€¦cz powiadomienia o wypÃ…â€šatach wynagrodzeÃ…â€ž</pl>
             <es>Activar/desactivar notificaciones de pago de salarios</es>
             <it>Attiva/disattiva notifiche pagamento salari</it>
-            <cz>Povolit/zakÃƒÆ’Ã‚Â¡zat upozornÃƒâ€žÃ¢â‚¬ÂºnÃƒÆ’Ã‚Â­ na vÃƒÆ’Ã‚Â½platu mezd</cz>
-            <br>Ativar/desativar notificaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de pagamento de salÃƒÆ’Ã‚Â¡rios</br>
-            <uk>ÃƒÂÃ‚Â£ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸/ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¼ÃƒÂÃ‚ÂºÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã¢â‚¬Â°ÃƒÂÃ‚ÂµÃƒÂÃ‚Â½ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã†â€™ ÃƒÂÃ‚Â·ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â±Ãƒâ€˜Ã¢â‚¬â€œÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬â€ ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸</uk>
-            <ru>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™/ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚ÂºÃƒÂÃ‚Â»Ãƒâ€˜Ã…Â½Ãƒâ€˜Ã¢â‚¬Â¡ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂµÃƒÂÃ‚Â´ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¼ÃƒÂÃ‚Â»ÃƒÂÃ‚ÂµÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚Â ÃƒÂÃ‚Â¾ ÃƒÂÃ‚Â²Ãƒâ€˜Ã¢â‚¬Â¹ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Âµ ÃƒÂÃ‚Â·ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¹ ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â‚¬Â¹</ru>
+            <cz>Povolit/zakÃƒÂ¡zat upozornÃ„â€ºnÃƒÂ­ na vÃƒÂ½platu mezd</cz>
+            <br>Ativar/desativar notificaÃƒÂ§ÃƒÂµes de pagamento de salÃƒÂ¡rios</br>
+            <uk>ÃÂ£ÃÂ²Ã‘â€“ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸/ÃÂ²ÃÂ¸ÃÂ¼ÃÂºÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸ Ã‘ÂÃÂ¿ÃÂ¾ÃÂ²Ã‘â€“Ã‘â€°ÃÂµÃÂ½ÃÂ½Ã‘Â ÃÂ¿Ã‘â‚¬ÃÂ¾ ÃÂ²ÃÂ¸ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘Æ’ ÃÂ·ÃÂ°Ã‘â‚¬ÃÂ¾ÃÂ±Ã‘â€“Ã‘â€šÃÂ½ÃÂ¾Ã‘â€” ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃÂ¸</uk>
+            <ru>Ãâ€™ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’/ÃÂ²Ã‘â€¹ÃÂºÃÂ»Ã‘Å½Ã‘â€¡ÃÂ¸Ã‘â€šÃ‘Å’ Ã‘Æ’ÃÂ²ÃÂµÃÂ´ÃÂ¾ÃÂ¼ÃÂ»ÃÂµÃÂ½ÃÂ¸Ã‘Â ÃÂ¾ ÃÂ²Ã‘â€¹ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃÂµ ÃÂ·ÃÂ°Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¾ÃÂ¹ ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘â€¹</ru>
         
-            <da>SlÃƒÆ’Ã‚Â¥ notifikationer om lÃƒÆ’Ã‚Â¸nudbetalinger til/fra</da>
+            <da>SlÃƒÂ¥ notifikationer om lÃƒÂ¸nudbetalinger til/fra</da>
         </text>
         
         <text name="wc_customrate_short">
             <en>Custom Rate</en>
             <de>Benutzerdefinierte Rate</de>
-            <fr>Taux personnalisÃƒÆ’Ã‚Â©</fr>
+            <fr>Taux personnalisÃƒÂ©</fr>
             <pl>Niestandardowa stawka</pl>
             <es>Tasa personalizada</es>
             <it>Tariffa personalizzata</it>
-            <cz>VlastnÃƒÆ’Ã‚Â­ sazba</cz>
+            <cz>VlastnÃƒÂ­ sazba</cz>
             <br>Taxa personalizada</br>
-            <uk>ÃƒÂÃ¢â‚¬â„¢ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â½ÃƒÂÃ‚Â° Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°</uk>
-            <ru>ÃƒÂÃ…Â¸ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™ÃƒÂÃ‚Â·ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚ÂµÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂºÃƒÂÃ‚Â°Ãƒâ€˜Ã‚Â Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒÂÃ‚Â°</ru>
+            <uk>Ãâ€™ÃÂ»ÃÂ°Ã‘ÂÃÂ½ÃÂ° Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃÂ°</uk>
+            <ru>ÃÅ¸ÃÂ¾ÃÂ»Ã‘Å’ÃÂ·ÃÂ¾ÃÂ²ÃÂ°Ã‘â€šÃÂµÃÂ»Ã‘Å’Ã‘ÂÃÂºÃÂ°Ã‘Â Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃÂ°</ru>
         
             <da>Brugerdefineret sats</da>
         </text>
@@ -299,34 +299,34 @@
         <text name="wc_customrate_long">
             <en>Set custom wage rate (0 = use wage level setting)</en>
             <de>Benutzerdefinierten Lohnsatz festlegen (0 = Lohnniveau verwenden)</de>
-            <fr>DÃƒÆ’Ã‚Â©finir le taux de salaire personnalisÃƒÆ’Ã‚Â© (0 = utiliser le niveau de salaire)</fr>
-            <pl>Ustaw niestandardowÃƒâ€žÃ¢â‚¬Â¦ stawkÃƒâ€žÃ¢â€žÂ¢ (0 = uÃƒâ€¦Ã‚Â¼yj ustawienia poziomu pÃƒâ€¦Ã¢â‚¬Å¡ac)</pl>
-            <es>Establecer tasa salarial personalizada (0 = usar configuraciÃƒÆ’Ã‚Â³n de nivel)</es>
+            <fr>DÃƒÂ©finir le taux de salaire personnalisÃƒÂ© (0 = utiliser le niveau de salaire)</fr>
+            <pl>Ustaw niestandardowÃ„â€¦ stawkÃ„â„¢ (0 = uÃ…Â¼yj ustawienia poziomu pÃ…â€šac)</pl>
+            <es>Establecer tasa salarial personalizada (0 = usar configuraciÃƒÂ³n de nivel)</es>
             <it>Imposta tariffa salariale personalizzata (0 = usa impostazione livello)</it>
-            <cz>Nastavit vlastnÃƒÆ’Ã‚Â­ mzdovou sazbu (0 = pouÃƒâ€¦Ã‚Â¾ÃƒÆ’Ã‚Â­t nastavenÃƒÆ’Ã‚Â­ ÃƒÆ’Ã‚ÂºrovnÃƒâ€žÃ¢â‚¬Âº)</cz>
-            <br>Definir taxa salarial personalizada (0 = usar configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o de nÃƒÆ’Ã‚Â­vel)</br>
-            <uk>ÃƒÂÃ¢â‚¬â„¢Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â²ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒâ€˜Ã†â€™ ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ (0 = ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã‹â€ Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â Ãƒâ€˜Ã¢â€šÂ¬Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â)</uk>
-            <ru>ÃƒÂÃ‚Â£Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™ÃƒÂÃ‚Â·ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚ÂµÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™Ãƒâ€˜Ã‚ÂÃƒÂÃ‚ÂºÃƒâ€˜Ã†â€™Ãƒâ€˜Ã…Â½ Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â°ÃƒÂÃ‚Â²ÃƒÂÃ‚ÂºÃƒâ€˜Ã†â€™ ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¿ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â‚¬Â¹ (0 = ÃƒÂÃ‚Â¸Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¿ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â»Ãƒâ€˜Ã…â€™ÃƒÂÃ‚Â·ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¹ÃƒÂÃ‚ÂºÃƒâ€˜Ã†â€™ Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â)</ru>
+            <cz>Nastavit vlastnÃƒÂ­ mzdovou sazbu (0 = pouÃ…Â¾ÃƒÂ­t nastavenÃƒÂ­ ÃƒÂºrovnÃ„â€º)</cz>
+            <br>Definir taxa salarial personalizada (0 = usar configuraÃƒÂ§ÃƒÂ£o de nÃƒÂ­vel)</br>
+            <uk>Ãâ€™Ã‘ÂÃ‘â€šÃÂ°ÃÂ½ÃÂ¾ÃÂ²ÃÂ¸Ã‘â€šÃÂ¸ ÃÂ²ÃÂ»ÃÂ°Ã‘ÂÃÂ½Ã‘Æ’ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃ‘Æ’ ÃÂ¾ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃÂ¸ (0 = ÃÂ²ÃÂ¸ÃÂºÃÂ¾Ã‘â‚¬ÃÂ¸Ã‘ÂÃ‘â€šÃÂ¾ÃÂ²Ã‘Æ’ÃÂ²ÃÂ°Ã‘â€šÃÂ¸ ÃÂ½ÃÂ°ÃÂ»ÃÂ°Ã‘Ë†Ã‘â€šÃ‘Æ’ÃÂ²ÃÂ°ÃÂ½ÃÂ½Ã‘Â Ã‘â‚¬Ã‘â€“ÃÂ²ÃÂ½Ã‘Â)</uk>
+            <ru>ÃÂ£Ã‘ÂÃ‘â€šÃÂ°ÃÂ½ÃÂ¾ÃÂ²ÃÂ¸Ã‘â€šÃ‘Å’ ÃÂ¿ÃÂ¾ÃÂ»Ã‘Å’ÃÂ·ÃÂ¾ÃÂ²ÃÂ°Ã‘â€šÃÂµÃÂ»Ã‘Å’Ã‘ÂÃÂºÃ‘Æ’Ã‘Å½ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃ‘Æ’ ÃÂ¾ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘â€¹ (0 = ÃÂ¸Ã‘ÂÃÂ¿ÃÂ¾ÃÂ»Ã‘Å’ÃÂ·ÃÂ¾ÃÂ²ÃÂ°Ã‘â€šÃ‘Å’ ÃÂ½ÃÂ°Ã‘ÂÃ‘â€šÃ‘â‚¬ÃÂ¾ÃÂ¹ÃÂºÃ‘Æ’ Ã‘Æ’Ã‘â‚¬ÃÂ¾ÃÂ²ÃÂ½Ã‘Â)</ru>
         
-            <da>Angiv brugerdefineret lÃƒÆ’Ã‚Â¸nsats (0 = brug lÃƒÆ’Ã‚Â¸nniveau-indstillingen)</da>
+            <da>Angiv brugerdefineret lÃƒÂ¸nsats (0 = brug lÃƒÂ¸nniveau-indstillingen)</da>
         </text>
         
         <text name="wc_reset">
             <en>Reset Worker Settings</en>
-            <de>Arbeitereinstellungen zurÃƒÆ’Ã‚Â¼cksetzen</de>
-            <fr>RÃƒÆ’Ã‚Â©initialiser les paramÃƒÆ’Ã‚Â¨tres des ouvriers</fr>
-            <pl>Resetuj ustawienia pracownikÃƒÆ’Ã‚Â³w</pl>
+            <de>Arbeitereinstellungen zurÃƒÂ¼cksetzen</de>
+            <fr>RÃƒÂ©initialiser les paramÃƒÂ¨tres des ouvriers</fr>
+            <pl>Resetuj ustawienia pracownikÃƒÂ³w</pl>
             <es>Restablecer config. trabajadores</es>
             <it>Ripristina impostazioni operai</it>
-            <cz>Resetovat nastavenÃƒÆ’Ã‚Â­ pracovnÃƒÆ’Ã‚Â­kÃƒâ€¦Ã‚Â¯</cz>
-            <br>Restaurar configuraÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes de trabalhadores</br>
-            <uk>ÃƒÂÃ‚Â¡ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¸ÃƒÂÃ‚Â½Ãƒâ€˜Ã†â€™Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â¸ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°ÃƒÂÃ‚Â»ÃƒÂÃ‚Â°Ãƒâ€˜Ã‹â€ Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã†â€™ÃƒÂÃ‚Â²ÃƒÂÃ‚Â°ÃƒÂÃ‚Â½ÃƒÂÃ‚Â½Ãƒâ€˜Ã‚Â ÃƒÂÃ‚Â¿Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°Ãƒâ€˜Ã¢â‚¬Â Ãƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒâ€˜Ã¢â‚¬â€œÃƒÂÃ‚Â²</uk>
-            <ru>ÃƒÂÃ‚Â¡ÃƒÂÃ‚Â±Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾Ãƒâ€˜Ã‚ÂÃƒÂÃ‚Â¸Ãƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã…â€™ ÃƒÂÃ‚Â½ÃƒÂÃ‚Â°Ãƒâ€˜Ã‚ÂÃƒâ€˜Ã¢â‚¬Å¡Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â¾ÃƒÂÃ‚Â¹ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¸ Ãƒâ€˜Ã¢â€šÂ¬ÃƒÂÃ‚Â°ÃƒÂÃ‚Â±ÃƒÂÃ‚Â¾Ãƒâ€˜Ã¢â‚¬Å¡ÃƒÂÃ‚Â½ÃƒÂÃ‚Â¸ÃƒÂÃ‚ÂºÃƒÂÃ‚Â¾ÃƒÂÃ‚Â²</ru>
+            <cz>Resetovat nastavenÃƒÂ­ pracovnÃƒÂ­kÃ…Â¯</cz>
+            <br>Restaurar configuraÃƒÂ§ÃƒÂµes de trabalhadores</br>
+            <uk>ÃÂ¡ÃÂºÃÂ¸ÃÂ½Ã‘Æ’Ã‘â€šÃÂ¸ ÃÂ½ÃÂ°ÃÂ»ÃÂ°Ã‘Ë†Ã‘â€šÃ‘Æ’ÃÂ²ÃÂ°ÃÂ½ÃÂ½Ã‘Â ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃ‘â€“ÃÂ²</uk>
+            <ru>ÃÂ¡ÃÂ±Ã‘â‚¬ÃÂ¾Ã‘ÂÃÂ¸Ã‘â€šÃ‘Å’ ÃÂ½ÃÂ°Ã‘ÂÃ‘â€šÃ‘â‚¬ÃÂ¾ÃÂ¹ÃÂºÃÂ¸ Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ¾ÃÂ²</ru>
         
             <da>Nulstil medarbejderindstillinger</da>
         </text>
 
-        <!-- ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â New Pause Menu GUI strings ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â -->
+        <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â New Pause Menu GUI strings Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
 
         <text name="wc_menu_title">
             <en>Worker Costs</en>
@@ -368,7 +368,7 @@
             <br>[EN] Open Manager</br>
             <uk>[EN] Open Manager</uk>
             <ru>[EN] Open Manager</ru>
-            <da>ÃƒÆ’Ã¢â‚¬Â¦bn manager</da>
+            <da>Ãƒâ€¦bn manager</da>
         </text>
         <text name="wc_hint_open_manager">
             <en>Press Accept to open the full Worker Costs manager.</en>
@@ -382,13 +382,13 @@
             <br>[EN] Press Accept to open the full Worker Costs manager.</br>
             <uk>[EN] Press Accept to open the full Worker Costs manager.</uk>
             <ru>[EN] Press Accept to open the full Worker Costs manager.</ru>
-            <da>Tryk pÃƒÆ’Ã‚Â¥ AcceptÃƒÆ’Ã‚Â©r for at ÃƒÆ’Ã‚Â¥bne den fulde styring</da>
+            <da>Tryk pÃƒÂ¥ AcceptÃƒÂ©r for at ÃƒÂ¥bne den fulde styring</da>
         </text>
 
         <!-- Tab titles -->
         <text name="wc_tab_dashboard">
             <en>Dashboard</en>
-            <de>ÃƒÆ’Ã…â€œbersicht</de>
+            <de>ÃƒÅ“bersicht</de>
             <fr>Tableau de bord</fr>
             <pl>Panel</pl>
             <es>Panel</es>
@@ -403,16 +403,16 @@
         <text name="wc_tab_wage_settings">
             <en>Wage Settings</en>
             <de>Lohneinstellungen</de>
-            <fr>ParamÃƒÆ’Ã‚Â¨tres Salaire</fr>
-            <pl>Ustawienia pÃƒâ€¦Ã¢â‚¬Å¡ac</pl>
-            <es>ConfiguraciÃƒÆ’Ã‚Â³n salarial</es>
+            <fr>ParamÃƒÂ¨tres Salaire</fr>
+            <pl>Ustawienia pÃ…â€šac</pl>
+            <es>ConfiguraciÃƒÂ³n salarial</es>
         
             <it>[EN] Wage Settings</it>
             <cz>[EN] Wage Settings</cz>
             <br>[EN] Wage Settings</br>
             <uk>[EN] Wage Settings</uk>
             <ru>[EN] Wage Settings</ru>
-            <da>LÃƒÆ’Ã‚Â¸n indstillinger</da>
+            <da>LÃƒÂ¸n indstillinger</da>
         </text>
         
         <!-- Section headings -->
@@ -598,7 +598,7 @@
             <br>[EN] Next Payment:</br>
             <uk>[EN] Next Payment:</uk>
             <ru>[EN] Next Payment:</ru>
-            <da>NÃƒÆ’Ã‚Â¦ste lÃƒÆ’Ã‚Â¸nudbetaling:</da>
+            <da>NÃƒÂ¦ste lÃƒÂ¸nudbetaling:</da>
         </text>
         <text name="wc_label_est_cost">
             <en>Est. Cost:</en>
@@ -626,7 +626,7 @@
             <br>[EN] Farm Balance:</br>
             <uk>[EN] Farm Balance:</uk>
             <ru>[EN] Farm Balance:</ru>
-            <da>GÃƒÆ’Ã‚Â¥rdsaldo:</da>
+            <da>GÃƒÂ¥rdsaldo:</da>
         </text>
         <text name="wc_label_worker_list">
             <en>Worker Names</en>
@@ -704,7 +704,7 @@
             <en>No active workers</en>
             <de>Keine aktiven Arbeiter</de>
             <fr>Aucun ouvrier actif</fr>
-            <pl>Brak aktywnych pracownikÃƒÆ’Ã‚Â³w</pl>
+            <pl>Brak aktywnych pracownikÃƒÂ³w</pl>
             <es>Sin trabajadores activos</es>
         
             <it>[EN] No active workers</it>
@@ -720,7 +720,7 @@
             <en>Configuration</en>
             <de>Konfiguration</de>
             <fr>Configuration</fr>
-            <es>ConfiguraciÃƒÆ’Ã‚Â³n</es>
+            <es>ConfiguraciÃƒÂ³n</es>
         
             <pl>[EN] Configuration</pl>
             <it>[EN] Configuration</it>
@@ -733,7 +733,7 @@
         <text name="wc_section_summary">
             <en>Summary</en>
             <de>Zusammenfassung</de>
-            <fr>RÃƒÆ’Ã‚Â©sumÃƒÆ’Ã‚Â©</fr>
+            <fr>RÃƒÂ©sumÃƒÂ©</fr>
             <es>Resumen</es>
         
             <pl>[EN] Summary</pl>
@@ -746,8 +746,8 @@
         </text>
         <text name="wc_section_breakdown">
             <en>Labor Cost Breakdown</en>
-            <de>Arbeiter-AufschlÃƒÆ’Ã‚Â¼sselung</de>
-            <fr>DÃƒÆ’Ã‚Â©tail par ouvrier</fr>
+            <de>Arbeiter-AufschlÃƒÂ¼sselung</de>
+            <fr>DÃƒÂ©tail par ouvrier</fr>
             <es>Desglose de trabajadores</es>
 
             <pl>[EN] Labor Cost Breakdown</pl>
@@ -761,8 +761,8 @@
         <text name="wc_section_how_it_works">
             <en>How It Works</en>
             <de>Funktionsweise</de>
-            <fr>Comment ÃƒÆ’Ã‚Â§a marche</fr>
-            <es>CÃƒÆ’Ã‚Â³mo funciona</es>
+            <fr>Comment ÃƒÂ§a marche</fr>
+            <es>CÃƒÂ³mo funciona</es>
         
             <pl>[EN] How It Works</pl>
             <it>[EN] How It Works</it>
@@ -791,7 +791,7 @@
         <text name="wc_col_interval_cost">
             <en>COST / INTERVAL</en>
             <de>KOSTEN / INTERVALL</de>
-            <fr>COÃƒÆ’Ã¢â‚¬ÂºT / INTERVALLE</fr>
+            <fr>COÃƒâ€ºT / INTERVALLE</fr>
             <es>COSTO / INTERVALO</es>
         
             <pl>[EN] COST / INTERVAL</pl>
@@ -851,7 +851,7 @@
         <text name="wc_tab_about">
             <en>About</en>
             <de>Info</de>
-            <fr>ÃƒÆ’Ã¢â€šÂ¬ propos</fr>
+            <fr>Ãƒâ‚¬ propos</fr>
             <es>Acerca de</es>
         
             <pl>[EN] About</pl>
@@ -1108,7 +1108,7 @@
             <en>VERSION</en>
             <de>VERSION</de>
             <fr>VERSION</fr>
-            <es>VERSIÃƒÆ’Ã¢â‚¬Å“N</es>
+            <es>VERSIÃƒâ€œN</es>
         
             <pl>[EN] VERSION</pl>
             <it>[EN] VERSION</it>
@@ -1120,9 +1120,9 @@
         </text>
         <text name="wc_about_payment_note">
             <en>Payments follow the in-game calendar. Wages accrue while workers are active and are deducted silently once per in-game day at midnight.</en>
-            <de>Zahlungen folgen dem Spielkalender. LÃƒÆ’Ã‚Â¶hne laufen auf, wÃƒÆ’Ã‚Â¤hrend Arbeiter aktiv sind, und werden einmal pro Spieltag um Mitternacht abgezogen.</de>
-            <fr>Les paiements suivent le calendrier du jeu. Les salaires s'accumulent pendant que les ouvriers travaillent et sont dÃƒÆ’Ã‚Â©duits une fois par jour de jeu, ÃƒÆ’Ã‚Â  minuit.</fr>
-            <es>Los pagos siguen el calendario del juego. Los salarios se acumulan mientras los trabajadores estÃƒÆ’Ã‚Â¡n activos y se deducen una vez por dÃƒÆ’Ã‚Â­a de juego, a medianoche.</es>
+            <de>Zahlungen folgen dem Spielkalender. LÃƒÂ¶hne laufen auf, wÃƒÂ¤hrend Arbeiter aktiv sind, und werden einmal pro Spieltag um Mitternacht abgezogen.</de>
+            <fr>Les paiements suivent le calendrier du jeu. Les salaires s'accumulent pendant que les ouvriers travaillent et sont dÃƒÂ©duits une fois par jour de jeu, ÃƒÂ  minuit.</fr>
+            <es>Los pagos siguen el calendario del juego. Los salarios se acumulan mientras los trabajadores estÃƒÂ¡n activos y se deducen una vez por dÃƒÂ­a de juego, a medianoche.</es>
         
             <pl>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</pl>
             <it>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</it>
@@ -1130,7 +1130,7 @@
             <br>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</br>
             <uk>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</uk>
             <ru>[EN] Payments follow the in-game calendar. Wages accrue while workers are active and are deducted once per in-game day at midnight.</ru>
-            <da>Betalinger fÃƒÆ’Ã‚Â¸lger spillets kalender. LÃƒÆ’Ã‚Â¸nnen optjenes, mens medarbejderne er aktive, og trÃƒÆ’Ã‚Â¦kkes automatisk en gang pr. spildag ved midnat.</da>
+            <da>Betalinger fÃƒÂ¸lger spillets kalender. LÃƒÂ¸nnen optjenes, mens medarbejderne er aktive, og trÃƒÂ¦kkes automatisk en gang pr. spildag ved midnat.</da>
         </text>
         <text name="wc_about_body">
             <en>Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
@@ -1151,8 +1151,8 @@ The Worker Stats tab shows a live breakdown of costs per worker for the current 
 
 This mod is multiplayer compatible. Settings are saved per save game.</en>
             <de>Realistische Arbeiterkosten ersetzt das Standard-Arbeiterlohnsystem durch ein Abrechnungsmodell auf Basis von Echtzeit.</de>
-            <fr>CoÃƒÆ’Ã‚Â»ts RÃƒÆ’Ã‚Â©alistes des Ouvriers remplace le systÃƒÆ’Ã‚Â¨me de salaire par dÃƒÆ’Ã‚Â©faut par un modÃƒÆ’Ã‚Â¨le de facturation basÃƒÆ’Ã‚Â© sur le temps rÃƒÆ’Ã‚Â©el.</fr>
-            <es>Costos Realistas de Trabajadores reemplaza el sistema de pago de trabajadores predeterminado con un modelo de facturaciÃƒÆ’Ã‚Â³n basado en tiempo real.</es>
+            <fr>CoÃƒÂ»ts RÃƒÂ©alistes des Ouvriers remplace le systÃƒÂ¨me de salaire par dÃƒÂ©faut par un modÃƒÂ¨le de facturation basÃƒÂ© sur le temps rÃƒÂ©el.</fr>
+            <es>Costos Realistas de Trabajadores reemplaza el sistema de pago de trabajadores predeterminado con un modelo de facturaciÃƒÂ³n basado en tiempo real.</es>
         
             <pl>[EN] Realistic Worker Costs replaces the default worker pay system with a billing model based on real time.
 
@@ -1256,18 +1256,18 @@ WORKER STATS
 The Worker Stats tab shows a live breakdown of costs per worker for the current billing interval.
 
 This mod is multiplayer compatible. Settings are saved per save game.</ru>
-            <da>Realistic Worker Costs erstatter standardlÃƒÆ’Ã‚Â¸nssystemet for medarbejdere med en faktureringsmodel baseret pÃƒÆ’Ã‚Â¥ realtid.
+            <da>Realistic Worker Costs erstatter standardlÃƒÂ¸nssystemet for medarbejdere med en faktureringsmodel baseret pÃƒÂ¥ realtid.
 
-Medarbejdere opkrÃƒÆ’Ã‚Â¦ves efter en fast tidsplan uanset spillets hastighed. Hver aktiv AI-medarbejder koster penge ved hvert betalingsinterval.
+Medarbejdere opkrÃƒÂ¦ves efter en fast tidsplan uanset spillets hastighed. Hver aktiv AI-medarbejder koster penge ved hvert betalingsinterval.
 
 TIMEBASERET TILSTAND
-En fast sats pr. medarbejder pr. time. Omkostningerne skalerer efter, hvor mange medarbejdere der er aktive, og hvor lÃƒÆ’Ã‚Â¦nge de arbejder.
+En fast sats pr. medarbejder pr. time. Omkostningerne skalerer efter, hvor mange medarbejdere der er aktive, og hvor lÃƒÂ¦nge de arbejder.
 
 PR. HEKTAR-TILSTAND
-Medarbejdere opkrÃƒÆ’Ã‚Â¦ves baseret pÃƒÆ’Ã‚Â¥ det bearbejdede areal. Satsen pr. hektar skalerer med din indstilling for lÃƒÆ’Ã‚Â¸nniveau.
+Medarbejdere opkrÃƒÂ¦ves baseret pÃƒÂ¥ det bearbejdede areal. Satsen pr. hektar skalerer med din indstilling for lÃƒÂ¸nniveau.
 
-LÃƒÆ’Ã‹Å“NINDSTILLINGER
-Juster omkostningstilstand, lÃƒÆ’Ã‚Â¸nniveau, og slÃƒÆ’Ã‚Â¥ notifikationer til eller fra i fanen LÃƒÆ’Ã‚Â¸nindstillinger. Brug Nulstil for at gendanne standardindstillingerne.
+LÃƒËœNINDSTILLINGER
+Juster omkostningstilstand, lÃƒÂ¸nniveau, og slÃƒÂ¥ notifikationer til eller fra i fanen LÃƒÂ¸nindstillinger. Brug Nulstil for at gendanne standardindstillingerne.
 
 MEDARBEJDERSTATISTIK
 Fanen Medarbejderstatistik viser en live oversigt over omkostninger pr. medarbejder for det aktuelle betalingsinterval.
@@ -1278,9 +1278,9 @@ Denne mod er kompatibel med multiplayer. Indstillinger gemmes pr. savegame.</da>
         <!-- WCMenuPage landing -->
         <text name="wc_menu_description">
             <en>Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</en>
-            <de>ÃƒÆ’Ã…â€œberwachen Sie Ihre Arbeitskosten und den Abrechnungsstatus auf einen Blick.</de>
-            <fr>Surveillez vos coÃƒÆ’Ã‚Â»ts de main-d'oeuvre d'un coup d'oeil. Ouvrez le Gestionnaire pour les statistiques en direct.</fr>
-            <es>Supervise los costos de sus trabajadores de un vistazo. Abra el Administrador para estadÃƒÆ’Ã‚Â­sticas en vivo.</es>
+            <de>ÃƒÅ“berwachen Sie Ihre Arbeitskosten und den Abrechnungsstatus auf einen Blick.</de>
+            <fr>Surveillez vos coÃƒÂ»ts de main-d'oeuvre d'un coup d'oeil. Ouvrez le Gestionnaire pour les statistiques en direct.</fr>
+            <es>Supervise los costos de sus trabajadores de un vistazo. Abra el Administrador para estadÃƒÂ­sticas en vivo.</es>
         
             <pl>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</pl>
             <it>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</it>
@@ -1288,7 +1288,7 @@ Denne mod er kompatibel med multiplayer. Indstillinger gemmes pr. savegame.</da>
             <br>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</br>
             <uk>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</uk>
             <ru>[EN] Monitor your worker costs and billing status at a glance. Open the Worker Manager for live stats, detailed breakdowns, and full settings control.</ru>
-            <da>FÃƒÆ’Ã‚Â¥ et hurtigt overblik over dine medarbejderomkostninger og betalingsstatus. ÃƒÆ’Ã¢â‚¬Â¦bn medarbejderstyringen for live statistik, detaljerede oversigter og fuld kontrol over indstillingerne</da>
+            <da>FÃƒÂ¥ et hurtigt overblik over dine medarbejderomkostninger og betalingsstatus. Ãƒâ€¦bn medarbejderstyringen for live statistik, detaljerede oversigter og fuld kontrol over indstillingerne</da>
         </text>
 
         <!-- Help text for Wage Settings tab -->
@@ -1440,17 +1440,17 @@ Settled once per in-game day at midnight, based on the in-game time worked.
 Use Reset to restore all settings to their defaults.</ru>
             <da>BETALINGSSTRATEGI
 Timebaseret - betal en fast sats pr. medarbejder pr. arbejdstime.
-Pr. hektar - betal baseret pÃƒÆ’Ã‚Â¥ det bearbejdede areal.
+Pr. hektar - betal baseret pÃƒÂ¥ det bearbejdede areal.
 
 KOMPENSATIONSNIVEAU
 Lav = $15 pr. medarbejder pr. time
 Mellem = $25 pr. medarbejder pr. time
-HÃƒÆ’Ã‚Â¸j = $40 pr. medarbejder pr. time
+HÃƒÂ¸j = $40 pr. medarbejder pr. time
 
 BETALINGER
-Afregnes en gang pr. spildag ved midnat, baseret pÃƒÆ’Ã‚Â¥ den arbejdede tid i spillet.
+Afregnes en gang pr. spildag ved midnat, baseret pÃƒÂ¥ den arbejdede tid i spillet.
 
-Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÆ’Ã‚Â¦rdierne.</da>
+Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÂ¦rdierne.</da>
         </text>
         <text name="wc_help_body_ha">
             <en>PAYMENT STRATEGY
@@ -1575,17 +1575,17 @@ Settled once per in-game day at midnight, based on area worked. Workers not curr
 
 Use Reset to restore all settings to their defaults.</ru>
             <da>BETALINGSSTRATEGI
-Pr. hektar - medarbejdere opkrÃƒÆ’Ã‚Â¦ves pr. hektar bearbejdet mark siden sidste afregning.
+Pr. hektar - medarbejdere opkrÃƒÂ¦ves pr. hektar bearbejdet mark siden sidste afregning.
 
 KOMPENSATIONSNIVEAU (pr. hektar)
 Lav = $15 pr. hektar bearbejdet
 Mellem = $25 pr. hektar bearbejdet
-HÃƒÆ’Ã‚Â¸j = $40 pr. hektar bearbejdet
+HÃƒÂ¸j = $40 pr. hektar bearbejdet
 
 BETALINGER
-Afregnes en gang pr. spildag ved midnat, baseret pÃƒÆ’Ã‚Â¥ det bearbejdede areal. Medarbejdere, der ikke er aktive, opkrÃƒÆ’Ã‚Â¦ves ikke for den pÃƒÆ’Ã‚Â¥gÃƒÆ’Ã‚Â¦ldende dag.
+Afregnes en gang pr. spildag ved midnat, baseret pÃƒÂ¥ det bearbejdede areal. Medarbejdere, der ikke er aktive, opkrÃƒÂ¦ves ikke for den pÃƒÂ¥gÃƒÂ¦ldende dag.
 
-Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÆ’Ã‚Â¦rdierne.</da>
+Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÂ¦rdierne.</da>
         </text>
         <text name="rf_pda_col_area">
             <br>[EN] Area</br>
@@ -1693,59 +1693,59 @@ Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÆ’Ã‚Â¦r
         </text>
                 <text name="wc_rf_pda_open_manager">
             <br>Abrir gerenciador de trabalhadores</br>
-            <cz>OtevÅ™Ã­t sprÃ¡vce pracovnÃ­kÅ¯</cz>
-            <da>Ã…bn medarbejderstyring</da>
-            <de>Arbeitermanager Ã¶ffnen</de>
+            <cz>Otevřít správce pracovníků</cz>
+            <da>Åbn medarbejderstyring</da>
+            <de>Arbeitermanager öffnen</de>
             <en>Open Worker Manager</en>
             <es>Abrir gestor de trabajadores</es>
             <fr>Ouvrir le gestionnaire d'ouvriers</fr>
             <it>Apri gestore operai</it>
-            <pl>OtwÃ³rz menedÅ¼era pracownikÃ³w</pl>
-            <ru>ÐžÑ‚ÐºÑ€Ñ‹Ñ‚ÑŒ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑ€ Ñ€Ð°Ð±Ð¾Ñ‚Ð½Ð¸ÐºÐ¾Ð²</ru>
-            <uk>Ð’Ñ–Ð´ÐºÑ€Ð¸Ñ‚Ð¸ Ð¼ÐµÐ½ÐµÐ´Ð¶ÐµÑ€ Ð¿Ñ€Ð°Ñ†Ñ–Ð²Ð½Ð¸ÐºÑ–Ð²</uk>
+            <pl>Otwórz menedżera pracowników</pl>
+            <ru>Открыть менеджер работников</ru>
+            <uk>Відкрити менеджер працівників</uk>
             <nl>Werkersbeheer openen</nl>
             <pt>Abrir gestor de trabalhadores</pt>
-            <sv>Ã–ppna arbetshanteraren</sv>
-            <no>Ã…pne arbeiderbehandler</no>
-            <fi>Avaa tyÃ¶ntekijÃ¤hallinta</fi>
-            <hu>DolgozÃ³kezelÅ‘ megnyitÃ¡sa</hu>
+            <sv>Öppna arbetshanteraren</sv>
+            <no>Åpne arbeiderbehandler</no>
+            <fi>Avaa työntekijähallinta</fi>
+            <hu>Dolgozókezelő megnyitása</hu>
             <ro>Deschide managerul de muncitori</ro>
-            <tr>Ä°ÅŸÃ§i yÃ¶neticisini aÃ§</tr>
-            <jp>ä½œæ¥­å“¡ãƒžãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚’é–‹ã</jp>
-            <kr>ìž‘ì—…ìž ê´€ë¦¬ìž ì—´ê¸°</kr>
-            <ct>é–‹å•Ÿå·¥äººç®¡ç†å“¡</ct>
+            <tr>İşçi yöneticisini aç</tr>
+            <jp>作業員マネージャーを開く</jp>
+            <kr>작업자 관리자 열기</kr>
+            <ct>開啟工人管理員</ct>
             <fc>Ouvrir le gestionnaire d'ouvriers</fc>
             <ea>Abrir gestor de trabajadores</ea>
             <id>Buka manajer pekerja</id>
-            <vi>Má»Ÿ trÃ¬nh quáº£n lÃ½ cÃ´ng nhÃ¢n</vi>
+            <vi>Mở trình quản lý công nhân</vi>
         </text>
         <text name="sf_pda_btn_rotation_planner">
-            <br>Planejador de rotaÃ§Ã£o</br>
-            <cz>PlÃ¡novaÄ osevnÃ­ho postupu</cz>
-            <da>RotationsplanlÃ¦gger</da>
+            <br>Planejador de rotação</br>
+            <cz>Plánovač osevního postupu</cz>
+            <da>Rotationsplanlægger</da>
             <de>Fruchtfolgeplaner</de>
             <en>Rotation Planner</en>
-            <es>Planificador de rotaciÃ³n</es>
+            <es>Planificador de rotación</es>
             <fr>Planificateur de rotation</fr>
             <it>Pianificatore rotazioni</it>
-            <pl>Planer pÅ‚odozmianu</pl>
-            <ru>ÐŸÐ»Ð°Ð½Ð¸Ñ€Ð¾Ð²Ñ‰Ð¸Ðº ÑÐµÐ²Ð¾Ð¾Ð±Ð¾Ñ€Ð¾Ñ‚Ð°</ru>
-            <uk>ÐŸÐ»Ð°Ð½ÑƒÐ²Ð°Ð»ÑŒÐ½Ð¸Ðº ÑÑ–Ð²Ð¾Ð·Ð¼Ñ–Ð½Ð¸</uk>
+            <pl>Planer płodozmianu</pl>
+            <ru>Планировщик севооборота</ru>
+            <uk>Планувальник сівозміни</uk>
             <nl>Rotatieplanner</nl>
-            <pt>Planeador de rotaÃ§Ã£o</pt>
-            <sv>VÃ¤xtfÃ¶ljdsplanerare</sv>
+            <pt>Planeador de rotação</pt>
+            <sv>Växtföljdsplanerare</sv>
             <no>Rotasjonsplanlegger</no>
             <fi>Viljelykiertosuunnittelija</fi>
-            <hu>VetÃ©sforgÃ³-tervezÅ‘</hu>
-            <ro>Planificator de rotaÈ›ie</ro>
-            <tr>Ekim nÃ¶beti planlayÄ±cÄ±</tr>
-            <jp>è¼ªä½œãƒ—ãƒ©ãƒ³ãƒŠãƒ¼</jp>
-            <kr>ìœ¤ìž‘ ê³„íšê¸°</kr>
-            <ct>è¼ªä½œè¦åŠƒ</ct>
+            <hu>Vetésforgó-tervező</hu>
+            <ro>Planificator de rotație</ro>
+            <tr>Ekim nöbeti planlayıcı</tr>
+            <jp>輪作プランナー</jp>
+            <kr>윤작 계획기</kr>
+            <ct>輪作規劃</ct>
             <fc>Planificateur de rotation</fc>
-            <ea>Planificador de rotaciÃ³n</ea>
+            <ea>Planificador de rotación</ea>
             <id>Perencana rotasi</id>
-            <vi>Láº­p káº¿ hoáº¡ch luÃ¢n canh</vi>
+            <vi>Lập kế hoạch luân canh</vi>
         </text>
         <text name="sf_pda_btn_field_detail">
             <br>Detalhe do campo</br>
@@ -1754,26 +1754,26 @@ Brug Nulstil for at gendanne alle indstillinger til standardvÃƒÆ’Ã‚Â¦r
             <de>Felddetails</de>
             <en>Field Detail</en>
             <es>Detalle del campo</es>
-            <fr>DÃ©tail du champ</fr>
+            <fr>Détail du champ</fr>
             <it>Dettaglio campo</it>
-            <pl>SzczegÃ³Å‚y pola</pl>
-            <ru>Ð¡Ð²ÐµÐ´ÐµÐ½Ð¸Ñ Ð¾ Ð¿Ð¾Ð»Ðµ</ru>
-            <uk>Ð”ÐµÑ‚Ð°Ð»Ñ– Ð¿Ð¾Ð»Ñ</uk>
+            <pl>Szczegóły pola</pl>
+            <ru>Сведения о поле</ru>
+            <uk>Деталі поля</uk>
             <nl>Veldgegevens</nl>
             <pt>Detalhe do campo</pt>
-            <sv>FÃ¤ltdetaljer</sv>
+            <sv>Fältdetaljer</sv>
             <no>Feltdetaljer</no>
             <fi>Pellon tiedot</fi>
-            <hu>TÃ¡blarÃ©szletek</hu>
-            <ro>Detaliu cÃ¢mp</ro>
-            <tr>Tarla detayÄ±</tr>
-            <jp>ç•‘ã®è©³ç´°</jp>
-            <kr>ë°¯ ìƒì„¸</kr>
-            <ct>ç”°åœ°è©³æƒ…</ct>
-            <fc>DÃ©tail du champ</fc>
+            <hu>Táblarészletek</hu>
+            <ro>Detaliu câmp</ro>
+            <tr>Tarla detayı</tr>
+            <jp>畑の詳細</jp>
+            <kr>밯 상세</kr>
+            <ct>田地詳情</ct>
+            <fc>Détail du champ</fc>
             <ea>Detalle del campo</ea>
             <id>Detail lahan</id>
-            <vi>Chi tiáº¿t thá»­a ruá»™ng</vi>
+            <vi>Chi tiết thửa ruộng</vi>
         </text>
 </l10n>
 

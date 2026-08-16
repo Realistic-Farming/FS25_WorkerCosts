@@ -3381,12 +3381,12 @@
   "2026-08-16": [
     {
       "referrer": "github.com",
-      "count": 81,
-      "uniques": 51
+      "count": 83,
+      "uniques": 50
     },
     {
       "referrer": "Google",
-      "count": 56,
+      "count": 52,
       "uniques": 29
     },
     {
@@ -3411,6 +3411,11 @@
     },
     {
       "referrer": "DuckDuckGo",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "realisticfarming.com",
       "count": 1,
       "uniques": 1
     }

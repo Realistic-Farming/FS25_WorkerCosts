@@ -3465,26 +3465,26 @@
   "2026-08-18": [
     {
       "referrer": "github.com",
-      "count": 83,
+      "count": 80,
       "uniques": 50
     },
     {
       "referrer": "Google",
-      "count": 52,
-      "uniques": 29
+      "count": 45,
+      "uniques": 24
     },
     {
       "referrer": "kingmods.net",
-      "count": 4,
-      "uniques": 3
+      "count": 6,
+      "uniques": 4
     },
     {
       "referrer": "Bing",
-      "count": 3,
+      "count": 2,
       "uniques": 2
     },
     {
-      "referrer": "forbidden-mods.de",
+      "referrer": "chatgpt.com",
       "count": 2,
       "uniques": 1
     },

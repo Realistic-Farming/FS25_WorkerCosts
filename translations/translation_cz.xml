@@ -3,6 +3,9 @@
     <texts>
         <!-- BUILD 11:27 F155 Esc RF button labels -->
         <text name="wc_rf_pda_open_manager" text="Otevřít správce pracovníků" />
+        <text name="wc_rf_pda_page_dashboard" text="Přehled"/>
+        <text name="wc_rf_pda_page_wages" text="Mzdy"/>
+        <text name="wc_rf_pda_page_workers" text="Pracovníci"/>
         <text name="sf_pda_btn_rotation_planner" text="Plánovač osevního postupu" />
         <text name="sf_pda_btn_field_detail" text="Detail pole" />
     </texts>

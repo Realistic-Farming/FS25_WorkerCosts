@@ -3,6 +3,9 @@
     <texts>
         <!-- BUILD 11:27 F155 Esc RF button labels -->
         <text name="wc_rf_pda_open_manager" text="Öppna arbetshanteraren" />
+        <text name="wc_rf_pda_page_dashboard" text="Översikt"/>
+        <text name="wc_rf_pda_page_wages" text="Löner"/>
+        <text name="wc_rf_pda_page_workers" text="Arbetare"/>
         <text name="sf_pda_btn_rotation_planner" text="Växtföljdsplanerare" />
         <text name="sf_pda_btn_field_detail" text="Fältdetaljer" />
     </texts>

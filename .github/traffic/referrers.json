@@ -3549,12 +3549,12 @@
   "2026-08-20": [
     {
       "referrer": "github.com",
-      "count": 80,
-      "uniques": 50
+      "count": 75,
+      "uniques": 45
     },
     {
       "referrer": "Google",
-      "count": 45,
+      "count": 55,
       "uniques": 24
     },
     {
@@ -3564,6 +3564,11 @@
     },
     {
       "referrer": "Bing",
+      "count": 2,
+      "uniques": 2
+    },
+    {
+      "referrer": "realisticfarming.com",
       "count": 2,
       "uniques": 2
     },
@@ -3579,11 +3584,6 @@
     },
     {
       "referrer": "DuckDuckGo",
-      "count": 1,
-      "uniques": 1
-    },
-    {
-      "referrer": "realisticfarming.com",
       "count": 1,
       "uniques": 1
     }

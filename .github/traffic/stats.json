@@ -31756,25 +31756,25 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-20T06:32:40Z",
+    "timestamp": "2026-08-20T12:32:32Z",
     "date": "2026-08-20",
     "views": {
-      "count": 195,
-      "uniques": 91
+      "count": 219,
+      "uniques": 89
     },
     "clones": {
-      "count": 474,
-      "uniques": 125
+      "count": 499,
+      "uniques": 122
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 80,
-        "uniques": 50
+        "count": 75,
+        "uniques": 45
       },
       {
         "referrer": "Google",
-        "count": 45,
+        "count": 55,
         "uniques": 24
       },
       {
@@ -31784,6 +31784,11 @@
       },
       {
         "referrer": "Bing",
+        "count": 2,
+        "uniques": 2
+      },
+      {
+        "referrer": "realisticfarming.com",
         "count": 2,
         "uniques": 2
       },
@@ -31801,60 +31806,55 @@
         "referrer": "DuckDuckGo",
         "count": 1,
         "uniques": 1
-      },
-      {
-        "referrer": "realisticfarming.com",
-        "count": 1,
-        "uniques": 1
       }
     ],
     "popular_paths": [
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 105,
-        "uniques": 86
+        "count": 114,
+        "uniques": 82
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
+        "title": "/releases",
+        "count": 25,
+        "uniques": 13
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
         "count": 24,
-        "uniques": 21
+        "uniques": 22
       },
       {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
-        "title": "/releases",
-        "count": 20,
-        "uniques": 12
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/105",
-        "title": "/pull/105",
-        "count": 6,
-        "uniques": 2
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/97",
+        "title": "/pull/97",
+        "count": 8,
+        "uniques": 4
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/98",
         "title": "/pull/98",
-        "count": 5,
+        "count": 7,
         "uniques": 4
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/101",
         "title": "/pull/101",
-        "count": 5,
-        "uniques": 3
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/97",
-        "title": "/pull/97",
-        "count": 4,
-        "uniques": 3
+        "count": 6,
+        "uniques": 4
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/100",
         "title": "/pull/100",
-        "count": 4,
+        "count": 6,
+        "uniques": 3
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/105",
+        "title": "/pull/105",
+        "count": 6,
         "uniques": 2
       },
       {
@@ -31883,7 +31883,7 @@
       {
         "assets": [
           {
-            "downloads": 117,
+            "downloads": 118,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

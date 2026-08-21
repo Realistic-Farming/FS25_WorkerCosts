@@ -32100,21 +32100,21 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-21T06:33:00Z",
+    "timestamp": "2026-08-21T12:31:33Z",
     "date": "2026-08-21",
     "views": {
-      "count": 219,
-      "uniques": 89
+      "count": 217,
+      "uniques": 85
     },
     "clones": {
-      "count": 499,
-      "uniques": 122
+      "count": 530,
+      "uniques": 131
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 75,
-        "uniques": 45
+        "count": 76,
+        "uniques": 43
       },
       {
         "referrer": "Google",
@@ -32142,11 +32142,6 @@
         "uniques": 1
       },
       {
-        "referrer": "ya.ru",
-        "count": 2,
-        "uniques": 1
-      },
-      {
         "referrer": "DuckDuckGo",
         "count": 1,
         "uniques": 1
@@ -32156,20 +32151,20 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 114,
-        "uniques": 82
+        "count": 115,
+        "uniques": 79
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 25,
-        "uniques": 13
+        "count": 26,
+        "uniques": 14
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 24,
-        "uniques": 22
+        "count": 23,
+        "uniques": 21
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/97",
@@ -32208,8 +32203,8 @@
         "uniques": 2
       },
       {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/tree/main/src",
-        "title": "/tree/main/src",
+        "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.3.45-pre",
+        "title": "/releases/tag/v2.2.3.45-pre",
         "count": 2,
         "uniques": 2
       }

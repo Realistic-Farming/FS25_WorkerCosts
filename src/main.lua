@@ -23,6 +23,7 @@ local modName = g_currentModName
 -- =========================================================
 
 -- Load all source files in correct order
+source(modDirectory .. "src/integrations/OptionScalingResolver.lua")
 source(modDirectory .. "src/settings/SettingsManager.lua")
 source(modDirectory .. "src/settings/Settings.lua")
 source(modDirectory .. "src/settings/WorkerSettingsGUI.lua")

@@ -6,12 +6,12 @@
 -- =========================================================
 
 -- Capture the mod directory at source() time.
--- g_currentModDirectory is valid during source() execution.
+-- (WorkerCostsModDirectory or g_currentModDirectory) is valid during source() execution.
 -- We store it as a module-level local so it's available forever after.
-local MOD_DIR = g_currentModDirectory
+local MOD_DIR = (WorkerCostsModDirectory or g_currentModDirectory)
 
 ---@class WCModGui
-WCModGui = {}
+WCModGui = WCModGui or {}
 local WCModGui_mt = Class(WCModGui)
 
 -- ─────────────────────────────────────────────────────────

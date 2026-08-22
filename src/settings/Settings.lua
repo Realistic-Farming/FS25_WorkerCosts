@@ -12,7 +12,7 @@
 -- =========================================================
 ---@class Settings
 
-Settings = {}
+Settings = Settings or {}
 local Settings_mt = Class(Settings)
 
 Settings.WAGE_LEVEL_LOW = 1

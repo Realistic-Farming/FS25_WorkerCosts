@@ -11,10 +11,10 @@
 -- Original author: TisonK
 -- =========================================================
 ---@class SettingsManager
-SettingsManager = {}
+SettingsManager = SettingsManager or {}
 local SettingsManager_mt = Class(SettingsManager)
 
-SettingsManager.MOD_NAME = g_currentModName or "FS25_WorkerCostsMod"
+SettingsManager.MOD_NAME = (WorkerCostsModName or g_currentModName) or "FS25_WorkerCostsMod"
 SettingsManager.XMLTAG = "WorkerCostsManager"
 
 SettingsManager.defaultConfig = {

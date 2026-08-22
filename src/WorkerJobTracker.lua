@@ -44,7 +44,7 @@
 -- =========================================================
 
 ---@class WorkerJobTracker
-WorkerJobTracker = {}
+WorkerJobTracker = WorkerJobTracker or {}
 local WorkerJobTracker_mt = Class(WorkerJobTracker)
 
 local MS_PER_HOUR = 3600000  -- real milliseconds in one hour (g_currentMission.time basis)

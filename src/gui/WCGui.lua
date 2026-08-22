@@ -5,10 +5,10 @@
 -- Author: TisonK
 -- =========================================================
 
-local MOD_DIR = g_currentModDirectory
+local MOD_DIR = (WorkerCostsModDirectory or g_currentModDirectory)
 
 ---@class WCGui
-WCGui = {}
+WCGui = WCGui or {}
 local WCGui_mt = Class(WCGui, TabbedMenu)
 
 function WCGui.new(messageCenter, l18n, inputManager)

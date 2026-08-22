@@ -8,11 +8,11 @@
 -- Farm balance OMIT. Hire/fire/salary dialogs stay deep WCGui.
 -- =========================================================
 
-WcRfPdaGuest = {}
+WcRfPdaGuest = WcRfPdaGuest or {}
 
--- Capture at source() time - g_currentModDirectory is often nil at deferred/map-load callbacks.
-local MOD_DIR = g_currentModDirectory
-local WC_RF_MOD_NAME = g_currentModName
+-- Capture at source() time - (WorkerCostsModDirectory or g_currentModDirectory) is often nil at deferred/map-load callbacks.
+local MOD_DIR = (WorkerCostsModDirectory or g_currentModDirectory)
+local WC_RF_MOD_NAME = (WorkerCostsModName or g_currentModName)
 local PANEL_ID = "workerCosts"
 local PANEL_ORDER = 30
 
@@ -832,7 +832,7 @@ function WcRfPdaGuest.tryRegister()
     end
 
     -- Equal Option B: WC may create menuRealisticFarming when Soil absent.
-    -- Always ensureDoor when bootstrap class is sourced; never trust bare g_currentModDirectory at callback time.
+    -- Always ensureDoor when bootstrap class is sourced; never trust bare (WorkerCostsModDirectory or g_currentModDirectory) at callback time.
     if RfEscBootstrap ~= nil then
         if MOD_DIR == nil then
             print("[WorkerCosts] WcRfPdaGuest: WARNING MOD_DIR nil - cannot ensureDoor (source capture failed)")

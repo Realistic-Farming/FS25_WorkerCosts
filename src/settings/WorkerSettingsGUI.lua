@@ -12,7 +12,7 @@
 -- =========================================================
 ---@class WorkerSettingsGUI
 
-WorkerSettingsGUI = {}
+WorkerSettingsGUI = WorkerSettingsGUI or {}
 local WorkerSettingsGUI_mt = Class(WorkerSettingsGUI)
 
 function WorkerSettingsGUI.new()

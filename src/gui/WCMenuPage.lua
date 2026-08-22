@@ -5,10 +5,10 @@
 -- Author: TisonK
 -- =========================================================
 
-local MOD_DIR = g_currentModDirectory
+local MOD_DIR = (WorkerCostsModDirectory or g_currentModDirectory)
 
 ---@class WCMenuPage
-WCMenuPage = {}
+WCMenuPage = WCMenuPage or {}
 WCMenuPage.CLASS_NAME     = "WCMenuPage"
 WCMenuPage.MENU_PAGE_NAME = "menuWorkerCosts"
 

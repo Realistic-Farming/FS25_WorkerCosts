@@ -13,7 +13,7 @@
 -- applies edits made *through* SettingsHub back onto that same object.
 -- =========================================================
 
-WorkerSettingsHubBridge = {}
+WorkerSettingsHubBridge = WorkerSettingsHubBridge or {}
 
 local function applyChange(key, value)
     local wm = g_WorkerManager

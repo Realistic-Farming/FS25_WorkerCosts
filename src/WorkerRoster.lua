@@ -30,7 +30,7 @@
 -- =========================================================
 
 ---@class WorkerRoster
-WorkerRoster = {}
+WorkerRoster = WorkerRoster or {}
 local WorkerRoster_mt = Class(WorkerRoster)
 
 -- Persistence identifiers

@@ -173,7 +173,7 @@ end
 -- ========================================
 -- A single command channel for every roster mutation. The server applies it and
 -- then broadcasts a fresh WCRosterSyncEvent so all peers converge.
-WCWorkerCommandEvent = {}
+WCWorkerCommandEvent = WCWorkerCommandEvent or {}
 WCWorkerCommandEvent_mt = Class(WCWorkerCommandEvent, Event)
 
 InitEventClass(WCWorkerCommandEvent, "WCWorkerCommandEvent")
@@ -234,7 +234,7 @@ end
 -- Carries the full enriched snapshot. Sent to one connection on join request, and
 -- broadcast to all after every mutation. Pure clients cache it; the host ignores
 -- its own broadcast (it computes the snapshot live).
-WCRosterSyncEvent = {}
+WCRosterSyncEvent = WCRosterSyncEvent or {}
 WCRosterSyncEvent_mt = Class(WCRosterSyncEvent, Event)
 
 InitEventClass(WCRosterSyncEvent, "WCRosterSyncEvent")
@@ -272,7 +272,7 @@ end
 -- ========================================
 -- REQUEST ROSTER SYNC (Client -> Server)
 -- ========================================
-WCRequestRosterSyncEvent = {}
+WCRequestRosterSyncEvent = WCRequestRosterSyncEvent or {}
 WCRequestRosterSyncEvent_mt = Class(WCRequestRosterSyncEvent, Event)
 
 InitEventClass(WCRequestRosterSyncEvent, "WCRequestRosterSyncEvent")

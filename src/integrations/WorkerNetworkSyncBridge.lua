@@ -48,7 +48,7 @@
 -- The cross-mod handle is g_currentMission.networkSync (published in Mission00.load).
 -- =========================================================
 
-WorkerNetworkSyncBridge = {}
+WorkerNetworkSyncBridge = WorkerNetworkSyncBridge or {}
 
 -- LOCKED channel / module id (see BEDROCK-MIGRATION-BUILD-BRIEF). Never renamed.
 WorkerNetworkSyncBridge.MODULE_ID = "WorkerCosts_Sync"

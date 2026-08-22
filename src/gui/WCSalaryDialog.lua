@@ -10,10 +10,10 @@
 -- Original author: TisonK
 -- =========================================================
 
-local MOD_DIR = g_currentModDirectory
+local MOD_DIR = (WorkerCostsModDirectory or g_currentModDirectory)
 
 ---@class WCSalaryDialog
-WCSalaryDialog = {}
+WCSalaryDialog = WCSalaryDialog or {}
 local WCSalaryDialog_mt = Class(WCSalaryDialog, MessageDialog)
 
 WCSalaryDialog.CLASS_NAME   = "WCSalaryDialog"

@@ -9,7 +9,7 @@
 -- =========================================================
 
 ---@class WCDashboardFrame
-WCDashboardFrame = {}
+WCDashboardFrame = WCDashboardFrame or {}
 local WCDashboardFrame_mt = Class(WCDashboardFrame, TabbedMenuFrameElement)
 
 function WCDashboardFrame.new()

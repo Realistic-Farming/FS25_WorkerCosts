@@ -37,7 +37,7 @@
 -- by both mods, so it is available here whatever the mod load order).
 -- =========================================================
 
-WorkerStateLedgerBridge = {}
+WorkerStateLedgerBridge = WorkerStateLedgerBridge or {}
 
 -- LOCKED persistence keys (see BEDROCK-MIGRATION-BUILD-BRIEF). Never rename.
 WorkerStateLedgerBridge.ROSTER_MODULE_ID   = "WorkerCosts_Roster"

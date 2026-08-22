@@ -12,7 +12,7 @@
 -- =========================================================
 
 ---@class WorkerSystem
-WorkerSystem = {}
+WorkerSystem = WorkerSystem or {}
 local WorkerSystem_mt = Class(WorkerSystem)
 
 -- PRO-STAFF BUILD CHECKLIST — work in THIS file (full plan: docs/PRO_STAFF_PLAN.md):

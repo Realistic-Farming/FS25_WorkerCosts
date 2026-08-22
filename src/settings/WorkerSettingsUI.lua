@@ -22,7 +22,7 @@ local function getTextSafe(key)
 end
 
 ---@class WorkerSettingsUI
-WorkerSettingsUI = {}
+WorkerSettingsUI = WorkerSettingsUI or {}
 local WorkerSettingsUI_mt = Class(WorkerSettingsUI)
 
 function WorkerSettingsUI.new(settings)

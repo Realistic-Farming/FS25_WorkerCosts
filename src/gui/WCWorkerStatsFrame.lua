@@ -12,7 +12,7 @@
 -- =========================================================
 
 ---@class WCWorkerStatsFrame
-WCWorkerStatsFrame = {}
+WCWorkerStatsFrame = WCWorkerStatsFrame or {}
 local WCWorkerStatsFrame_mt = Class(WCWorkerStatsFrame, TabbedMenuFrameElement)
 
 function WCWorkerStatsFrame.new()

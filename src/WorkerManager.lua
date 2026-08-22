@@ -24,7 +24,7 @@
 --                 Farm Tablet Pro-Staff app); MP roster-sync events still pending
 -- =========================================================
 ---@class WorkerManager
-WorkerManager = {}
+WorkerManager = WorkerManager or {}
 local WorkerManager_mt = Class(WorkerManager)
 
 -- Pro-Staff Phase 5: recruitment pool. The host keeps a small rotating set of

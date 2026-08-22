@@ -10,8 +10,15 @@
 -- or claiming this code as your own is strictly prohibited.
 -- Original author: TisonK
 -- =========================================================
-local modDirectory = g_currentModDirectory
-local modName = g_currentModName
+-- Hot-reload latch (FuelCosts reference): g_currentModDirectory and
+-- g_currentModName are nil on a live re-source, so they are latched into
+-- module globals on first load, with a g_modsDirectory loose-folder fallback.
+WorkerCostsModDirectory = WorkerCostsModDirectory
+    or g_currentModDirectory
+    or (g_modsDirectory ~= nil and (g_modsDirectory .. "FS25_WorkerCosts/") or nil)
+WorkerCostsModName = WorkerCostsModName or g_currentModName or "FS25_WorkerCosts"
+local modDirectory = WorkerCostsModDirectory
+local modName = WorkerCostsModName
 
 -- =========================================================
 -- PRO-STAFF BUILD CHECKLIST — load order & lifecycle hooks in THIS file,
@@ -23,6 +30,7 @@ local modName = g_currentModName
 -- =========================================================
 
 -- Load all source files in correct order
+source(modDirectory .. "src/integrations/OptionScalingResolver.lua")
 source(modDirectory .. "src/settings/SettingsManager.lua")
 source(modDirectory .. "src/settings/Settings.lua")
 source(modDirectory .. "src/settings/WorkerSettingsGUI.lua")

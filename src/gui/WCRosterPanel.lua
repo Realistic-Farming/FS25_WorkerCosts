@@ -26,7 +26,10 @@
 -- =========================================================
 
 ---@class WCRosterPanel
-WCRosterPanel = {}
+-- BUILD 17:57 + ATTN 18:02 (Wizard hot-reload law, FS25-HotReload-Guide.md Part 1):
+-- reuse the existing class table on Ctrl+R reload so updated methods land on the
+-- table live metatables already reference, instead of orphaning it.
+WCRosterPanel = WCRosterPanel or {}
 local WCRosterPanel_mt = Class(WCRosterPanel)
 
 -- ── Palette ── dark grey panel, green text (matches the mod's style) ──
@@ -686,5 +689,17 @@ function WCRosterPanel:handleClick(id, data)
     elseif id:sub(1, 9) == "unassign_" and data then
         if mgr then mgr:unassignWorker(data.uuid) end
         self.infoMsg = "Pin removed"
+    end
+end
+
+-- =========================================================
+-- BUILD 17:57 + ATTN 18:02 (hot-reload guide Part 2): force-patch the live
+-- instance after a Ctrl+R reload - mission.workerCostsManager published in src/main.lua; holds .rosterPanel.
+if g_currentMission ~= nil and g_currentMission.workerCostsManager ~= nil and g_currentMission.workerCostsManager.rosterPanel ~= nil then
+    local inst = g_currentMission.workerCostsManager.rosterPanel
+    for k, v in pairs(WCRosterPanel) do
+        if type(v) == "function" then
+            inst[k] = v
+        end
     end
 end

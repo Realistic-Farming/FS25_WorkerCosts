@@ -9,7 +9,7 @@
 -- lottery is NOT the product default.
 -- =========================================================
 
-RfEscModules = {}
+RfEscModules = RfEscModules or {}
 local RfEscModules_mt = Class(RfEscModules)
 
 local HUB_MOD_ID = "RfEsc"
@@ -232,6 +232,7 @@ function RfEscModules:registerModule(def)
         -- discarded and the Esc Crop Stress buttons would do nothing.
         onOpenConsultant = def.onOpenConsultant,
         onOpenSchedule = def.onOpenSchedule,
+        onOpenHelp = def.onOpenHelp,
         onPaintConsultant = def.onPaintConsultant,
         -- Same trap again, BUILD 15:46: the CS guest registers onPivotRemote on
         -- its module def (CsRfPdaGuest.lua) but it was missing here, so it was
@@ -255,6 +256,11 @@ function RfEscModules:registerModule(def)
         -- companions that predate this.
         selectCommodityIndex = def.selectCommodityIndex,
         onLightTick = def.onLightTick,
+        -- Sixth instance, BUILD 14:04 (Brian TEST 10:29): NPC Favor registered onPageStep
+        -- for the shared row pager on BUILD 09:19 and this whitelist ate it, so the live
+        -- MORE (1/2) button forwarded a step to nil and the roster never turned the page.
+        -- The register-time warning below did name it, in a log nobody read back.
+        onPageStep = def.onPageStep,
     }
     -- BUILD 23:51: this whitelist has now silently eaten a handler four times, so stop
     -- letting it do that quietly. Anything a caller passed that is not carried above gets

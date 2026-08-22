@@ -9,7 +9,7 @@
 -- =========================================================
 
 ---@class WCAboutFrame
-WCAboutFrame = {}
+WCAboutFrame = WCAboutFrame or {}
 local WCAboutFrame_mt = Class(WCAboutFrame, TabbedMenuFrameElement)
 
 -- Sub-tab indices

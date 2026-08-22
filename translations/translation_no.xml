@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<l10n>
+    <texts>
+        <!-- BUILD 11:27 F155 Esc RF button labels -->
+        <text name="wc_rf_pda_open_manager" text="Åpne arbeiderbehandler" />
+        <text name="wc_rf_pda_page_dashboard" text="Oversikt"/>
+        <text name="wc_rf_pda_page_wages" text="Lønninger"/>
+        <text name="wc_rf_pda_page_workers" text="Arbeidere"/>
+        <text name="sf_pda_btn_rotation_planner" text="Rotasjonsplanlegger" />
+        <text name="sf_pda_btn_field_detail" text="Feltdetaljer" />
+    </texts>
+</l10n>

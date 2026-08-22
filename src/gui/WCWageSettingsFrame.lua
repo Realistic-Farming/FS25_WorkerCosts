@@ -6,7 +6,7 @@
 -- =========================================================
 
 ---@class WCWageSettingsFrame
-WCWageSettingsFrame = {}
+WCWageSettingsFrame = WCWageSettingsFrame or {}
 local WCWageSettingsFrame_mt = Class(WCWageSettingsFrame, TabbedMenuFrameElement)
 
 function WCWageSettingsFrame.new()

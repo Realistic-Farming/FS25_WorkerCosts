@@ -32,7 +32,7 @@
 -- The cross-mod handle is g_currentMission.masterHUD (published in Mission00.load).
 -- =========================================================
 
-WorkerMasterHUDBridge = {}
+WorkerMasterHUDBridge = WorkerMasterHUDBridge or {}
 
 WorkerMasterHUDBridge.HUD_ID = "WorkerCosts_RosterPanel"
 WorkerMasterHUDBridge.active = false   -- MasterHUD present and we registered

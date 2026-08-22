@@ -32439,25 +32439,25 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-22T06:26:10Z",
+    "timestamp": "2026-08-22T12:23:11Z",
     "date": "2026-08-22",
     "views": {
-      "count": 217,
+      "count": 220,
       "uniques": 85
     },
     "clones": {
-      "count": 530,
-      "uniques": 131
+      "count": 516,
+      "uniques": 125
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 76,
-        "uniques": 43
+        "count": 74,
+        "uniques": 41
       },
       {
         "referrer": "Google",
-        "count": 55,
+        "count": 53,
         "uniques": 24
       },
       {
@@ -32490,8 +32490,8 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 115,
-        "uniques": 79
+        "count": 112,
+        "uniques": 78
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
@@ -32502,38 +32502,38 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 23,
+        "count": 24,
         "uniques": 21
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/97",
-        "title": "/pull/97",
-        "count": 8,
-        "uniques": 4
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/98",
         "title": "/pull/98",
-        "count": 7,
+        "count": 8,
         "uniques": 4
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/100",
+        "title": "/pull/100",
+        "count": 7,
+        "uniques": 3
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/105",
+        "title": "/pull/105",
+        "count": 7,
+        "uniques": 3
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/97",
+        "title": "/pull/97",
+        "count": 7,
+        "uniques": 3
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/101",
         "title": "/pull/101",
         "count": 6,
         "uniques": 4
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/100",
-        "title": "/pull/100",
-        "count": 6,
-        "uniques": 3
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/105",
-        "title": "/pull/105",
-        "count": 6,
-        "uniques": 2
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pulls",
@@ -32552,7 +32552,7 @@
       {
         "assets": [
           {
-            "downloads": 7,
+            "downloads": 8,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

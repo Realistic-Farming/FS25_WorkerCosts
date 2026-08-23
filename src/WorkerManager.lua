@@ -408,8 +408,11 @@ function WorkerManager:getServerSnapshot()
     -- Aggregate "this month" accrued wages from the worker system.
     local monthAccrued = 0
     if workerSys and workerSys.monthlyCosts then
-        for _, amt in pairs(workerSys.monthlyCosts) do
-            monthAccrued = monthAccrued + (amt or 0)
+        -- Entries are { name, amount, farmId } tables, not raw numbers.
+        for _, entry in pairs(workerSys.monthlyCosts) do
+            if entry and entry.amount then
+                monthAccrued = monthAccrued + entry.amount
+            end
         end
     end
 

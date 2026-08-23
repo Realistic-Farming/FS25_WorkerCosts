@@ -62,34 +62,19 @@ function Settings:getWageLevelName()
     end
 end
 
-Settings.SPINE_WAGE_SCALE = {
-    id   = "wc_wageScale",
-    dial = "labor",
-    base = 1.0,
-}
-
 ---@return number
 function Settings:getWageRate()
-    local baseRate
     if self.customRate > 0 then
-        baseRate = self.customRate
-    elseif self.wageLevel == Settings.WAGE_LEVEL_LOW then
-        baseRate = 15
+        return self.customRate
+    end
+    
+    if self.wageLevel == Settings.WAGE_LEVEL_LOW then
+        return 15
     elseif self.wageLevel == Settings.WAGE_LEVEL_HIGH then
-        baseRate = 40
+        return 40
     else
-        baseRate = 25
+        return 25
     end
-
-    if OptionScalingResolver ~= nil then
-        local hub = (g_currentMission ~= nil and g_currentMission.settingsHub) or g_settingsHub
-        local profile = OptionScalingResolver.readProfile(hub)
-        if profile ~= nil then
-            baseRate = baseRate * OptionScalingResolver.resolve(Settings.SPINE_WAGE_SCALE, profile)
-        end
-    end
-
-    return baseRate
 end
 
 ---@param mode number

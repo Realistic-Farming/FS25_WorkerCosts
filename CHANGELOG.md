@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to FS25_WorkerCosts will be documented in this file.
 
@@ -15,6 +15,7 @@ the repo's git history and README.
 
 ### Added
 - Changelog file established (suite ruling 2026-08-22).
+- Playtest fixes: wage rate reads plain level/custom rates directly, dropping the option-scaling spine multiplier.
 - Control Center action: `WC_OPEN_ROSTER` opens the Worker Costs roster from the suite Control Center (requires SettingsHub).
 
 ### Fixed

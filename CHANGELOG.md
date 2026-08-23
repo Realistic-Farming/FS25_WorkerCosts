@@ -17,6 +17,9 @@ the repo's git history and README.
 - Changelog file established (suite ruling 2026-08-22).
 - Control Center action: `WC_OPEN_ROSTER` opens the Worker Costs roster from the suite Control Center (requires SettingsHub).
 
+### Fixed
+- Monthly cost summary read server-snapshot `monthlyCosts` entries as raw numbers; they are tables with an `amount` field. The accrued monthly total now reads correctly.
+
 ## [2.2.3.45] - 2026-08-22
 
 - First entry under changelog tracking.

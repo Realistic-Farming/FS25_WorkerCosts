@@ -3702,8 +3702,8 @@
   "2026-08-24": [
     {
       "referrer": "github.com",
-      "count": 81,
-      "uniques": 43
+      "count": 86,
+      "uniques": 44
     },
     {
       "referrer": "Google",
@@ -3712,8 +3712,8 @@
     },
     {
       "referrer": "kingmods.net",
-      "count": 7,
-      "uniques": 5
+      "count": 9,
+      "uniques": 6
     },
     {
       "referrer": "Bing",
@@ -3728,11 +3728,6 @@
     {
       "referrer": "chatgpt.com",
       "count": 2,
-      "uniques": 1
-    },
-    {
-      "referrer": "DuckDuckGo",
-      "count": 1,
       "uniques": 1
     }
   ]

@@ -33785,36 +33785,36 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-08-26T06:34:54Z",
+    "timestamp": "2026-08-26T12:36:32Z",
     "date": "2026-08-26",
     "views": {
-      "count": 262,
+      "count": 267,
       "uniques": 93
     },
     "clones": {
-      "count": 523,
-      "uniques": 118
+      "count": 505,
+      "uniques": 107
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 90,
-        "uniques": 47
+        "count": 87,
+        "uniques": 45
       },
       {
         "referrer": "Google",
-        "count": 48,
-        "uniques": 21
+        "count": 51,
+        "uniques": 23
       },
       {
         "referrer": "kingmods.net",
-        "count": 9,
-        "uniques": 6
+        "count": 7,
+        "uniques": 5
       },
       {
         "referrer": "Bing",
-        "count": 2,
-        "uniques": 2
+        "count": 4,
+        "uniques": 3
       },
       {
         "referrer": "realisticfarming.com",
@@ -33832,19 +33832,19 @@
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
         "count": 125,
-        "uniques": 84
+        "uniques": 83
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 34,
+        "count": 33,
         "uniques": 20
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 26,
-        "uniques": 21
+        "count": 28,
+        "uniques": 23
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/97",
@@ -33873,13 +33873,13 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.3.45-pre",
         "title": "/releases/tag/v2.2.3.45-pre",
-        "count": 5,
-        "uniques": 4
+        "count": 6,
+        "uniques": 5
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/pull/101",
         "title": "/pull/101",
-        "count": 5,
+        "count": 6,
         "uniques": 3
       },
       {

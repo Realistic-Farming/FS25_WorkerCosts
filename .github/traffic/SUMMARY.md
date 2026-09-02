@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-09-02T00:44:09Z
-**Days tracked:** 133 | **Download snapshots:** 587 (hourly)
+**Last updated:** 2026-09-02T18:18:12Z
+**Days tracked:** 133 | **Download snapshots:** 589 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 252 | 93 |
-| Git Clones | 379 | 89 |
+| Page Views | 222 | 90 |
+| Git Clones | 364 | 89 |
 
-> **Engagement:** 2.7 pages per visitor (14-day avg)
+> **Engagement:** 2.4 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 767 of 93 visitors cloned or downloaded (**824.7%**)
+> **14-day conversion:** 768 of 90 visitors cloned or downloaded (**853.3%**)
 >
-> Unique cloners: 89 | Release downloads: 678
+> Unique cloners: 89 | Release downloads: 679
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 678 |
-| Git Clones (14-day) | 379 |
-| **Total Acquisitions** | **1057** |
+| Zip Downloads | 679 |
+| Git Clones (14-day) | 364 |
+| **Total Acquisitions** | **1043** |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 96 | 44 |
-| Google | 39 | 19 |
+| github.com | 91 | 43 |
+| Google | 27 | 17 |
 | kingmods.net | 5 | 4 |
 | Bing | 2 | 1 |
 | com.yandex.aliceapp | 2 | 1 |
@@ -80,16 +80,16 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 127 | 82 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 36 | 30 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 30 | 17 |
-| `/Realistic-Farming/FS25_WorkerCosts/pull/97` | 6 | 3 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 111 | 80 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 33 | 28 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 23 | 16 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.3.45-pre` | 5 | 4 |
-| `/Realistic-Farming/FS25_WorkerCosts/pull/98` | 5 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/pull/100` | 4 | 3 |
+| `/Realistic-Farming/FS25_WorkerCosts/pull/98` | 4 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/pull/101` | 3 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/pull/109` | 3 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues` | 3 | 2 |
+| `/Realistic-Farming/FS25_WorkerCosts/pull/105` | 3 | 2 |
 
 ---
 

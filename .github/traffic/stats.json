@@ -38516,26 +38516,26 @@
     "watchers": 2
   },
   {
-    "timestamp": "2026-09-11T00:43:55Z",
+    "timestamp": "2026-09-11T18:03:29Z",
     "date": "2026-09-11",
     "views": {
-      "count": 206,
-      "uniques": 104
+      "count": 191,
+      "uniques": 93
     },
     "clones": {
-      "count": 252,
-      "uniques": 104
+      "count": 247,
+      "uniques": 102
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 78,
-        "uniques": 42
+        "count": 72,
+        "uniques": 38
       },
       {
         "referrer": "Google",
-        "count": 38,
-        "uniques": 25
+        "count": 35,
+        "uniques": 23
       },
       {
         "referrer": "kingmods.net",
@@ -38568,6 +38568,11 @@
         "uniques": 1
       },
       {
+        "referrer": "DuckDuckGo",
+        "count": 1,
+        "uniques": 1
+      },
+      {
         "referrer": "Yahoo",
         "count": 1,
         "uniques": 1
@@ -38577,26 +38582,20 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 113,
-        "uniques": 90
+        "count": 106,
+        "uniques": 83
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 37,
-        "uniques": 32
+        "count": 33,
+        "uniques": 28
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 19,
-        "uniques": 12
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/icon.png",
-        "title": "/blob/main/icon.png",
-        "count": 4,
-        "uniques": 4
+        "count": 20,
+        "uniques": 11
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.3.45-pre",
@@ -38609,6 +38608,12 @@
         "title": "/tags",
         "count": 4,
         "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/icon.png",
+        "title": "/blob/main/icon.png",
+        "count": 3,
+        "uniques": 3
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues",

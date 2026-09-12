@@ -182,6 +182,14 @@ function WorkerManager:onMissionLoaded()
         -- After initialize() so nothing clobbers the loaded values.
         if g_currentMission and g_currentMission:getIsServer() then
             self.workerSystem:loadMonthlyState(g_currentMission.missionInfo)
+            -- F223: apply the native MP-to-SP farm conversion map ONCE, after the
+            -- snapshot is loaded and native farm loading has completed (mergedFarms is
+            -- populated during FarmManager load, before loadMission00Finished). A repeat
+            -- load/map cannot double-pool: remap retargets ids without re-adding money.
+            local fm = g_farmManager
+            if fm ~= nil and type(fm.mergedFarms) == "table" and next(fm.mergedFarms) ~= nil then
+                self.workerSystem:remapMergedFarms(fm.mergedFarms)
+            end
         end
     end
 
@@ -405,15 +413,13 @@ function WorkerManager:getServerSnapshot()
     local baseRate   = (settings and settings.getWageRate and settings:getWageRate()) or 0
     local isHourly   = (settings and settings.costMode == Settings.COST_MODE_HOURLY) and true or false
 
-    -- Aggregate "this month" accrued wages from the worker system.
+    -- Aggregate "this month" accrued wages from the worker system. F223: monthlyCosts
+    -- is now nested per farm, and frozen unpaid bills also carry owed base wages, so the
+    -- display aggregate is assembled by the owner helper (unbilled base + unpaid frozen
+    -- base portions). Keeps the existing "base accrual" meaning; no penalised final here.
     local monthAccrued = 0
-    if workerSys and workerSys.monthlyCosts then
-        -- Entries are { name, amount, farmId } tables, not raw numbers.
-        for _, entry in pairs(workerSys.monthlyCosts) do
-            if entry and entry.amount then
-                monthAccrued = monthAccrued + entry.amount
-            end
-        end
+    if workerSys and workerSys._baseAccrualAggregate then
+        monthAccrued = workerSys:_baseAccrualAggregate()
     end
 
     local snapshot = {
@@ -565,6 +571,33 @@ function WorkerManager:getWorkersForFarm(farmId)
     if type(farmId) ~= "number" or farmId <= 0 then return {} end
     local snap = self:getRosterSnapshot()
     return (snap and snap.workers) or {}
+end
+
+-- =========================================================
+-- F223 / C3: payroll obligations read contract (for the emergency-loan forecast)
+-- =========================================================
+-- IncomeMod's emergency loan calls this COLON method on mission.workerCostsManager to
+-- learn a farm's dated payroll cash bills for its one-period cash forecast. Server-only
+-- and PURE: it never issues, pays, flushes open work or migrates (the owner keeps its
+-- money and formulas; C3 only reads). Delegates to the WorkerSystem collector, which
+-- returns a copied version-1 snapshot that never aliases live payroll state. `horizon`
+-- carries the shared date contract { asOf, horizonEnd, daysPerPeriod, dayInPeriod }.
+---@param farmId number
+---@param horizon table
+---@return table  version-1 payroll obligations snapshot
+function WorkerManager:getPayrollObligations(farmId, horizon)
+    if self.workerSystem and self.workerSystem.getPayrollObligations then
+        return self.workerSystem:getPayrollObligations(farmId, horizon)
+    end
+    return {
+        version         = (WorkerSystem and WorkerSystem.PAYROLL_CONTRACT_VERSION) or 1,
+        status          = "UNAVAILABLE",
+        farmId          = farmId,
+        enabled         = false,
+        settlementMode  = "IMMEDIATE",
+        coverageReasons = { "NO_WORKER_SYSTEM" },
+        events          = {},
+    }
 end
 
 -- =========================================================

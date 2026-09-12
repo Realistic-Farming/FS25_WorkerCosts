@@ -72,15 +72,53 @@ function WorkerSystem.new(settings, roster)
     self._originalAddMoney = nil   -- stored so we can restore on delete
     self._hookedAddMoney = false
 
-    -- Monthly salary tracking
-    -- monthlyCosts[workerId] = { name = displayName, amount = accumulated $ for this month }
+    -- Monthly salary tracking (F223: per-farm, never pooled into the first farm).
+    -- Nested accrual so two farms sharing one worker key stay distinct:
+    --   monthlyCosts[farmId][workerKey] = { name = displayName, amount = accrued $ }
+    -- workerKey is always a canonical string (tostring of the roster uuid / vehicle id).
     self.monthlyCosts   = {}
+    -- F223 frozen bills: a month-end issue freezes ONE bill, moving the accrued rows
+    -- OUT of live accrual so later wages are distinct. Parts are per-farm and carry
+    -- their own payment disposition so a partial/failed farm never loses or repeats.
+    --   salaryBills[billId] = {
+    --     id, issuedYear, issuedPeriod, penaltyApplied,
+    --     parts = { [farmId] = { name, base, final, remaining, status } } }
+    -- status is UNPAID / PAID / INDETERMINATE (WorkerSystem.PART_*).
+    self.salaryBills    = {}
+    self.nextBillId     = 1        -- monotonic, persisted; never reused after payoff
     self.lastDay        = -1       -- last in-game day we checked
-    self.lastMonthPaid  = -1       -- last in-game month that triggered the salary dialog
-    self.declinedLastMonth = false -- true if player skipped last month's payment
-    self.pendingSalary  = nil      -- { entries, total, month } stored while dialog is open
+    -- F223: issuance is keyed by the native ordinal (year*PERIODS_IN_YEAR+period-1),
+    -- kept SEPARATE from any bill's payment state, so a new year's same-named period
+    -- can issue again and a repeated same-period check cannot issue twice.
+    self.lastIssuedOrdinal = -1
+    self.lastMonthPaid  = -1       -- LEGACY schema-1 field; retained only for load seeding
+    self.declinedLastMonth = false -- true if player declined last bill (next bill +20%)
+    self.pendingSalary  = nil      -- { billId, entries, total, month } while dialog is open
+    -- F223: legacy schema-1 rows with no valid recorded farm. Never defaulted to a
+    -- farm, never charged to a borrower; retained as inspectable evidence only.
+    self.legacyUnattributed = {}
 
     return self
+end
+
+-- F223 bill-part payment disposition.
+WorkerSystem.PART_UNPAID        = "UNPAID"
+WorkerSystem.PART_PAID          = "PAID"
+WorkerSystem.PART_INDETERMINATE = "INDETERMINATE"
+
+-- Periods (months) per native year. Engine constant (Environment.PERIODS_IN_YEAR=12);
+-- read the live constant when present so a future engine change cannot silently drift.
+function WorkerSystem._periodsInYear()
+    if Environment ~= nil and Environment.PERIODS_IN_YEAR ~= nil then
+        return Environment.PERIODS_IN_YEAR
+    end
+    return 12
+end
+
+-- The issuance ordinal for a (year, period) pair: a strictly increasing integer so a
+-- later period always compares greater and a new year's period 1 follows last year's.
+function WorkerSystem._issuanceOrdinal(year, period)
+    return year * WorkerSystem._periodsInYear() + period - 1
 end
 
 function WorkerSystem:initialize()
@@ -203,12 +241,20 @@ function WorkerSystem:installGameHook()
             local isHelperWage = (aiType ~= nil and moneyType == aiType)
                               or (wageType ~= nil and moneyType == wageType)
 
-            -- Last-resort heuristic ONLY when this build exposes NEITHER wage
-            -- MoneyType. Previously it fired whenever MoneyType.AI was nil even if
-            -- WORKER_WAGES existed, so it could eat any unrelated negative <=500
-            -- (e.g. a small purchase) during a job. Now gated on both being absent,
-            -- and it warns visibly since suppression here is an informed guess.
-            if not isHelperWage and aiType == nil and wageType == nil then
+            -- F223/R1: forward every explicit KNOWN non-wage MoneyType (e.g. OTHER)
+            -- through the captured chain BEFORE any missing-enum/magnitude heuristic.
+            -- Only an unknown/nil type may be guessed at. Previously, when this build
+            -- exposed neither AI nor WORKER_WAGES, the heuristic could swallow a typed
+            -- OTHER charge <=500 during a job — eating IncomeMod's loan/tax/repayment
+            -- deductions. A known OTHER is never a helper wage. (Owner-predicate fix,
+            -- not a second money writer; AI/WORKER_WAGES keep their real suppression.)
+            local otherType    = MoneyType and MoneyType.OTHER
+            local knownNonWage = (otherType ~= nil and moneyType == otherType)
+
+            -- Last-resort heuristic ONLY when this build exposes NEITHER wage MoneyType
+            -- AND the charge is not a known non-wage type. Gated on both enums being
+            -- absent; warns visibly since suppression here is an informed guess.
+            if not isHelperWage and not knownNonWage and aiType == nil and wageType == nil then
                 local hasActiveJobs = false
                 local aiSystem = g_currentMission and g_currentMission.aiSystem
                 if aiSystem and aiSystem.getActiveJobs then
@@ -620,14 +666,20 @@ function WorkerSystem:chargeWage(workerId, workerName, amount, workType, silent,
     -- moving any money. The accrual is persisted (saveMonthlyState) so a mid-month
     -- reload cannot drop what is owed.
     if self.settings.monthlySalaryEnabled then
-        local entry = self.monthlyCosts[workerId]
+        -- F223: accrue under farmId -> canonical worker key. The same worker working
+        -- for two farms keeps two distinct entries (no first-farm pooling), so each
+        -- farm is billed exactly its own work.
+        local farmBook = self.monthlyCosts[farmId]
+        if farmBook == nil then
+            farmBook = {}
+            self.monthlyCosts[farmId] = farmBook
+        end
+        local key = tostring(workerId)
+        local entry = farmBook[key]
         if entry then
             entry.amount = entry.amount + amount
-            if entry.farmId == nil then
-                entry.farmId = farmId
-            end
         else
-            self.monthlyCosts[workerId] = { name = workerName, amount = amount, farmId = farmId }
+            farmBook[key] = { name = workerName, amount = amount }
         end
         self:log("%s %s wage accrued for monthly salary: %d (farm %d)", workerName, workType, amount, farmId)
         return true
@@ -789,9 +841,9 @@ function WorkerSystem:update(dt)
     -- Monthly salary: check if the last day of the month has just been reached
     if self.settings.monthlySalaryEnabled then
         self:checkMonthEnd()
-    elseif next(self.monthlyCosts) ~= nil then
-        -- Monthly mode was switched off with wages still accrued: settle once now
-        -- so the accrual is never orphaned (money still moves exactly once).
+    elseif self:_hasAccrual() or next(self.salaryBills) ~= nil then
+        -- Monthly mode was switched off with wages still accrued or a bill still owed:
+        -- settle once now so nothing is orphaned (money still moves exactly once).
         self:settlePendingMonthlyAccrual()
     end
 end
@@ -896,89 +948,233 @@ end
 -- Monthly salary system
 -- ─────────────────────────────────────────────────────────
 
+-- F223 accrual helpers (the nested monthlyCosts[farmId][workerKey] book).
+
+--- Total unbilled accrual per farm: { [farmId] = sum of that farm's worker amounts }.
+function WorkerSystem:_accrualByFarm()
+    local byFarm = {}
+    for farmId, farmBook in pairs(self.monthlyCosts or {}) do
+        local sum = 0
+        for _, entry in pairs(farmBook) do
+            if entry and entry.amount and entry.amount > 0 then
+                sum = sum + entry.amount
+            end
+        end
+        if sum > 0 then
+            byFarm[farmId] = sum
+        end
+    end
+    return byFarm
+end
+
+--- Grand total of all unbilled accrual across every farm.
+function WorkerSystem:_accrualTotal()
+    local total = 0
+    for _, sum in pairs(self:_accrualByFarm()) do
+        total = total + sum
+    end
+    return total
+end
+
+--- Any unbilled accrual present? (replaces the old `next(monthlyCosts)` test, which
+--- is now truthy for an empty per-farm book.)
+function WorkerSystem:_hasAccrual()
+    for _, farmBook in pairs(self.monthlyCosts or {}) do
+        for _, entry in pairs(farmBook) do
+            if entry and entry.amount and entry.amount > 0 then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+--- F223 Direction 13: the legacy `monthAccrued` display aggregate — unbilled base
+--- accrual plus the unpaid BASE (pre-penalty) portions of frozen bills. It keeps its
+--- old "base accrual this month" meaning; the penalised final bill is not summed here.
+function WorkerSystem:_baseAccrualAggregate()
+    local total = self:_accrualTotal()
+    for _, bill in pairs(self.salaryBills or {}) do
+        for _, part in ipairs(bill.parts or {}) do
+            if part.status == WorkerSystem.PART_UNPAID and (part.remaining or 0) > 0 then
+                total = total + (part.base or 0)
+            end
+        end
+    end
+    return total
+end
+
+--- Re-accrue one worker row under a farm (used by Decline to return unpaid base rows).
+function WorkerSystem:_accrueRow(farmId, key, name, amount)
+    if farmId == nil or amount == nil or amount <= 0 then return end
+    local farmBook = self.monthlyCosts[farmId]
+    if farmBook == nil then
+        farmBook = {}
+        self.monthlyCosts[farmId] = farmBook
+    end
+    key = tostring(key)
+    local entry = farmBook[key]
+    if entry then
+        entry.amount = entry.amount + amount
+    else
+        farmBook[key] = { name = name or "Worker", amount = amount }
+    end
+end
+
 --- Called every update tick when monthlySalaryEnabled is true.
--- Detects the transition to the last day of the month (day 28 in FS25
--- which uses 28-day months) and triggers the salary dialog once.
+-- F223: issue the monthly bill on the real last day of the period for ANY configured
+-- month length, keyed by the native ordinal so it fires once per (year, period). The
+-- old `currentDay >= currentPeriod*28` test never reached the last day of a month with
+-- daysPerPeriod other than 28 (e.g. a 3-day month), silently skipping the bill.
 function WorkerSystem:checkMonthEnd()
     if not g_currentMission or not g_currentMission.environment then
         return
     end
     local env = g_currentMission.environment
 
-    -- FS25 months have 28 in-game days (1..28).
-    -- We trigger on day 28 so that the player pays before the month rolls over.
-    local currentDay   = env.currentDay         -- 1-based day within the current year
-    local currentMonth = env.currentPeriod      -- 1-based period/month index
+    local dayInPeriod   = env.currentDayInPeriod
+    local daysPerPeriod = env.daysPerPeriod
+    local year          = env.currentYear
+    local period        = env.currentPeriod
 
-    if currentDay == nil or currentMonth == nil then
+    -- Validate the native ordinal calendar; an inconsistent/unready sample is not a
+    -- due date. (currentDayInPeriod = (currentDay-1) % daysPerPeriod + 1 in the engine.)
+    if type(dayInPeriod) ~= "number" or type(daysPerPeriod) ~= "number"
+        or type(year) ~= "number" or type(period) ~= "number"
+        or daysPerPeriod < 1 or dayInPeriod < 1 or dayInPeriod > daysPerPeriod
+        or period < 1 or year < 0 then
         return
     end
 
-    -- Only fire once per month
-    if currentMonth == self.lastMonthPaid then
+    -- The last day of the period (on a one-day month, that one day is the last day).
+    if dayInPeriod ~= daysPerPeriod then
         return
     end
 
-    -- Days per month in FS25 = 28 (7 periods × 28 days each → 196-day year).
-    -- env.currentDay is the absolute day of the year (1-196).
-    -- Last day of each period = period * 28.
-    local lastDayOfThisMonth = currentMonth * 28
-
-    -- Fire once when the last day of the period is reached.
-    -- The outer `currentMonth == self.lastMonthPaid` check above already
-    -- prevents re-entry for the same month, so no inner guard is needed.
-    if currentDay >= lastDayOfThisMonth then
-        self.lastMonthPaid = currentMonth
-        self:triggerMonthlySalaryDialog(currentMonth)
+    -- Issue once per (year, period): a strictly increasing ordinal lets a new year's
+    -- same-named period issue again and blocks a repeated same-period check.
+    local ordinal = WorkerSystem._issuanceOrdinal(year, period)
+    if self.lastIssuedOrdinal ~= nil and self.lastIssuedOrdinal >= 0
+        and ordinal <= self.lastIssuedOrdinal then
+        return
     end
+    self.lastIssuedOrdinal = ordinal
+    self.lastMonthPaid = period  -- legacy mirror only; payment state lives on the bill
+    self:triggerMonthlySalaryDialog(period)
 end
 
 --- Build the salary summary and show the dialog (or pay silently if no GUI).
 ---@param month number  in-game month index
 function WorkerSystem:triggerMonthlySalaryDialog(month)
-    -- Flush any pending interval payments silently — the monthly dialog is
-    -- the single summary notification. Per-payment alerts here would be noise.
+    -- Flush any pending interval payments silently — the bill is the single summary.
     self:processWorkerPayments(true)
 
-    -- Build the entry list
-    local entries = {}
-    local total   = 0
-
-    for workerId, entry in pairs(self.monthlyCosts) do
-        if entry.amount > 0 then
-            -- Apply 20 % late-payment penalty if player declined last month
-            local finalAmount = entry.amount
-            if self.declinedLastMonth then
-                finalAmount = math.floor(entry.amount * 1.20)
-                self:log("Late-pay penalty applied to %s: $%d -> $%d", entry.name, entry.amount, finalAmount)
-            end
-            table.insert(entries, { name = entry.name, amount = finalAmount, farmId = entry.farmId })
-            total = total + finalAmount
-        end
-    end
-
-    -- Sort alphabetically for consistent display
-    table.sort(entries, function(a, b) return a.name < b.name end)
-
-    if total == 0 then
+    -- F223: freeze ONE immutable bill from the current accrual. This moves the accrued
+    -- rows OUT of live accrual so wages earned after issuance stay distinct, and bakes
+    -- the decline penalty (per-entry floor(base*1.20)) into the frozen final amounts.
+    local bill = self:_freezeMonthlyBill(month)
+    if bill == nil then
         self:log("Monthly salary: no costs accumulated — skipping dialog")
-        self.monthlyCosts = {}
         self.declinedLastMonth = false
         return
     end
 
+    local entries, total = self:_billEntries(bill)
     self:log("Monthly salary dialog triggered: month=%d, workers=%d, total=$%d", month, #entries, total)
 
-    -- Store for the callbacks
-    self.pendingSalary = { entries = entries, total = total, month = month }
+    -- Store the billId so Pay/Decline bind to THIS exact frozen bill, never to
+    -- whichever object happens to be pending when the button is clicked.
+    self.pendingSalary = { billId = bill.id, entries = entries, total = total, month = month }
 
-    -- Try to show the in-game GUI dialog; fall back to silent payment on dedicated/headless
     if g_gui and g_client then
         self:showSalaryDialog(entries, total, month)
     else
-        -- Dedicated server or no GUI — pay automatically
+        -- Dedicated server or no GUI — pay automatically.
         self:executeMonthlySalaryPayment()
     end
+end
+
+--- F223: freeze the current accrual into one immutable bill with per-farm parts. Each
+--- part keeps its exact base rows (pre-penalty) plus the per-entry priced final, so
+--- Pay/Decline bind to frozen amounts and later wages never change a displayed quote.
+---@param month number  in-game period index
+---@return table|nil bill  the frozen bill, or nil when nothing was accrued
+function WorkerSystem:_freezeMonthlyBill(month)
+    local env = g_currentMission and g_currentMission.environment
+    local year = (env and env.currentYear) or 0
+    local penalty = self.declinedLastMonth == true
+
+    -- parts is a LIST (not farm-keyed): an MP->SP conversion can retarget two old
+    -- parts onto one surviving farm, and each must still be consumed exactly once.
+    local parts = {}
+    for farmId, farmBook in pairs(self.monthlyCosts or {}) do
+        local baseRows, base, final = {}, 0, 0
+        for key, entry in pairs(farmBook) do
+            if entry and entry.amount and entry.amount > 0 then
+                baseRows[#baseRows + 1] = { key = key, name = entry.name or "Worker", amount = entry.amount }
+                base = base + entry.amount
+                -- Per-entry penalty floor (never compounded into principal).
+                final = final + (penalty and math.floor(entry.amount * 1.20) or entry.amount)
+            end
+        end
+        if base > 0 then
+            parts[#parts + 1] = {
+                farmId    = farmId,
+                baseRows  = baseRows,
+                base      = base,
+                final     = final,
+                remaining = final,
+                status    = WorkerSystem.PART_UNPAID,
+            }
+        end
+    end
+
+    if #parts == 0 then
+        return nil
+    end
+
+    local bill = {
+        id             = self.nextBillId,
+        issuedYear     = year,
+        issuedPeriod   = month,
+        penaltyApplied = penalty,
+        parts          = parts,
+    }
+    self.nextBillId = self.nextBillId + 1
+    self.salaryBills[bill.id] = bill
+
+    -- Move rows OUT of live accrual; wages after issuance accrue into a fresh book.
+    -- The penalty (if any) is now baked into this bill, so clear the carry-over flag.
+    self.monthlyCosts = {}
+    self.declinedLastMonth = false
+    return bill
+end
+
+--- Per-worker display rows for a frozen bill (alphabetical), plus the bill total.
+function WorkerSystem:_billEntries(bill)
+    local entries, total = {}, 0
+    local penalty = bill.penaltyApplied == true
+    for _, part in ipairs(bill.parts or {}) do
+        for _, row in ipairs(part.baseRows or {}) do
+            local amount = penalty and math.floor(row.amount * 1.20) or row.amount
+            entries[#entries + 1] = { name = row.name, amount = amount, farmId = part.farmId }
+            total = total + amount
+        end
+    end
+    table.sort(entries, function(a, b) return (a.name or "") < (b.name or "") end)
+    return entries, total
+end
+
+--- A bill is fully resolved when no part still owes money (UNPAID/INDETERMINATE with a
+--- positive remaining). Only then is it safe to drop from the book.
+function WorkerSystem:_billFullyResolved(bill)
+    for _, part in ipairs(bill.parts or {}) do
+        if (part.status == WorkerSystem.PART_UNPAID or part.status == WorkerSystem.PART_INDETERMINATE)
+            and (part.remaining or 0) > 0 then
+            return false
+        end
+    end
+    return true
 end
 
 --- Show the salary summary to the player using the registered WCSalaryDialog screen.
@@ -1018,91 +1214,110 @@ function WorkerSystem:showSalaryDialog(entries, total, month)
     end
 end
 
---- Deduct the monthly salary from the farm balance.
+--- Pay the salary bill the player just confirmed. Binds to the EXACT frozen bill id
+--- stored when the dialog opened, never to whatever accrual is current now.
 function WorkerSystem:executeMonthlySalaryPayment()
     if not self.pendingSalary then
         return
     end
-
-    local entries = self.pendingSalary.entries
-    local total   = self.pendingSalary.total
-    local month   = self.pendingSalary.month
+    local billId = self.pendingSalary.billId
+    local month  = self.pendingSalary.month
     self.pendingSalary = nil
+    self:paySalaryBill(billId, month)
+end
 
-    if total <= 0 then
-        self.monthlyCosts      = {}
-        self.declinedLastMonth = false
+--- Pay the UNPAID parts of one specific frozen bill. Each farm part retires exactly
+--- once on success; a native addMoney that throws leaves that part INDETERMINATE
+--- (retained, never auto-retried or treated as paid). A farm with no resolvable id
+--- this tick keeps its UNPAID part for a later attempt. The bill is dropped from the
+--- book only when no part still owes money (Direction 4 / native addMoney has no
+--- success boolean, so we validate farm/server before mutating and never fabricate).
+---@param billId number|nil
+---@param month number|nil  for the log line only
+function WorkerSystem:paySalaryBill(billId, month)
+    local bill = billId and self.salaryBills[billId]
+    if bill == nil then
         return
     end
 
-    -- Charge per owning farm (explicit farmId on each accrual). Dedicated-safe.
-    local byFarm = {}
-    for _, entry in ipairs(entries or {}) do
-        local fid = self:_resolveBillingFarmId(entry.farmId)
-        if fid ~= nil and entry.amount and entry.amount > 0 then
-            byFarm[fid] = (byFarm[fid] or 0) + entry.amount
-        end
-    end
-    if next(byFarm) == nil then
-        -- Legacy accrual without farmId: try local real farm only.
-        local fallback = self:_resolveBillingFarmId(nil)
-        if fallback == nil then
-            self:log("executeMonthlySalaryPayment: no valid farmId, skipping")
-            self.monthlyCosts      = {}
-            self.declinedLastMonth = false
-            return
-        end
-        byFarm[fallback] = total
-    end
-
-    local paidOk = true
-    for farmId, farmTotal in pairs(byFarm) do
-        self._isProcessingPayment = true
-        local ok, err = pcall(function()
-            g_currentMission:addMoney(-farmTotal, farmId, MoneyType.OTHER, false)
-        end)
-        self._isProcessingPayment = false
-        if not ok then
-            paidOk = false
-            self:log("executeMonthlySalaryPayment: addMoney error farm %d: %s", farmId, tostring(err))
+    local paidTotal, paidFarms = 0, 0
+    for _, part in ipairs(bill.parts) do
+        if part.status == WorkerSystem.PART_UNPAID and (part.remaining or 0) > 0 then
+            local fid = self:_resolveBillingFarmId(part.farmId)
+            if fid ~= nil then
+                self._isProcessingPayment = true
+                local ok, err = pcall(function()
+                    g_currentMission:addMoney(-part.remaining, fid, MoneyType.OTHER, false)
+                end)
+                self._isProcessingPayment = false
+                if ok then
+                    paidTotal = paidTotal + part.remaining
+                    paidFarms = paidFarms + 1
+                    part.remaining = 0
+                    part.status = WorkerSystem.PART_PAID
+                else
+                    -- Unknown native effect: retain evidence, do not retry or mark paid.
+                    part.status = WorkerSystem.PART_INDETERMINATE
+                    self:log("paySalaryBill: addMoney error farm %s: %s", tostring(fid), tostring(err))
+                end
+            end
         end
     end
 
-    if paidOk then
-        self:log("Monthly salary paid: month=%d, workers=%d, total=%d", month, #entries, total)
+    if self:_billFullyResolved(bill) then
+        self.salaryBills[billId] = nil
+    end
 
+    if paidTotal > 0 then
+        self:log("Monthly salary bill %s (month %s): paid %d across %d farm(s)",
+            tostring(billId), tostring(month), paidTotal, paidFarms)
         if self.settings.showNotifications then
-            local money = g_i18n and g_i18n:formatMoney(total, 0, true, true) or tostring(total)
-            local msg = string.format("Monthly salary paid: %s for %d worker(s)", money, #entries)
-            self:showNotification("Monthly Salary", msg)
+            local money = g_i18n and g_i18n:formatMoney(paidTotal, 0, true, true) or tostring(paidTotal)
+            self:showNotification("Monthly Salary",
+                string.format("Monthly salary paid: %s for %d farm(s)", money, paidFarms))
         end
     end
-
-    -- Reset for next month
-    self.monthlyCosts      = {}
-    self.declinedLastMonth = false
 end
 
---- Called when the player declines to pay the monthly salary.
+--- Called when the player declines to pay the monthly salary. F223: return only the
+--- UNPAID frozen BASE rows (pre-penalty) to live accrual, so the next bill re-prices
+--- them once with the existing floor(base*1.20) rule — the penalty is never compounded
+--- into principal or added as a new fee. Set the global decline flag for the next bill.
 function WorkerSystem:declineMonthlySalary()
     if not self.pendingSalary then
         return
     end
-
-    local total = self.pendingSalary.total
-    local month = self.pendingSalary.month
+    local billId = self.pendingSalary.billId
+    local total  = self.pendingSalary.total
+    local month  = self.pendingSalary.month
     self.pendingSalary = nil
 
-    self:log("Monthly salary DECLINED: month=%d, total=$%d — penalty will apply next month", month, total)
+    local bill = billId and self.salaryBills[billId]
+    if bill then
+        for _, part in ipairs(bill.parts) do
+            if part.status == WorkerSystem.PART_UNPAID then
+                for _, row in ipairs(part.baseRows or {}) do
+                    self:_accrueRow(part.farmId, row.key, row.name, row.amount)
+                end
+                -- This part's obligation is back in accrual; it no longer owes on the bill.
+                part.remaining = 0
+                part.status = WorkerSystem.PART_PAID  -- resolved-off-bill (moved to accrual)
+            end
+        end
+        -- Drop the bill once nothing on it still owes (PAID/returned parts only).
+        if self:_billFullyResolved(bill) then
+            self.salaryBills[billId] = nil
+        end
+    end
+
+    self.declinedLastMonth = true
+    self:log("Monthly salary DECLINED: month=%s, total=$%d — penalty applies next bill", tostring(month), total)
 
     if self.settings.showNotifications then
         local money = g_i18n and g_i18n:formatMoney(total, 0, true, true) or tostring(total)
         self:showNotification("Monthly Salary Declined",
             string.format("Warning: %s salary declined — workers will demand 20%% more next month!", money))
     end
-
-    -- Keep monthlyCosts so the unpaid amounts carry over and are penalised next month
-    self.declinedLastMonth = true
 end
 
 -- ─────────────────────────────────────────────────────────
@@ -1115,7 +1330,10 @@ end
 -- ─────────────────────────────────────────────────────────
 WorkerSystem.MONTHLY_SAVE_FILE      = "workerMonthlySalary.xml"
 WorkerSystem.MONTHLY_SAVE_ROOT      = "workerMonthlySalary"
-WorkerSystem.MONTHLY_SCHEMA_VERSION = "1"
+-- F223 schema 2: nested per-farm accrual, frozen bills with per-farm parts + base
+-- rows, the issuance ordinal and nextBillId, and retained legacy-unattributed rows.
+-- Schema 1 (flat worker rows) is migrated on load, never rewritten in place.
+WorkerSystem.MONTHLY_SCHEMA_VERSION = "2"
 
 function WorkerSystem:saveMonthlyState(missionInfo)
     local dir = missionInfo and missionInfo.savegameDirectory
@@ -1132,21 +1350,75 @@ function WorkerSystem:saveMonthlyState(missionInfo)
 
     local root = WorkerSystem.MONTHLY_SAVE_ROOT
     xmlFile:setString(root .. "#version", WorkerSystem.MONTHLY_SCHEMA_VERSION)
-    xmlFile:setInt(root .. "#lastMonthPaid", self.lastMonthPaid or -1)
+    xmlFile:setInt(root .. "#lastIssuedOrdinal", self.lastIssuedOrdinal or -1)
+    xmlFile:setInt(root .. "#nextBillId", self.nextBillId or 1)
+    xmlFile:setInt(root .. "#lastMonthPaid", self.lastMonthPaid or -1)  -- legacy mirror
     xmlFile:setBool(root .. "#declinedLastMonth", self.declinedLastMonth == true)
 
-    local i = 0
-    for workerId, entry in pairs(self.monthlyCosts or {}) do
-        if entry and entry.amount and entry.amount > 0 then
-            local key = string.format("%s.worker(%d)", root, i)
-            xmlFile:setString(key .. "#id", tostring(workerId))
-            xmlFile:setString(key .. "#name", entry.name)
-            xmlFile:setInt(key .. "#amount", math.floor(entry.amount))
-            if entry.farmId ~= nil then
-                xmlFile:setInt(key .. "#farmId", entry.farmId)
-            end
-            i = i + 1
+    -- Unbilled accrual, nested farm -> worker (explicit-empty is a valid save).
+    local fi = 0
+    for farmId, farmBook in pairs(self.monthlyCosts or {}) do
+        local hasRows = false
+        for _, e in pairs(farmBook) do
+            if e and e.amount and e.amount > 0 then hasRows = true; break end
         end
+        if hasRows and self:_isRealFarmId(farmId) then
+            local fkey = string.format("%s.accrual.farm(%d)", root, fi)
+            xmlFile:setInt(fkey .. "#id", farmId)
+            local wi = 0
+            for key, entry in pairs(farmBook) do
+                if entry and entry.amount and entry.amount > 0 then
+                    local wkey = string.format("%s.worker(%d)", fkey, wi)
+                    xmlFile:setString(wkey .. "#key", tostring(key))
+                    xmlFile:setString(wkey .. "#name", entry.name or "Worker")
+                    xmlFile:setInt(wkey .. "#amount", math.floor(entry.amount))
+                    wi = wi + 1
+                end
+            end
+            fi = fi + 1
+        end
+    end
+
+    -- Frozen bills with per-farm parts and their exact base rows.
+    local bi = 0
+    for _, bill in pairs(self.salaryBills or {}) do
+        local bkey = string.format("%s.bills.bill(%d)", root, bi)
+        xmlFile:setInt(bkey .. "#id", bill.id)
+        xmlFile:setInt(bkey .. "#issuedYear", bill.issuedYear or 0)
+        xmlFile:setInt(bkey .. "#issuedPeriod", bill.issuedPeriod or 0)
+        xmlFile:setBool(bkey .. "#penaltyApplied", bill.penaltyApplied == true)
+        local pi = 0
+        for _, part in ipairs(bill.parts or {}) do
+            local pkey = string.format("%s.part(%d)", bkey, pi)
+            xmlFile:setInt(pkey .. "#farmId", part.farmId or 0)
+            xmlFile:setInt(pkey .. "#base", math.floor(part.base or 0))
+            xmlFile:setInt(pkey .. "#final", math.floor(part.final or 0))
+            xmlFile:setInt(pkey .. "#remaining", math.floor(part.remaining or 0))
+            xmlFile:setString(pkey .. "#status", part.status or WorkerSystem.PART_UNPAID)
+            local ri = 0
+            for _, row in ipairs(part.baseRows or {}) do
+                local rkey = string.format("%s.row(%d)", pkey, ri)
+                xmlFile:setString(rkey .. "#key", tostring(row.key))
+                xmlFile:setString(rkey .. "#name", row.name or "Worker")
+                xmlFile:setInt(rkey .. "#amount", math.floor(row.amount or 0))
+                ri = ri + 1
+            end
+            pi = pi + 1
+        end
+        bi = bi + 1
+    end
+
+    -- Retained legacy-unattributed rows (evidence only; never charged or defaulted).
+    local li = 0
+    for _, row in ipairs(self.legacyUnattributed or {}) do
+        local lkey = string.format("%s.legacyUnattributed.row(%d)", root, li)
+        xmlFile:setString(lkey .. "#id", tostring(row.id))
+        xmlFile:setString(lkey .. "#name", row.name or "Worker")
+        xmlFile:setInt(lkey .. "#amount", math.floor(row.amount or 0))
+        if row.recordedFarmId ~= nil then
+            xmlFile:setInt(lkey .. "#recordedFarmId", row.recordedFarmId)
+        end
+        li = li + 1
     end
 
     xmlFile:save()
@@ -1167,25 +1439,129 @@ function WorkerSystem:loadMonthlyState(missionInfo)
     end
 
     local root = WorkerSystem.MONTHLY_SAVE_ROOT
-    self.lastMonthPaid     = xmlFile:getInt(root .. "#lastMonthPaid", self.lastMonthPaid or -1)
-    self.declinedLastMonth = xmlFile:getBool(root .. "#declinedLastMonth", false)
+    local version = xmlFile:getString(root .. "#version") or "1"
 
-    self.monthlyCosts = {}
-    xmlFile:iterate(root .. ".worker", function(_, key)
-        local name   = xmlFile:getString(key .. "#name")
-        local amount = xmlFile:getInt(key .. "#amount", 0)
-        local id     = xmlFile:getString(key .. "#id") or name
-        local farmId = xmlFile:getInt(key .. "#farmId", 0)
-        if name and amount > 0 then
-            local entry = { name = name, amount = amount }
-            if farmId and farmId > 0 then
-                entry.farmId = farmId
+    -- Read everything into temporary state, validate, then install once. Never
+    -- overwrite a live book on a repeated load (Direction 7).
+    local accrual, bills, legacy = {}, {}, {}
+    local declined           = xmlFile:getBool(root .. "#declinedLastMonth", false)
+    local legacyLastMonthPaid = xmlFile:getInt(root .. "#lastMonthPaid", -1)
+    local nextBillId         = 1
+    local lastIssuedOrdinal  = -1
+
+    if version == WorkerSystem.MONTHLY_SCHEMA_VERSION then
+        lastIssuedOrdinal = xmlFile:getInt(root .. "#lastIssuedOrdinal", -1)
+        nextBillId        = xmlFile:getInt(root .. "#nextBillId", 1)
+
+        xmlFile:iterate(root .. ".accrual.farm", function(_, fkey)
+            local farmId = xmlFile:getInt(fkey .. "#id", 0)
+            if self:_isRealFarmId(farmId) then
+                local book = accrual[farmId] or {}
+                xmlFile:iterate(fkey .. ".worker", function(_, wkey)
+                    local key    = xmlFile:getString(wkey .. "#key")
+                    local name   = xmlFile:getString(wkey .. "#name") or "Worker"
+                    local amount = xmlFile:getInt(wkey .. "#amount", 0)
+                    if key and amount > 0 then
+                        local existing = book[key]
+                        if existing then existing.amount = existing.amount + amount
+                        else book[key] = { name = name, amount = amount } end
+                    end
+                end)
+                if next(book) ~= nil then accrual[farmId] = book end
             end
-            self.monthlyCosts[id] = entry
+        end)
+
+        xmlFile:iterate(root .. ".bills.bill", function(_, bkey)
+            local id = xmlFile:getInt(bkey .. "#id", 0)
+            if id and id > 0 then
+                local bill = {
+                    id             = id,
+                    issuedYear     = xmlFile:getInt(bkey .. "#issuedYear", 0),
+                    issuedPeriod   = xmlFile:getInt(bkey .. "#issuedPeriod", 0),
+                    penaltyApplied = xmlFile:getBool(bkey .. "#penaltyApplied", false),
+                    parts          = {},
+                }
+                xmlFile:iterate(bkey .. ".part", function(_, pkey)
+                    local part = {
+                        farmId    = xmlFile:getInt(pkey .. "#farmId", 0),
+                        base      = xmlFile:getInt(pkey .. "#base", 0),
+                        final     = xmlFile:getInt(pkey .. "#final", 0),
+                        remaining = xmlFile:getInt(pkey .. "#remaining", 0),
+                        status    = xmlFile:getString(pkey .. "#status") or WorkerSystem.PART_UNPAID,
+                        baseRows  = {},
+                    }
+                    xmlFile:iterate(pkey .. ".row", function(_, rkey)
+                        local k = xmlFile:getString(rkey .. "#key")
+                        local n = xmlFile:getString(rkey .. "#name") or "Worker"
+                        local a = xmlFile:getInt(rkey .. "#amount", 0)
+                        if k then part.baseRows[#part.baseRows + 1] = { key = k, name = n, amount = a } end
+                    end)
+                    bill.parts[#bill.parts + 1] = part
+                end)
+                bills[id] = bill
+                if id >= nextBillId then nextBillId = id + 1 end
+            end
+        end)
+
+        xmlFile:iterate(root .. ".legacyUnattributed.row", function(_, lkey)
+            local amount = xmlFile:getInt(lkey .. "#amount", 0)
+            if amount > 0 then
+                local rf = xmlFile:getInt(lkey .. "#recordedFarmId", -1)
+                legacy[#legacy + 1] = {
+                    id             = xmlFile:getString(lkey .. "#id"),
+                    name           = xmlFile:getString(lkey .. "#name") or "Worker",
+                    amount         = amount,
+                    recordedFarmId = (rf ~= -1) and rf or nil,
+                }
+            end
+        end)
+    else
+        -- Schema 1 migration: flat worker rows {id, name, amount, farmId}. A valid
+        -- recorded farm becomes carried unbilled accrual; a missing/invalid target is
+        -- retained as legacy-unattributed evidence, never defaulted to a farm or
+        -- charged to a borrower (Direction 8). Old first-farm pooling is NOT undone:
+        -- a previously pooled amount keeps its whole recorded target.
+        xmlFile:iterate(root .. ".worker", function(_, wkey)
+            local id     = xmlFile:getString(wkey .. "#id")
+            local name   = xmlFile:getString(wkey .. "#name") or "Worker"
+            local amount = xmlFile:getInt(wkey .. "#amount", 0)
+            local farmId = xmlFile:getInt(wkey .. "#farmId", 0)
+            if amount > 0 then
+                if self:_isRealFarmId(farmId) then
+                    local book = accrual[farmId] or {}
+                    local key  = tostring(id or name)
+                    local existing = book[key]
+                    if existing then existing.amount = existing.amount + amount
+                    else book[key] = { name = name, amount = amount } end
+                    accrual[farmId] = book
+                else
+                    legacy[#legacy + 1] = { id = id or name, name = name, amount = amount,
+                        recordedFarmId = (farmId ~= 0) and farmId or nil }
+                end
+            end
+        end)
+
+        -- Direction 9: a legacy lastMonthPaid matching the currently loaded period
+        -- seeds this period's issuance ordinal so we do not re-issue it; a nonmatching
+        -- marker seeds nothing. New (schema 2) saves carry the exact ordinal, so this
+        -- ambiguity cannot recur.
+        local env = g_currentMission and g_currentMission.environment
+        if env and type(env.currentPeriod) == "number" and type(env.currentYear) == "number"
+            and legacyLastMonthPaid >= 1 and env.currentPeriod == legacyLastMonthPaid then
+            lastIssuedOrdinal = WorkerSystem._issuanceOrdinal(env.currentYear, legacyLastMonthPaid)
         end
-    end)
+    end
 
     xmlFile:delete()
+
+    -- Install once.
+    self.monthlyCosts       = accrual
+    self.salaryBills        = bills
+    self.legacyUnattributed = legacy
+    self.nextBillId         = math.max(1, nextBillId)
+    self.lastIssuedOrdinal  = lastIssuedOrdinal
+    self.declinedLastMonth  = declined
+    self.lastMonthPaid      = legacyLastMonthPaid
     return true
 end
 
@@ -1194,64 +1570,260 @@ end
 --- orphaned - the money still moves exactly once. Keeps the accrual on failure
 --- (e.g. no valid farm yet) so the next update tick retries.
 function WorkerSystem:settlePendingMonthlyAccrual()
-    if not self.monthlyCosts then
-        return
-    end
+    -- F223: settle per farm so a farm that cannot be charged this tick keeps its own
+    -- state and retries later (money still moves exactly once). Covers both unbilled
+    -- accrual and any still-owed frozen bill parts, so switching monthly mode off never
+    -- orphans money. Accrual farm ids are always real (stored at accrual time).
+    local paidTotal, paidFarms = 0, 0
 
-    local total = 0
-    for _, entry in pairs(self.monthlyCosts) do
-        if entry and entry.amount and entry.amount > 0 then
-            total = total + entry.amount
+    -- 1) Unbilled accrual, per farm.
+    for farmId, farmBook in pairs(self.monthlyCosts or {}) do
+        local sum = 0
+        for _, entry in pairs(farmBook) do
+            if entry and entry.amount and entry.amount > 0 then
+                sum = sum + entry.amount
+            end
         end
-    end
-
-    if total <= 0 then
-        self.monthlyCosts = {}
-        return
-    end
-
-    -- Charge per owning farm from accrual entries (dedicated-safe).
-    local byFarm = {}
-    for _, entry in pairs(self.monthlyCosts) do
-        if entry and entry.amount and entry.amount > 0 then
-            local fid = self:_resolveBillingFarmId(entry.farmId)
-            if fid ~= nil then
-                byFarm[fid] = (byFarm[fid] or 0) + entry.amount
+        if sum > 0 and self:_isRealFarmId(farmId) then
+            self._isProcessingPayment = true
+            local ok, err = pcall(function()
+                g_currentMission:addMoney(-sum, farmId, MoneyType.OTHER, false)
+            end)
+            self._isProcessingPayment = false
+            if ok then
+                self.monthlyCosts[farmId] = nil
+                paidTotal = paidTotal + sum
+                paidFarms = paidFarms + 1
+            else
+                self:log("settlePendingMonthlyAccrual: addMoney error farm %s: %s", tostring(farmId), tostring(err))
             end
         end
     end
-    if next(byFarm) == nil then
-        local fallback = self:_resolveBillingFarmId(nil)
-        if fallback == nil then
-            return  -- no valid farm this tick; keep the accrual and retry
+
+    -- 2) Still-owed frozen bill parts, per farm.
+    for billId, bill in pairs(self.salaryBills or {}) do
+        for _, part in ipairs(bill.parts) do
+            if part.status == WorkerSystem.PART_UNPAID and (part.remaining or 0) > 0
+                and self:_isRealFarmId(part.farmId) then
+                self._isProcessingPayment = true
+                local ok = pcall(function()
+                    g_currentMission:addMoney(-part.remaining, part.farmId, MoneyType.OTHER, false)
+                end)
+                self._isProcessingPayment = false
+                if ok then
+                    paidTotal = paidTotal + part.remaining
+                    part.remaining = 0
+                    part.status = WorkerSystem.PART_PAID
+                end
+            end
         end
-        byFarm[fallback] = total
-    end
-
-    local paidOk = true
-    for farmId, farmTotal in pairs(byFarm) do
-        self._isProcessingPayment = true
-        local ok, err = pcall(function()
-            g_currentMission:addMoney(-farmTotal, farmId, MoneyType.OTHER, false)
-        end)
-        self._isProcessingPayment = false
-        if not ok then
-            paidOk = false
-            self:log("settlePendingMonthlyAccrual: addMoney error farm %d: %s", farmId, tostring(err))
+        if self:_billFullyResolved(bill) then
+            self.salaryBills[billId] = nil
         end
     end
 
-    if not paidOk then
-        return  -- keep the accrual and retry next tick
+    if paidTotal > 0 then
+        self.declinedLastMonth = false
+        self:log("Settled pending monthly accrual after mode switch: %d (%d farm(s))", paidTotal, paidFarms)
+        if self.settings.showNotifications then
+            local money = g_i18n and g_i18n:formatMoney(paidTotal, 0, true, true) or tostring(paidTotal)
+            self:showNotification("Worker Salary Settled",
+                string.format("Pending monthly wages settled: -%s", money))
+        end
+    end
+end
+
+-- ─────────────────────────────────────────────────────────
+-- F223: native MP-to-SP farm conversion remap
+-- ─────────────────────────────────────────────────────────
+
+--- Apply the native g_farmManager.mergedFarms (old -> surviving id) map to OUR own
+--- obligations exactly once, before the owner is considered ready. Native cash/loan
+--- pooling already happened in the engine; this remaps only WorkerCosts' attributed
+--- accrual and frozen bill parts. Part identity and paid/indeterminate markers survive,
+--- so a repeated map (or reload) cannot pool the same amount twice. Only genuinely
+--- mapped origins with a real surviving target move; a missing farm alone is not a map.
+---@param mergedFarms table|nil  { [oldFarmId] = survivingFarmId }
+function WorkerSystem:remapMergedFarms(mergedFarms)
+    if type(mergedFarms) ~= "table" then return end
+
+    -- Accrual: move a mapped farm's worker rows onto the surviving farm. Equal worker
+    -- keys (same pricing/consumption identity) combine additively; distinct keys stay
+    -- distinct. Legacy-unassigned money is NOT made attributable by this map.
+    local moves = {}
+    for oldFarmId in pairs(self.monthlyCosts or {}) do
+        local target = mergedFarms[oldFarmId]
+        if target ~= nil and target ~= oldFarmId and self:_isRealFarmId(target) then
+            moves[oldFarmId] = target
+        end
+    end
+    for oldFarmId, target in pairs(moves) do
+        local src = self.monthlyCosts[oldFarmId]
+        self.monthlyCosts[oldFarmId] = nil
+        local dst = self.monthlyCosts[target] or {}
+        for key, entry in pairs(src or {}) do
+            if entry and entry.amount and entry.amount > 0 then
+                local existing = dst[key]
+                if existing then existing.amount = existing.amount + entry.amount
+                else dst[key] = { name = entry.name, amount = entry.amount } end
+            end
+        end
+        self.monthlyCosts[target] = dst
     end
 
-    self:log("Settled pending monthly accrual after mode switch: %d", total)
-    if self.settings.showNotifications then
-        local money = g_i18n and g_i18n:formatMoney(total, 0, true, true) or tostring(total)
-        self:showNotification("Worker Salary Settled",
-            string.format("Pending monthly wages settled: -%s", money))
+    -- Bill parts: retarget each part's farmId. Because parts are a list, two parts now
+    -- belonging to one farm simply coexist and are each consumed exactly once; a PAID
+    -- part keeps its status and is never revived. Original id is preserved as provenance.
+    for _, bill in pairs(self.salaryBills or {}) do
+        for _, part in ipairs(bill.parts or {}) do
+            local target = mergedFarms[part.farmId]
+            if target ~= nil and target ~= part.farmId and self:_isRealFarmId(target) then
+                part.originFarmId = part.originFarmId or part.farmId
+                part.farmId = target
+            end
+        end
+    end
+end
+
+-- ─────────────────────────────────────────────────────────
+-- F223 / C3: pure payroll obligation reader (for the emergency-loan forecast)
+-- ─────────────────────────────────────────────────────────
+
+WorkerSystem.PAYROLL_CONTRACT_VERSION = 1
+
+--- Pure, server-only reader. Returns a COPIED version-1 snapshot of this farm's dated
+--- payroll cash obligations inside the supplied one-period horizon. It NEVER mutates
+--- payroll state, issues, pays, flushes open work or migrates (Direction 10/12). Issued
+--- unpaid bills are due-now cash events (clamped to asOf); unbilled measured work is
+--- placed once at its next payable last-day boundary (FIRST_OWNER_CHECK midnight), and
+--- future continuation is declared a coverage gap rather than invented. The shared date
+--- contract: dueDay = native monotonic day, dueTimeMs = ms since midnight.
+---@param farmId number
+---@param horizon table  { asOf = {monotonicDay, timeOfDayMs}, horizonEnd = {monotonicDay, timeOfDayMs}, daysPerPeriod, dayInPeriod }
+---@return table  version-1 payroll obligations snapshot (copied; never aliases live state)
+function WorkerSystem:getPayrollObligations(farmId, horizon)
+    local enabled = (self.settings and self.settings.monthlySalaryEnabled) == true
+    local result = {
+        version         = WorkerSystem.PAYROLL_CONTRACT_VERSION,
+        status          = "UNAVAILABLE",
+        farmId          = farmId,
+        asOf            = nil,
+        enabled         = enabled,
+        settlementMode  = enabled and "MONTHLY" or "IMMEDIATE",
+        coverageReasons = {},
+        events          = {},
+    }
+    local function gap(reason) result.coverageReasons[#result.coverageReasons + 1] = reason end
+
+    if g_currentMission == nil or g_currentMission.getIsServer == nil or not g_currentMission:getIsServer() then
+        gap("NOT_SERVER")
+        return result
+    end
+    if not self:_isRealFarmId(farmId) then
+        gap("INVALID_FARM")
+        return result
     end
 
-    self.monthlyCosts      = {}
-    self.declinedLastMonth = false
+    -- Validate the supplied date contract; an invalid clock is unavailable, not zero.
+    local asOf = horizon and horizon.asOf
+    if type(asOf) ~= "table" or type(asOf.monotonicDay) ~= "number" or type(asOf.timeOfDayMs) ~= "number"
+        or asOf.monotonicDay < 0 or asOf.monotonicDay % 1 ~= 0
+        or asOf.timeOfDayMs < 0 or asOf.timeOfDayMs >= 86400000 then
+        gap("INVALID_ASOF")
+        return result
+    end
+    result.asOf = { monotonicDay = asOf.monotonicDay, timeOfDayMs = asOf.timeOfDayMs }
+
+    local daysPerPeriod = horizon.daysPerPeriod
+    local dayInPeriod   = horizon.dayInPeriod
+    local endDay        = horizon.horizonEnd and horizon.horizonEnd.monotonicDay
+    local endTimeMs     = horizon.horizonEnd and horizon.horizonEnd.timeOfDayMs
+
+    local function withinHorizon(dueDay, dueTimeMs)
+        if type(endDay) ~= "number" then return true end
+        if dueDay < endDay then return true end
+        if dueDay > endDay then return false end
+        return dueTimeMs <= (endTimeMs or 0)
+    end
+
+    -- 1) Issued unpaid bills for this farm: due now, clamped to asOf.
+    for _, bill in pairs(self.salaryBills or {}) do
+        local sum, indeterminate = 0, false
+        for _, part in ipairs(bill.parts or {}) do
+            if part.farmId == farmId then
+                if part.status == WorkerSystem.PART_UNPAID and (part.remaining or 0) > 0 then
+                    sum = sum + part.remaining
+                elseif part.status == WorkerSystem.PART_INDETERMINATE then
+                    indeterminate = true
+                end
+            end
+        end
+        if indeterminate then gap("BILL_INDETERMINATE") end
+        if sum > 0 and withinHorizon(asOf.monotonicDay, asOf.timeOfDayMs) then
+            result.events[#result.events + 1] = {
+                sourceKey       = "payroll:bill:" .. tostring(bill.id),
+                dueDay          = asOf.monotonicDay,
+                dueTimeMs       = asOf.timeOfDayMs,
+                timingBasis     = "ISSUED_DUE_NOW",
+                fixedAmount     = sum,
+                estimatedAmount = 0,
+                basis           = "ISSUED_BILL",
+                componentIds    = { "bill:" .. tostring(bill.id) },
+            }
+        end
+    end
+
+    -- 2) Unbilled measured accrual for this farm: one event at the next payable last day
+    -- (or due-now at asOf if today is the last day and this period has not yet issued).
+    local accruedNow = 0
+    local farmBook = self.monthlyCosts[farmId]
+    if farmBook then
+        for _, entry in pairs(farmBook) do
+            if entry and entry.amount and entry.amount > 0 then accruedNow = accruedNow + entry.amount end
+        end
+    end
+    if accruedNow > 0 then
+        if type(daysPerPeriod) == "number" and type(dayInPeriod) == "number"
+            and daysPerPeriod >= 1 and dayInPeriod >= 1 and dayInPeriod <= daysPerPeriod then
+            local offset = daysPerPeriod - dayInPeriod
+            if offset == 0 then
+                -- Today is the last day; if this period already issued, the next payable
+                -- boundary is a full period out, not another due-now bill.
+                local env = g_currentMission.environment
+                if env and type(env.currentYear) == "number" and type(env.currentPeriod) == "number" then
+                    local ordinal = WorkerSystem._issuanceOrdinal(env.currentYear, env.currentPeriod)
+                    if self.lastIssuedOrdinal == ordinal then
+                        offset = daysPerPeriod
+                    end
+                end
+            end
+            local dueDay    = asOf.monotonicDay + offset
+            local dueTimeMs = (offset == 0) and asOf.timeOfDayMs or 0  -- FIRST_OWNER_CHECK midnight
+            if withinHorizon(dueDay, dueTimeMs) then
+                result.events[#result.events + 1] = {
+                    sourceKey       = "payroll:unbilled:" .. tostring(farmId),
+                    dueDay          = dueDay,
+                    dueTimeMs       = dueTimeMs,
+                    timingBasis     = (offset == 0) and "DUE_NOW" or "FIRST_OWNER_CHECK",
+                    fixedAmount     = accruedNow,
+                    estimatedAmount = 0,
+                    basis           = "UNBILLED_MEASURED",
+                    componentIds    = { "unbilled" },
+                }
+            end
+            -- Future crew continuation needs live job area; declare the gap, never invent.
+            gap("FUTURE_CONTINUATION_UNESTIMATED")
+        else
+            gap("NO_CALENDAR_FOR_UNBILLED")
+        end
+    end
+
+    -- Sort events by due day/time for a stable consumer view.
+    table.sort(result.events, function(a, b)
+        if a.dueDay ~= b.dueDay then return a.dueDay < b.dueDay end
+        return a.dueTimeMs < b.dueTimeMs
+    end)
+
+    result.status = (#result.coverageReasons > 0) and "PARTIAL" or "OK"
+    return result
 end

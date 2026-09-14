@@ -109,12 +109,15 @@ Evolution:pushUrgent(4)   -- dedupe
 T.eq("F142 B7 urgent first then slice", joinVisits(step(core)), "4,1,2,3,4,5")
 T.eq("F142 B7 urgent queue drained", #Evolution.urgentQueue, 0)
 
--- B8: client is a no-op.
+-- B8: client is a no-op, even with a seeded cursor and count.
 Evolution:reset()
 workers = makeWorkers(3); core = makeCore(workers)
+step(core)                                  -- host seeds count 3, cursor 0 (wrapped)
+Evolution.lastProcessedIndex = 2
 isHost = false
 T.eq("F142 B8 client visits nothing", joinVisits(step(core)), "")
-T.eq("F142 B8 client leaves count untouched", Evolution.lastRosterCount, 0)
+T.eq("F142 B8 client leaves count untouched", Evolution.lastRosterCount, 3)
+T.eq("F142 B8 client leaves cursor untouched", Evolution.lastProcessedIndex, 2)
 isHost = true
 
 -- B9: throttle: below STEP_INTERVAL nothing runs, timer accumulates.

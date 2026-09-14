@@ -27,7 +27,7 @@ HireHallCore = HireHallCore or {}
 HireHallCore.core = HireHallCore.core or {}
 HireHallCore.core.Evolution = HireHallCore.core.Evolution or {
     lastProcessedIndex = 0,   -- bucket-wheel cursor (0-based; wraps via modulo)
-    lastRosterCount    = 0,   -- detect shrinkage to reset the cursor (FR4)
+    lastRosterCount    = 0,   -- detect shrinkage to reset the cursor (FR4); growth keeps it
     urgentQueue        = {},  -- workerIds viewed in the FarmTablet -> processed first
 }
 local Evolution = HireHallCore.core.Evolution
@@ -119,11 +119,15 @@ function Evolution:update(core, dt)
         local workers = roster:getAll()
         local count = #workers
 
-        -- Roster shrinkage guard (FR4): reset the cursor to avoid out-of-bounds.
-        if count ~= self.lastRosterCount then
+        -- Roster shrinkage guard (FR4): reset the cursor only when the roster
+        -- shrinks, so it cannot point past the end. On growth the cursor keeps
+        -- its place and the modulo slice visits the added workers naturally
+        -- (RSF-F142: a reset on growth sent late-array workers to the back of
+        -- the wheel every time someone was hired).
+        if count < self.lastRosterCount then
             self.lastProcessedIndex = 0
-            self.lastRosterCount = count
         end
+        self.lastRosterCount = count
         if count == 0 then
             return
         end

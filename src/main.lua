@@ -58,6 +58,7 @@ source(modDirectory .. "src/hireHallCore/integration/HireHallJobMonitor.lua") --
 source(modDirectory .. "src/hireHallCore/xml/HireHallSchema.lua")
 
 source(modDirectory .. "src/gui/WCRosterPanel.lua") -- created in WorkerManager.new, so load before it
+source(modDirectory .. "src/WorkerContextInput.lua")
 source(modDirectory .. "src/WorkerManager.lua")
 source(modDirectory .. "src/WCNetworkEvents.lua")   -- Pro-Staff Phase 5: MP roster sync + command events
 
@@ -95,6 +96,10 @@ local function loadedMission(mission, node)
     end
     
     wm:onMissionLoaded()
+
+    -- RSF-F201: deterministic PLAYER input recovery once the mission is loaded.
+    -- No-op when the expected set is already complete or the context is absent.
+    wm:catchUpRosterInput()
 
     -- Trigger GUI tab registration after map load
     if g_wcModGui ~= nil then

@@ -27,6 +27,25 @@
 WorkerManager = WorkerManager or {}
 local WorkerManager_mt = Class(WorkerManager)
 
+-- RSF-F201 input record and expected sets. The record lives on this class table
+-- (latched `WorkerManager = WorkerManager or {}` above) so it survives mission
+-- teardown and a script reload; the per-mission instance only binds as owner.
+local function wcInputRecord()
+    return WorkerContextInput.record(WorkerManager, "_f201Input")
+end
+
+local function wcHasRosterPanel(owner) return owner.rosterPanel ~= nil end
+local function wcHideRow(binding, eventId) binding:setActionEventTextVisibility(eventId, false) end
+
+local WC_PLAYER_SPECS = {
+    { action = "WC_OPEN_ROSTER", handler = "onOpenRosterInput", idField = "rosterPlayerEventId",
+      present = wcHasRosterPanel, after = wcHideRow, up = false, down = true, always = false, startActive = true },
+}
+local WC_VEHICLE_SPECS = {
+    { action = "WC_OPEN_ROSTER", handler = "onOpenRosterInput", idField = "rosterVehicleEventId",
+      present = wcHasRosterPanel, after = wcHideRow, up = false, down = true, always = false, startActive = true },
+}
+
 -- Pro-Staff Phase 5: recruitment pool. The host keeps a small rotating set of
 -- candidates the player can hire from the Farm Tablet Personnel app. Candidate
 -- names come from this pool (no text-input field on a controller-friendly tablet).
@@ -85,7 +104,7 @@ function WorkerManager.new(mission, modDirectory, modName)
     -- renders. Opened via the WorkerCostsRoster console command.
     if mission:getIsClient() and WCRosterPanel then
         self.rosterPanel = WCRosterPanel.new(self.workerRoster, self.workerSystem)
-        self:installRosterInput()
+        self:installRosterInput(mission)
     end
 
     if mission:getIsClient() and g_gui then
@@ -205,6 +224,9 @@ function WorkerManager:onMissionLoaded()
 end
 
 function WorkerManager:update(dt)
+    -- RSF-F201: admission reset is the first input act of every update interval,
+    -- before the server/client gates below.
+    WorkerContextInput.resetAdmission(wcInputRecord())
     -- Wage billing is server-authoritative. workerSystem:update runs the payment
     -- tick that calls g_currentMission:addMoney, so a pure MP client must never
     -- enter it. (Clients being spared today only because aiSystem:getActiveJobs()
@@ -805,72 +827,41 @@ end
 
 -- Phase 5: register the rebindable WC_OPEN_ROSTER action (default ALT+H, shown in
 -- the Controls menu) in BOTH the on-foot (PLAYER) and in-vehicle (VEHICLE) input
--- contexts. Mirrors SoilFertilizer's proven dual-context registration so the hotkey
--- works whether the player is walking or driving. The console command is the fallback.
-function WorkerManager:installRosterInput()
+-- contexts, so the hotkey works whether the player is walking or driving. The
+-- console command is the fallback.
+--
+-- RSF-F201: each context registers through its own private forwarding target,
+-- so the two registrations never share an engine identifier (the old shared
+-- `mgr` target made them one global slot, which is why the vehicle hook used
+-- to clear both ids on every seat change and never restored PLAYER). Membership
+-- is asked of the wrap's own context; a complete set costs no transaction. The
+-- wrappers install once per loaded script environment and the record lives on
+-- the WorkerManager class table; each mission only binds a new owner.
+function WorkerManager:installRosterInput(mission)
     if not (InputAction and InputAction.WC_OPEN_ROSTER and g_inputBinding) then
         Logging.warning("[Worker Costs] WC_OPEN_ROSTER action unavailable - roster hotkey not bound")
         return
     end
-
-    -- PLAYER (on-foot) context.
-    if PlayerInputComponent and PlayerInputComponent.registerActionEvents then
-        local original = PlayerInputComponent.registerActionEvents
-        self._rosterPlayerInputOriginal = original
-        PlayerInputComponent.registerActionEvents = function(inputComponent, ...)
-            original(inputComponent, ...)
-            if not (inputComponent.player and inputComponent.player.isOwner) then return end
-            local mgr = g_WorkerManager
-            if not mgr or not mgr.rosterPanel or mgr.rosterPlayerEventId then return end
-            g_inputBinding:beginActionEventsModification(PlayerInputComponent.INPUT_CONTEXT_NAME)
-            local ok, id = g_inputBinding:registerActionEvent(
-                InputAction.WC_OPEN_ROSTER, mgr, mgr.onOpenRosterInput, false, true, false, true)
-            if ok and id then
-                mgr.rosterPlayerEventId = id
-                g_inputBinding:setActionEventTextVisibility(id, false)
-            end
-            g_inputBinding:endActionEventsModification()
-        end
+    -- Install once per loaded script environment; the helper latches on its
+    -- captured predecessors, so a second call is a no-op.
+    local record = wcInputRecord()
+    WorkerContextInput.installPlayerWrapper(record, WC_PLAYER_SPECS)
+    if Vehicle then
+        WorkerContextInput.installVehicleWrapper(record, WC_VEHICLE_SPECS)
     end
+    if PlayerInputComponent == nil or Vehicle == nil then return end
+    WorkerContextInput.activate(record, self, mission or self.mission or g_currentMission, {
+        [PlayerInputComponent.INPUT_CONTEXT_NAME] = WC_PLAYER_SPECS,
+        [Vehicle.INPUT_CONTEXT_NAME]              = WC_VEHICLE_SPECS,
+    })
+end
 
-    -- VEHICLE context, via InputBinding.endActionEventsModification (hooking
-    -- Vehicle.registerActionEvents directly does not work once vehicles exist).
-    if InputBinding and InputBinding.endActionEventsModification and Vehicle then
-        local originalEndMod = InputBinding.endActionEventsModification
-        self._rosterVehicleInputOriginal = originalEndMod
-        local reentrant = false
-        InputBinding.endActionEventsModification = function(binding, ignoreCheck)
-            local contextName = ""
-            if binding.registrationContext and
-               binding.registrationContext ~= InputBinding.NO_REGISTRATION_CONTEXT then
-                contextName = binding.registrationContext.name or ""
-            end
-            originalEndMod(binding, ignoreCheck)
-            if contextName ~= Vehicle.INPUT_CONTEXT_NAME or reentrant then return end
-            local mgr = g_WorkerManager
-            if not mgr or not mgr.rosterPanel then return end
-            reentrant = true
-            -- Fires on every seat change; purge stale ids (slot-based removeActionEvent
-            -- can invalidate the PLAYER slot too, so clear both and let them re-register).
-            if mgr.rosterVehicleEventId then
-                pcall(function() binding:removeActionEvent(mgr.rosterVehicleEventId) end)
-                mgr.rosterVehicleEventId = nil
-            end
-            if mgr.rosterPlayerEventId then
-                pcall(function() binding:removeActionEvent(mgr.rosterPlayerEventId) end)
-                mgr.rosterPlayerEventId = nil
-            end
-            binding:beginActionEventsModification(Vehicle.INPUT_CONTEXT_NAME)
-            local ok, id = binding:registerActionEvent(
-                InputAction.WC_OPEN_ROSTER, mgr, mgr.onOpenRosterInput, false, true, false, true)
-            if ok and id then
-                mgr.rosterVehicleEventId = id
-                binding:setActionEventTextVisibility(id, false)
-            end
-            binding:endActionEventsModification()
-            reentrant = false
-        end
-    end
+--- RSF-F201 deterministic post-load recovery: one complete PLAYER reconciliation
+--- from main.lua's loadedMission door, if the local owning player and the native
+--- PLAYER context already exist. Creates no context and no timer; when the
+--- context is not there yet the installed PLAYER wrapper is the later door.
+function WorkerManager:catchUpRosterInput()
+    WorkerContextInput.catchUpPlayer(wcInputRecord(), WC_PLAYER_SPECS)
 end
 
 -- Input callback for the WC_OPEN_ROSTER action.
@@ -881,15 +872,11 @@ function WorkerManager:onOpenRosterInput()
 end
 
 function WorkerManager:delete()
-    -- Restore the original input functions we hooked, so they don't accumulate.
-    if self._rosterPlayerInputOriginal and PlayerInputComponent then
-        PlayerInputComponent.registerActionEvents = self._rosterPlayerInputOriginal
-        self._rosterPlayerInputOriginal = nil
-    end
-    if self._rosterVehicleInputOriginal and InputBinding then
-        InputBinding.endActionEventsModification = self._rosterVehicleInputOriginal
-        self._rosterVehicleInputOriginal = nil
-    end
+    -- RSF-F201: retire this owner's registration activity. Old forwarding
+    -- targets go inert and the owner reference is released. The captured
+    -- input predecessors are NOT restored: restoring per mission can remove a
+    -- later mod's wrapper. They stay installed for the whole session.
+    WorkerContextInput.retire(wcInputRecord())
 
     -- Restore the original mission.addMoney before the mission object is torn down
     if self.workerSystem then

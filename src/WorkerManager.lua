@@ -842,13 +842,12 @@ function WorkerManager:installRosterInput(mission)
         Logging.warning("[Worker Costs] WC_OPEN_ROSTER action unavailable - roster hotkey not bound")
         return
     end
+    -- Install once per loaded script environment; the helper latches on its
+    -- captured predecessors, so a second call is a no-op.
     local record = wcInputRecord()
-    if not record.installed then
-        record.installed = true
-        WorkerContextInput.installPlayerWrapper(record, WC_PLAYER_SPECS)
-        if Vehicle then
-            WorkerContextInput.installVehicleWrapper(record, WC_VEHICLE_SPECS)
-        end
+    WorkerContextInput.installPlayerWrapper(record, WC_PLAYER_SPECS)
+    if Vehicle then
+        WorkerContextInput.installVehicleWrapper(record, WC_VEHICLE_SPECS)
     end
     if PlayerInputComponent == nil or Vehicle == nil then return end
     WorkerContextInput.activate(record, self, mission or self.mission or g_currentMission, {

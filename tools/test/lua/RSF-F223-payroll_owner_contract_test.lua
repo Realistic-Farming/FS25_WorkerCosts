@@ -49,6 +49,10 @@ sourceSettings.monthlySalaryEnabled = true
 
 local sourceMoneyCalls = 0
 g_currentMission = {
+    -- The player is in the world: BaseMission sets this true in onStartMission only.
+    -- Group A asserts the in-gameplay contract, so it must be explicit here; the
+    -- load-screen case (false) is pinned separately in GROUP A0 below.
+    isMissionStarted = true,
     environment = {
         currentYear = 1, currentPeriod = 1, currentDay = 3,
         currentMonotonicDay = 3, currentDayInPeriod = 3, daysPerPeriod = 3,
@@ -57,6 +61,55 @@ g_currentMission = {
     getIsServer = function() return true end,
     addMoney = function() sourceMoneyCalls = sourceMoneyCalls + 1 end,
 }
+
+-- GROUP A0: the salary bill must not be issued before gameplay starts.
+-- Regression for the load-screen modal: a save sitting on the last day of a period
+-- (daysPerPeriod = 1 makes EVERY day the last day) issued the bill on the load frame,
+-- stacking a dialog over the paused 100% loading screen and stranding the START
+-- handoff. Drives the REAL checkMonthEnd; only the downstream issue action is mocked.
+do
+    local a0Settings = Settings.new(nil)
+    a0Settings.enabled = true
+    a0Settings.debugMode = false
+    a0Settings.monthlySalaryEnabled = true
+
+    local savedEnvMission = g_currentMission
+    g_currentMission = {
+        isMissionStarted = false,          -- still on the loading screen
+        environment = {
+            currentYear = 1, currentPeriod = 4, currentDay = 16,
+            currentMonotonicDay = 16, currentDayInPeriod = 1, daysPerPeriod = 1,
+        },
+        getFarmId = function() return 9 end,
+        getIsServer = function() return true end,
+        addMoney = function() end,
+    }
+
+    local a0 = WorkerSystem.new(a0Settings, nil)
+    local a0Issues = 0
+    a0.triggerMonthlySalaryDialog = function() a0Issues = a0Issues + 1 end
+
+    a0:checkMonthEnd()
+    T.eq("F223 A0 load screen issues no bill", a0Issues, 0)
+    -- -1 is the constructor's never-issued sentinel (WorkerSystem.lua:93); the issue
+    -- guard treats >= 0 as already issued. Still -1 proves the gate returned BEFORE
+    -- the ordinal was consumed, so the bill is genuinely deferred rather than eaten.
+    T.eq("F223 A0 load screen leaves the ordinal unconsumed", a0.lastIssuedOrdinal, -1)
+
+    -- Repeated load-frame ticks stay silent (update() runs every frame down there).
+    a0:checkMonthEnd()
+    a0:checkMonthEnd()
+    T.eq("F223 A0 repeated load-frame ticks stay silent", a0Issues, 0)
+
+    -- Entering gameplay on that same day issues the deferred bill exactly once.
+    g_currentMission.isMissionStarted = true
+    a0:checkMonthEnd()
+    T.eq("F223 A0 the bill is deferred, not lost", a0Issues, 1)
+    a0:checkMonthEnd()
+    T.eq("F223 A0 issuing after the gate is still once per period", a0Issues, 1)
+
+    g_currentMission = savedEnvMission
+end
 
 -- REPAIRED REGRESSIONS (replacing the pre-repair defect witnesses A1/A2/A8-A10).
 -- F130/F223 changed checkMonthEnd to fire on the native last day of any month length

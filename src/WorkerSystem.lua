@@ -1030,6 +1030,23 @@ function WorkerSystem:checkMonthEnd()
     if not g_currentMission or not g_currentMission.environment then
         return
     end
+
+    -- The savegame's environment is populated while the loading screen is still up and
+    -- the engine has paused itself at 100% waiting for START. update() keeps ticking
+    -- there, so without this gate a save sitting on the last day of a period issues the
+    -- bill on the load frame and stacks a modal over the loading screen; dismissing it
+    -- leaves the START handoff unreachable and the mission never begins.
+    -- BaseMission initialises isMissionStarted = false (BaseMission.lua:56) and sets it
+    -- true only in onStartMission (BaseMission.lua:247), on the line after the engine
+    -- logs "Entered Gameplay". NOT isRunning: doPauseGame/doUnpauseGame toggle that, so
+    -- it would also swallow the bill whenever the player simply pauses. NPCManager:219,
+    -- BeehiveSystem:32 and PlaceableTrainSystem:269 gate periodic work the same way.
+    -- The bill is deferred, not lost: once gameplay starts the next tick still sees the
+    -- last day of the period and issues it through the normal path.
+    if g_currentMission.isMissionStarted ~= true then
+        return
+    end
+
     local env = g_currentMission.environment
 
     local dayInPeriod   = env.currentDayInPeriod

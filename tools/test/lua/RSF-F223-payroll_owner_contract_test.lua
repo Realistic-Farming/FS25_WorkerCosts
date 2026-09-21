@@ -111,6 +111,92 @@ do
     g_currentMission = savedEnvMission
 end
 
+-- GROUP A0b: the deferral must also hold for a save whose period was ALREADY issued.
+-- A0 above only drives the fresh -1 constructor sentinel, so the gate's interaction
+-- with a RESTORED lastIssuedOrdinal was untested. A save reloaded mid-period has to
+-- stay silent on the load frame AND after gameplay starts, or every reload re-bills.
+do
+    local a0bSettings = Settings.new(nil)
+    a0bSettings.enabled = true
+    a0bSettings.debugMode = false
+    a0bSettings.monthlySalaryEnabled = true
+
+    local savedEnvMission = g_currentMission
+    g_currentMission = {
+        isMissionStarted = false,          -- still on the loading screen
+        environment = {
+            currentYear = 1, currentPeriod = 4, currentDay = 16,
+            currentMonotonicDay = 16, currentDayInPeriod = 1, daysPerPeriod = 1,
+        },
+        getFarmId = function() return 9 end,
+        getIsServer = function() return true end,
+        addMoney = function() end,
+    }
+
+    local a0b = WorkerSystem.new(a0bSettings, nil)
+    local a0bIssues = 0
+    a0b.triggerMonthlySalaryDialog = function() a0bIssues = a0bIssues + 1 end
+    -- Restored from a save that already paid this period.
+    local restored = WorkerSystem._issuanceOrdinal(1, 4)
+    a0b.lastIssuedOrdinal = restored
+
+    a0b:checkMonthEnd()
+    T.eq("F223 A0b restored-ordinal load frame issues no bill", a0bIssues, 0)
+
+    -- Entering gameplay must NOT re-issue: this period was paid before the save.
+    g_currentMission.isMissionStarted = true
+    a0b:checkMonthEnd()
+    T.eq("F223 A0b entering gameplay does not re-issue an already-paid period", a0bIssues, 0)
+    T.eq("F223 A0b the restored ordinal is left intact", a0b.lastIssuedOrdinal, restored)
+
+    g_currentMission = savedEnvMission
+end
+
+-- GROUP A0c: the load-screen DEFERRAL itself, from a restored ordinal rather than the
+-- fresh -1 sentinel. A0b above is deliberately gate-insensitive (its ordinal already
+-- covers the current period, so the issue guard blocks re-billing whether the gate
+-- fires or not). This case restores the PREVIOUS period's ordinal, so the bill for the
+-- current period is genuinely outstanding: only the gate can hold it on the load frame,
+-- and entering gameplay must then issue it exactly once.
+do
+    local a0cSettings = Settings.new(nil)
+    a0cSettings.enabled = true
+    a0cSettings.debugMode = false
+    a0cSettings.monthlySalaryEnabled = true
+
+    local savedEnvMission = g_currentMission
+    g_currentMission = {
+        isMissionStarted = false,          -- still on the loading screen
+        environment = {
+            currentYear = 1, currentPeriod = 4, currentDay = 16,
+            currentMonotonicDay = 16, currentDayInPeriod = 1, daysPerPeriod = 1,
+        },
+        getFarmId = function() return 9 end,
+        getIsServer = function() return true end,
+        addMoney = function() end,
+    }
+
+    local a0c = WorkerSystem.new(a0cSettings, nil)
+    local a0cIssues = 0
+    a0c.triggerMonthlySalaryDialog = function() a0cIssues = a0cIssues + 1 end
+    -- Restored from a save that last paid period 3; period 4 is still outstanding.
+    local carried = WorkerSystem._issuanceOrdinal(1, 3)
+    a0c.lastIssuedOrdinal = carried
+
+    a0c:checkMonthEnd()
+    T.eq("F223 A0c outstanding bill is held on the load frame", a0cIssues, 0)
+    T.eq("F223 A0c the carried ordinal is not advanced while deferred", a0c.lastIssuedOrdinal, carried)
+
+    g_currentMission.isMissionStarted = true
+    a0c:checkMonthEnd()
+    T.eq("F223 A0c entering gameplay issues the outstanding bill once", a0cIssues, 1)
+    T.eq("F223 A0c issuing advances the ordinal to the current period", a0c.lastIssuedOrdinal, WorkerSystem._issuanceOrdinal(1, 4))
+    a0c:checkMonthEnd()
+    T.eq("F223 A0c the issued period does not re-bill", a0cIssues, 1)
+
+    g_currentMission = savedEnvMission
+end
+
 -- REPAIRED REGRESSIONS (replacing the pre-repair defect witnesses A1/A2/A8-A10).
 -- F130/F223 changed checkMonthEnd to fire on the native last day of any month length
 -- and chargeWage to accrue per farm, so the old witnesses must assert the fixed
@@ -173,6 +259,10 @@ do
     FarmManager = { SPECTATOR_FARM_ID = 0, GUIDED_TOUR_FARM_ID = 14, INVALID_FARM_ID = 15 }
     local moves = {}
     g_currentMission = {
+        -- Explicit: checkMonthEnd returns early unless this is true
+        -- (WorkerSystem.lua:1046). Without it, any assertion added to this block
+        -- that reaches checkMonthEnd or update() passes green having tested nothing.
+        isMissionStarted = true,
         environment = { currentYear = 1, currentPeriod = 3, currentDay = 3,
             currentMonotonicDay = 3, currentDayInPeriod = 3, daysPerPeriod = 3, dayTime = 0 },
         getFarmId = function() return 1 end,
@@ -235,6 +325,10 @@ do
     Logging = { info = function() end, warning = function() end, error = function() end }
     FarmManager = { SPECTATOR_FARM_ID = 0, GUIDED_TOUR_FARM_ID = 14, INVALID_FARM_ID = 15 }
     g_currentMission = {
+        -- Explicit: checkMonthEnd returns early unless this is true
+        -- (WorkerSystem.lua:1046). Without it, any assertion added to this block
+        -- that reaches checkMonthEnd or update() passes green having tested nothing.
+        isMissionStarted = true,
         environment = { currentYear = 1, currentPeriod = 3, currentDay = 3,
             currentMonotonicDay = 3, currentDayInPeriod = 3, daysPerPeriod = 3, dayTime = 0 },
         getFarmId = function() return 1 end,

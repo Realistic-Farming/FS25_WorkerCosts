@@ -30,7 +30,7 @@ Thanks for taking the time to contribute! Here's how to get started.
 
 **Build & deploy:**
 ```bash
-bash build.sh --deploy
+py build.py --deploy
 ```
 
 After deploying, load a save in FS25 and watch `log.txt` for lines tagged `[Worker Costs]`.

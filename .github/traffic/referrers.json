@@ -4666,5 +4666,57 @@
       "count": 1,
       "uniques": 1
     }
+  ],
+  "2026-09-22": [
+    {
+      "referrer": "github.com",
+      "count": 41,
+      "uniques": 26
+    },
+    {
+      "referrer": "Google",
+      "count": 40,
+      "uniques": 24
+    },
+    {
+      "referrer": "realisticfarming.com",
+      "count": 5,
+      "uniques": 4
+    },
+    {
+      "referrer": "search.brave.com",
+      "count": 4,
+      "uniques": 2
+    },
+    {
+      "referrer": "yandex.ru",
+      "count": 3,
+      "uniques": 2
+    },
+    {
+      "referrer": "ya.ru",
+      "count": 3,
+      "uniques": 1
+    },
+    {
+      "referrer": "alice.yandex.ru",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "referrer": "chatgpt.com",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "referrer": "Bing",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "DuckDuckGo",
+      "count": 1,
+      "uniques": 1
+    }
   ]
 }

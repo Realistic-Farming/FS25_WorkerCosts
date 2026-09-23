@@ -14,6 +14,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import fengari from "fengari";
+import { spawnSync } from "node:child_process";
 import { REPO_ROOT, rel, c } from "./lib.mjs";
 
 const { lua, lauxlib, lualib, to_luastring } = fengari;
@@ -52,6 +53,14 @@ if (testFiles.length === 0) {
 }
 
 let totalPass = 0, totalFail = 0, hadError = false;
+
+// The l10n-once gate (MAINTENANCE row 65) runs with the suite, so a key declared both
+// inline and in a translation file fails the same command everyone already runs.
+const gate = spawnSync(process.execPath, [fileURLToPath(new URL("./l10n-once.mjs", import.meta.url)), REPO_ROOT], { encoding: "utf8" });
+process.stdout.write(gate.stdout || "");
+process.stderr.write(gate.stderr || "");
+const gateFailed = gate.status !== 0;
+if (gateFailed) console.log(c.red("✗ l10n-once gate failed"));
 
 for (const tf of testFiles) {
   const testPath = join(LUA_DIR, tf);
@@ -105,7 +114,7 @@ for (const tf of testFiles) {
 
 console.log(
   "\n" +
-    (totalFail === 0 && !hadError ? c.green("PASS") : c.red("FAIL")) +
+    (totalFail === 0 && !hadError && !gateFailed ? c.green("PASS") : c.red("FAIL")) +
     ` - ${totalPass} assertion${totalPass === 1 ? "" : "s"} passed, ${totalFail} failed across ${testFiles.length} file${testFiles.length === 1 ? "" : "s"}.`
 );
-process.exit(totalFail === 0 && !hadError ? 0 : 1);
+process.exit(totalFail === 0 && !hadError && !gateFailed ? 0 : 1);

@@ -14,17 +14,21 @@ EN = os.path.join(ROOT, "translations", "translation_en.xml")
 DE = os.path.join(ROOT, "translations", "translation_de.xml")
 
 ANCHOR = '        <text name="wc_rf_pda_page_dashboard" text="Dashboard"/>\n'
+RUNNER = os.path.join(ROOT, "tools", "test", "run-tests.mjs")
 MUTATIONS = [
  ("K1-open-manager-back-in-en", EN, ANCHOR, '        <text name="wc_rf_pda_open_manager" text="Open Worker Manager" />\n' + ANCHOR, "translation_en.xml: wc_rf_pda_open_manager"),
  ("K2-rotation-planner-back-in-en", EN, ANCHOR, ANCHOR + '        <text name="sf_pda_btn_rotation_planner" text="Rotation Planner" />\n', "translation_en.xml: sf_pda_btn_rotation_planner"),
  ("K3-field-detail-back-in-de", DE, None, None, "translation_de.xml: sf_pda_btn_field_detail"),
  ("K4-e-form-back-in-en", EN, ANCHOR, ANCHOR + '        <e k="sf_pda_btn_field_detail" v="Field Detail"/>\n', "translation_en.xml: sf_pda_btn_field_detail"),
+ # The wiring: the suite command everyone runs fails on the same defect.
+ ("K5-suite-command-fails-too", EN, ANCHOR, '        <text name="wc_rf_pda_open_manager" text="Open Worker Manager" />\n' + ANCHOR, "translation_en.xml: wc_rf_pda_open_manager", "suite"),
 ]
 
 def sha(b): return hashlib.sha256(b).hexdigest()
 
-def gate():
-    r = subprocess.run(["node", GATE, ROOT], capture_output=True, text=True, encoding="utf-8", errors="replace")
+def gate(via=None):
+    cmd = ["node", RUNNER] if via == "suite" else ["node", GATE, ROOT]
+    r = subprocess.run(cmd, cwd=os.path.join(ROOT, "tools", "test"), capture_output=True, text=True, encoding="utf-8", errors="replace")
     return r.returncode, (r.stdout + r.stderr)
 
 rc, out = gate()
@@ -34,7 +38,9 @@ if rc != 0:
 print("baseline green: " + out.strip().encode("ascii", "replace").decode("ascii"))
 
 killed, survived, badedit = [], [], []
-for mid, path, old, new, expect in MUTATIONS:
+for entry in MUTATIONS:
+    mid, path, old, new, expect = entry[:5]
+    via = entry[5] if len(entry) > 5 else None
     original = open(path, "rb").read()
     crlf = b"\r\n" in original
     enc = lambda s: (s.replace("\n", "\r\n") if crlf else s).encode("utf-8")
@@ -55,7 +61,7 @@ for mid, path, old, new, expect in MUTATIONS:
     if open(path, "rb").read() != mutated:
         open(path, "wb").write(original); badedit.append((mid, "edit did not land")); continue
     try:
-        rc, out = gate()
+        rc, out = gate(via)
     finally:
         open(path, "wb").write(original)
     if sha(open(path, "rb").read()) != sha(original):

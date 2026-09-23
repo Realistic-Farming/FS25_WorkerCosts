@@ -15,10 +15,19 @@
 set -e
 
 staged_lua="$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.lua$' || true)"
-[ -z "$staged_lua" ] && exit 0
+staged_l10n="$(git diff --cached --name-only --diff-filter=ACMD | grep -E '^modDesc\.xml$|^translations/.*\.xml$' || true)"
+[ -z "$staged_lua" ] && [ -z "$staged_l10n" ] && exit 0
 
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root/tools/test"
+
+# Every l10n key declared once (MAINTENANCE row 65): modDesc.xml's inline block against
+# the translation files, whenever either side is staged.
+if [ -n "$staged_l10n" ]; then
+  echo "pre-commit: l10n keys declared once…"
+  node ./l10n-once.mjs "$repo_root"
+fi
+[ -z "$staged_lua" ] && exit 0
 [ -d node_modules ] || npm install --silent
 
 echo "pre-commit: Lua 5.1 syntax (staged)…"

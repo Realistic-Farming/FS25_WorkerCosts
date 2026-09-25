@@ -216,16 +216,30 @@ function WCWorkerCommandEvent:run(connection)
     local wm = g_currentMission and g_currentMission.workerCostsManager
     if not wm then return end
 
-    -- Reject a spoofed/absent farm id for the money-spending actions. The client
-    -- sends its own getFarmId(); a real farm must exist for hire/fire to charge.
+    -- THE CHARGED FARM IS THE SENDER'S OWN (MAINTENANCE row 117): the server's player
+    -- record for this connection (FSBaseMission:getFarmId, FSBaseMission.lua:1067-1085,
+    -- nil for a connection with no player), never the wire. The wire farm stays only as
+    -- an equality check, so the event shape does not change; a client naming another
+    -- farm, a sender with no record and a spectator (farm 0) are refused.
+    local farmId = self.farmId
     if (self.action == WCCommand.HIRE or self.action == WCCommand.FIRE) then
-        if not self.farmId or self.farmId == 0 then
-            Logging.warning("[Worker Costs] Rejected command (action=%d) — invalid farmId", self.action)
+        local senderFarm = nil
+        if g_currentMission.getFarmId ~= nil then
+            local ok, id = pcall(g_currentMission.getFarmId, g_currentMission, connection)
+            if ok then senderFarm = id end
+        end
+        if type(senderFarm) ~= "number" or senderFarm <= 0 then
+            Logging.warning("[Worker Costs] Rejected command (action=%d) - the sender has no farm", self.action)
             return
         end
+        if self.farmId ~= nil and self.farmId ~= 0 and self.farmId ~= senderFarm then
+            Logging.warning("[Worker Costs] Rejected command (action=%d) - names farm %s but is farm %d", self.action, tostring(self.farmId), senderFarm)
+            return
+        end
+        farmId = senderFarm
     end
 
-    wm:_applyCommandFromNetwork(self.action, self.uuid, self.slot, self.vehicleUniqueId, self.farmId)
+    wm:_applyCommandFromNetwork(self.action, self.uuid, self.slot, self.vehicleUniqueId, farmId)
 end
 
 -- ========================================

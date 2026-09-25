@@ -356,6 +356,10 @@ end
 -- false when NetworkSync is absent so the caller runs its own path.
 function WorkerNetworkSyncBridge.sendCommand(action, uuid, slot, vehicleUniqueId, farmId)
     if not WorkerNetworkSyncBridge.active then return false end
+    -- On a server the caller applies locally with its own farm (WCNetwork_SendCommand's
+    -- other branch); routing the host through NetworkSync's in-memory apply would reach
+    -- the handlers with no user, which they now refuse (MAINTENANCE row 117).
+    if g_currentMission ~= nil and g_currentMission:getIsServer() then return false end
     local ns = (g_currentMission and g_currentMission.networkSync) or g_networkSync
     if ns == nil then return false end
 
@@ -388,26 +392,42 @@ end
 local function registerActions(ns, mgr)
     local A = WorkerNetworkSyncBridge.ACTIONS
 
-    -- Reproduce WCWorkerCommandEvent:run's guard: hire/fire need a real farm to charge.
-    local function farmOk(farmId, action)
-        if not farmId or farmId == 0 then
-            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - invalid farmId", action)
-            return false
+    -- THE CHARGED FARM IS THE SENDER'S OWN (MAINTENANCE row 117): the server's farm for
+    -- the requesting user (FarmManager:getFarmByUserId, farms/FarmManager.lua:192-202: the
+    -- singleplayer farm in singleplayer, farm 0 for a user in no farm), never the wire.
+    -- NetworkSync hands the userId it resolved from the connection's user (_applyAction);
+    -- nil means no user could be named, and is refused (the host never comes this way:
+    -- sendCommand stands down on a server). The wire farm stays only as an equality
+    -- check, so the action shape does not change; a client naming another farm is refused.
+    local function chargedFarm(userId, wireFarmId, action)
+        if userId == nil then
+            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - no user for the sender", action)
+            return nil
         end
-        return true
+        local farm = g_farmManager ~= nil and g_farmManager:getFarmByUserId(userId) or nil
+        local farmId = farm ~= nil and farm.farmId or nil
+        if type(farmId) ~= "number" or farmId <= 0 then
+            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - the sender is in no farm", action)
+            return nil
+        end
+        if wireFarmId ~= nil and wireFarmId ~= 0 and wireFarmId ~= farmId then
+            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - names farm %s but is farm %d", action, tostring(wireFarmId), farmId)
+            return nil
+        end
+        return farmId
     end
 
-    ns:registerAction(A.HIRE, { adminOnly = false, onAction = function(_userId, args)
+    ns:registerAction(A.HIRE, { adminOnly = false, onAction = function(userId, args)
         local slot   = (args and args[1]) or 1
-        local farmId = (args and args[2]) or 0
-        if farmOk(farmId, WCCommand.HIRE) then
+        local farmId = chargedFarm(userId, args and args[2], WCCommand.HIRE)
+        if farmId ~= nil then
             mgr:_applyCommandFromNetwork(WCCommand.HIRE, 0, slot, "", farmId)
         end
     end })
-    ns:registerAction(A.FIRE, { adminOnly = false, onAction = function(_userId, args)
+    ns:registerAction(A.FIRE, { adminOnly = false, onAction = function(userId, args)
         local uuid   = (args and args[1]) or 0
-        local farmId = (args and args[2]) or 0
-        if farmOk(farmId, WCCommand.FIRE) then
+        local farmId = chargedFarm(userId, args and args[2], WCCommand.FIRE)
+        if farmId ~= nil then
             mgr:_applyCommandFromNetwork(WCCommand.FIRE, uuid, 0, "", farmId)
         end
     end })

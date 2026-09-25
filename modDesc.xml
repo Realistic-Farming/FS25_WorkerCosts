@@ -190,6 +190,93 @@
             <da>MÃƒÂ¥nedslÃƒÂ¸n</da>
         </text>
 
+        <text name="wc_costmode_short">
+            <en>Cost Mode</en>
+            <de>Kostenmodus</de>
+            <fr>Mode de coût</fr>
+            <pl>Tryb kosztów</pl>
+            <es>Modo de coste</es>
+            <it>Modalità costi</it>
+            <cz>Režim nákladů</cz>
+            <br>Modo de custo</br>
+            <uk>Режим витрат</uk>
+            <ru>Режим затрат</ru>
+            <da>Omkostningsmetode</da>
+            <pt>Modo de custo</pt>
+            <nl>Kostenmodus</nl>
+            <hu>Költségmód</hu>
+            <tr>Maliyet modu</tr>
+            <ro>Mod de cost</ro>
+            <sv>Kostnadsläge</sv>
+            <fi>Kustannustila</fi>
+            <no>Kostnadsmodus</no>
+            <jp>コストモード</jp>
+            <kr>비용 방식</kr>
+            <ct>成本模式</ct>
+            <ea>Modo de costo</ea>
+            <fc>Mode de coût</fc>
+            <id>Mode biaya</id>
+            <vi>Chế độ chi phí</vi>
+        </text>
+
+        <text name="wc_difficulty_short">
+            <en>Wage Level</en>
+            <de>Lohnstufe</de>
+            <fr>Niveau de salaire</fr>
+            <pl>Poziom płac</pl>
+            <es>Nivel salarial</es>
+            <it>Livello salariale</it>
+            <cz>Úroveň mzdy</cz>
+            <br>Nível salarial</br>
+            <uk>Рівень оплати</uk>
+            <ru>Уровень оплаты</ru>
+            <da>Lønniveau</da>
+            <pt>Nível salarial</pt>
+            <nl>Loonniveau</nl>
+            <hu>Bérszint</hu>
+            <tr>Ücret seviyesi</tr>
+            <ro>Nivel salarial</ro>
+            <sv>Lönenivå</sv>
+            <fi>Palkkataso</fi>
+            <no>Lønnsnivå</no>
+            <jp>賃金レベル</jp>
+            <kr>임금 수준</kr>
+            <ct>工資等級</ct>
+            <ea>Nivel salarial</ea>
+            <fc>Niveau de salaire</fc>
+            <id>Tingkat upah</id>
+            <vi>Mức lương</vi>
+        </text>
+
+        <text name="wc_monthly_salary_long">
+            <en>Accrue wages through the month and pay them once at month end</en>
+            <de>Löhne über den Monat ansammeln und einmal am Monatsende auszahlen</de>
+            <fr>Cumuler les salaires sur le mois et les payer une fois en fin de mois</fr>
+            <pl>Naliczaj płace przez cały miesiąc i wypłacaj je raz na koniec miesiąca</pl>
+            <es>Acumular los salarios durante el mes y pagarlos una vez al final del mes</es>
+            <it>Accumula i salari durante il mese e pagali una volta a fine mese</it>
+            <cz>Mzdy se během měsíce sčítají a vyplácejí se jednou na konci měsíce</cz>
+            <br>Acumular os salários durante o mês e pagá-los uma vez no fim do mês</br>
+            <uk>Нараховувати зарплату протягом місяця та виплачувати її один раз наприкінці місяця</uk>
+            <ru>Начислять зарплату в течение месяца и выплачивать её один раз в конце месяца</ru>
+            <da>Optjen lønninger gennem måneden og udbetal dem én gang ved månedens udgang</da>
+            <pt>Acumular os salários durante o mês e pagá-los uma vez no fim do mês</pt>
+            <nl>Lonen gedurende de maand opbouwen en één keer aan het einde van de maand uitbetalen</nl>
+            <hu>A béreket a hónap során gyűjti, és egyszer, a hónap végén fizeti ki</hu>
+            <tr>Ücretleri ay boyunca biriktir ve ay sonunda bir kez öde</tr>
+            <ro>Acumulează salariile pe parcursul lunii și plătește-le o singură dată la sfârșitul lunii</ro>
+            <sv>Samla löner under månaden och betala dem en gång vid månadens slut</sv>
+            <fi>Kerrytä palkat kuukauden aikana ja maksa ne kerran kuun lopussa</fi>
+            <no>Opptjen lønn gjennom måneden og betal den én gang ved månedsslutt</no>
+            <jp>賃金を月の間に積み立て、月末に一度だけ支払います</jp>
+            <kr>한 달 동안 임금을 적립하고 월말에 한 번 지급합니다</kr>
+            <ct>在整個月內累計工資，並於月底一次支付</ct>
+            <ea>Acumular los salarios durante el mes y pagarlos una vez al final del mes</ea>
+            <fc>Cumuler les salaires sur le mois et les payer une fois en fin de mois</fc>
+            <id>Kumpulkan upah selama sebulan dan bayarkan sekali di akhir bulan</id>
+            <vi>Tích lũy tiền lương trong tháng và trả một lần vào cuối tháng</vi>
+        </text>
+
         
         <text name="wc_difficulty_long">
             <en>Set base wage rate: Low=$15/h, Medium=$25/h, High=$40/h</en>

@@ -8,8 +8,10 @@
 //
 // The translation files are the ones the engine reads: modDesc.l10n#filenamePrefix
 // (mods.lua:783-786) plus "_<lang>.xml"; defaultLanguage is never read by the engine.
-// An inline <text> with no language child is skipped by the engine (:774-777), so its
-// file copy would be live and it is not counted as inline here.
+// The engine sets an inline <text> from the client's language, else en, else de
+// (mods.lua:774); one with neither en nor de is set only for a client whose language it
+// carries (and skipped with a warning otherwise, :775-776), so it is counted as inline here
+// only when it has an en or de child: then it is set for every client (MAINTENANCE row 88).
 //
 // Exit 0 when no key is declared both inline and in a translation file; exit 1 with the
 // offending keys otherwise. Usage: node tools/test/l10n-once.mjs [repo root]
@@ -26,7 +28,7 @@ if (l10nBlock) {
   const attr = l10nBlock[1].match(/filenamePrefix="([^"]+)"/);
   if (attr) prefix = attr[1];
   for (const m of l10nBlock[2].matchAll(/<text\s+name="([^"]+)"[^>]*>([\s\S]*?)<\/text>/g)) {
-    if (/<[a-z]{2}(?:[_-][a-zA-Z]+)?>/.test(m[2])) inline.add(m[1]);
+    if (/<(?:en|de)>/.test(m[2])) inline.add(m[1]);
   }
 }
 const dir = join(root, dirname(prefix));

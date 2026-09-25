@@ -10,8 +10,9 @@
 -- THE ENTRY-POINT BAR IS GROUP A: the REAL Settings and the REAL WorkerSystem,
 -- initialized as production does (WorkerSystem:initialize) and driven through
 -- WorkerSystem:update(dt) as the manager drives it each frame, against the engine's
--- own clock (f282_environment_model.lua: updateTimeValues, setEnvironmentTime and
--- consoleCommandSetDayTime verbatim from Environment.lua) and one running AI job read
+-- own clock (f282_environment_model.lua: updateTimeValues and setEnvironmentTime
+-- verbatim from Environment.lua, consoleCommandSetDayTime through its arithmetic with the
+-- brief's reading of its empty lower-time branch) and one running AI job read
 -- through the real getActiveWorkers. No accrual, baseline or marker is written by
 -- hand; the mocks are the mission (money sink, one job) and the log sink.
 --
@@ -148,4 +149,24 @@ do
     T.eq("G1 two rewinds, two lines, each with the span in in-game ms", rewindLines() .. " " .. tostring(logs[#logs]:find("backwards by 18000000 in-game ms", 1, true) ~= nil), "2 true")
     frame(sys, env, HOUR)
     T.eq("G2 a forward hour adds no line and accrues once", rewindLines() .. " " .. hours(sys, vehicle), "2 " .. num(H))
+end
+do
+    -- MAINTENANCE row 103: with the mod's debug mode ON, a rewind is still said once. The
+    -- mod's own debug log (WorkerSystem:log) prints; Logging.info is the log sink. Both are
+    -- captured, and the count is across both.
+    local env = world({ day = 3, hour = 20 })
+    local sys = system()
+    sys.settings.debugMode = true
+    frame(sys, env)
+    local printed, realPrint = {}, print
+    print = function(s) printed[#printed + 1] = tostring(s) end
+    local before = rewindLines()
+    local ok = pcall(function()
+        F282Env.consoleCommandSetDayTime(env, 10)
+        frame(sys, env)
+    end)
+    print = realPrint
+    local n = rewindLines() - before
+    for _, l in ipairs(printed) do if l:find("Clock moved backwards", 1, true) then n = n + 1 end end
+    T.eq("G3 with debug mode on, one rewind is said exactly once (it used to print a second line)", tostring(ok) .. " " .. n, "true 1")
 end

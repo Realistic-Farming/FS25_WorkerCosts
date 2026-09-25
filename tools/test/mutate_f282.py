@@ -8,7 +8,7 @@
 # NOT RUN, and why:
 #   - the daily settlement's day-change branch: a backward monotonic day is unreachable
 #     for the server's WorkerSystem (the tick only increments it, the console setter holds
-#     it on the brief's reading of its empty lower-time branch, Environment.lua:579-581,
+#     it on the brief's reading of its empty lower-time branch, Environment.lua:579-582,
 #     and every mission load re-baselines the markers, WorkerSystem:initialize),
 #     so no bar can reach a rewind there and the branch is left as it was.
 #

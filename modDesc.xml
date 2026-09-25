@@ -82,6 +82,21 @@
             <ru>Включить мод</ru>
         
             <da>Aktiver Mod</da>
+            <pt>Ativar mod</pt>
+            <nl>Mod inschakelen</nl>
+            <hu>Mod engedélyezése</hu>
+            <tr>Modu etkinleştir</tr>
+            <ro>Activează modul</ro>
+            <sv>Aktivera mod</sv>
+            <fi>Ota modi käyttöön</fi>
+            <no>Aktiver mod</no>
+            <jp>MODを有効化</jp>
+            <kr>모드 활성화</kr>
+            <ct>啟用模組</ct>
+            <ea>Activar mod</ea>
+            <fc>Activer le mod</fc>
+            <id>Aktifkan mod</id>
+            <vi>Bật mod</vi>
         </text>
         
         <text name="wc_enabled_long">
@@ -97,6 +112,21 @@
             <ru>Включить или выключить мод расходов на работников</ru>
         
             <da>Aktivér eller deaktiver mod’en for medarbejderomkostninger</da>
+            <pt>Ativar ou desativar o mod de custos de trabalhadores</pt>
+            <nl>De arbeiderskostenmod in- of uitschakelen</nl>
+            <hu>A munkásköltség-mod be- vagy kikapcsolása</hu>
+            <tr>İşçi maliyetleri modunu etkinleştir veya devre dışı bırak</tr>
+            <ro>Activează sau dezactivează modul costurilor cu muncitorii</ro>
+            <sv>Aktivera eller inaktivera arbetarkostnadsmoden</sv>
+            <fi>Ota työntekijäkulumodi käyttöön tai poista se käytöstä</fi>
+            <no>Aktiver eller deaktiver arbeiderkostnadsmoden</no>
+            <jp>作業員コストMODを有効または無効にします</jp>
+            <kr>작업자 비용 모드를 켜거나 끕니다</kr>
+            <ct>啟用或停用工人成本模組</ct>
+            <ea>Activar o desactivar el módulo de costos de trabajadores</ea>
+            <fc>Activer ou désactiver le module de coûts des ouvriers</fc>
+            <id>Aktifkan atau nonaktifkan mod biaya pekerja</id>
+            <vi>Bật hoặc tắt mod chi phí công nhân</vi>
         </text>
         
         <text name="wc_debug_short">
@@ -112,6 +142,21 @@
             <ru>Режим DEBUG</ru>
         
             <da>Debug-tilstand</da>
+            <pt>Modo DEBUG</pt>
+            <nl>DEBUG-modus</nl>
+            <hu>DEBUG mód</hu>
+            <tr>DEBUG modu</tr>
+            <ro>Mod DEBUG</ro>
+            <sv>DEBUG-läge</sv>
+            <fi>DEBUG-tila</fi>
+            <no>DEBUG-modus</no>
+            <jp>デバッグモード</jp>
+            <kr>디버그 모드</kr>
+            <ct>除錯模式</ct>
+            <ea>Modo DEBUG</ea>
+            <fc>Mode DEBUG</fc>
+            <id>Mode DEBUG</id>
+            <vi>Chế độ DEBUG</vi>
         </text>
         
         <text name="wc_debug_long">
@@ -127,6 +172,21 @@
             <ru>Включить/выключить режим DEBUG (дополнительное логирование)</ru>
         
             <da>Slå debug-tilstand til/fra (ekstra logning)</da>
+            <pt>Ativar/desativar modo DEBUG (registro adicional)</pt>
+            <nl>Debugmodus aan/uit (extra logboek)</nl>
+            <hu>Hibakereső mód be/ki (bővebb naplózás)</hu>
+            <tr>Hata ayıklama modunu aç/kapat (ek kayıt)</tr>
+            <ro>Activează/dezactivează modul de depanare (jurnalizare suplimentară)</ro>
+            <sv>Aktivera/inaktivera felsökningsläge (extra loggning)</sv>
+            <fi>Vianmääritystila päälle/pois (lisälokitus)</fi>
+            <no>Slå feilsøkingsmodus av/på (ekstra logging)</no>
+            <jp>デバッグモードのオン/オフ（追加ログ）</jp>
+            <kr>디버그 모드 켜기/끄기(추가 로그)</kr>
+            <ct>開啟/關閉除錯模式（額外記錄）</ct>
+            <ea>Activar/desactivar modo DEBUG (registro adicional)</ea>
+            <fc>Activer/désactiver le mode DEBUG (journalisation supplémentaire)</fc>
+            <id>Aktifkan/nonaktifkan mode debug (log tambahan)</id>
+            <vi>Bật/tắt chế độ gỡ lỗi (ghi nhật ký thêm)</vi>
         </text>
         
         
@@ -143,6 +203,21 @@
             <ru>Выбрать расчет расходов: почасово или за гектар</ru>
         
             <da>Vælg beregningsmetode for omkostninger: timebaseret eller pr. hektar</da>
+            <pt>Escolher cálculo de custos: por hora ou por hectare</pt>
+            <nl>Kies de kostenberekening: per uur of per hectare</nl>
+            <hu>Költségszámítás választása: óránként vagy hektáronként</hu>
+            <tr>Maliyet hesabını seçin: saatlik veya hektar başına</tr>
+            <ro>Alege calculul costurilor: pe oră sau pe hectar</ro>
+            <sv>Välj kostnadsberäkning: per timme eller per hektar</sv>
+            <fi>Valitse kustannuslaskenta: tunneittain tai hehtaaria kohden</fi>
+            <no>Velg kostnadsberegning: per time eller per hektar</no>
+            <jp>コスト計算を選択：時間ごとまたはヘクタールごと</jp>
+            <kr>비용 계산 방식 선택: 시간당 또는 헥타르당</kr>
+            <ct>選擇成本計算方式：按小時或按公頃</ct>
+            <ea>Elegir cálculo de costos: por hora o por hectárea</ea>
+            <fc>Choisissez le calcul des coûts : horaire ou par hectare</fc>
+            <id>Pilih perhitungan biaya: per jam atau per hektar</id>
+            <vi>Chọn cách tính chi phí: theo giờ hoặc theo hécta</vi>
         </text>
         
         <text name="wc_costmode_1">
@@ -188,6 +263,21 @@
             <ru>Ежемесячная зарплата</ru>
         
             <da>Månedsløn</da>
+            <pt>Salário Mensal</pt>
+            <nl>Maandsalaris</nl>
+            <hu>Havi fizetés</hu>
+            <tr>Aylık maaş</tr>
+            <ro>Salariu lunar</ro>
+            <sv>Månadslön</sv>
+            <fi>Kuukausipalkka</fi>
+            <no>Månedslønn</no>
+            <jp>月給</jp>
+            <kr>월급</kr>
+            <ct>月薪</ct>
+            <ea>Salario Mensual</ea>
+            <fc>Salaire Mensuel</fc>
+            <id>Gaji bulanan</id>
+            <vi>Lương tháng</vi>
         </text>
 
         <text name="wc_costmode_short">
@@ -291,6 +381,21 @@
             <ru>Установить базовую ставку: Низкая=15$/ч, Средняя=25$/ч, Высокая=40$/ч</ru>
         
             <da>Angiv basislønsats: Lav=$15/t, Mellem=$25/t, Høj=$40/t</da>
+            <pt>Definir taxa salarial base: Baixa=15$/h, Média=25$/h, Alta=40$/h</pt>
+            <nl>Basisloon instellen: Laag=$15/u, Gemiddeld=$25/u, Hoog=$40/u</nl>
+            <hu>Alapbér beállítása: Alacsony=$15/óra, Közepes=$25/óra, Magas=$40/óra</hu>
+            <tr>Temel ücret oranını ayarla: Düşük=$15/sa, Orta=$25/sa, Yüksek=$40/sa</tr>
+            <ro>Setează salariul de bază: Scăzut=$15/h, Mediu=$25/h, Ridicat=$40/h</ro>
+            <sv>Ange grundlön: Låg=$15/h, Medel=$25/h, Hög=$40/h</sv>
+            <fi>Aseta peruspalkka: Matala=$15/h, Keskitaso=$25/h, Korkea=$40/h</fi>
+            <no>Angi grunnlønn: Lav=$15/t, Middels=$25/t, Høy=$40/t</no>
+            <jp>基本賃金を設定：低=$15/時、中=$25/時、高=$40/時</jp>
+            <kr>기본 임금 설정: 낮음=$15/시간, 보통=$25/시간, 높음=$40/시간</kr>
+            <ct>設定基本工資：低=$15/小時、中=$25/小時、高=$40/小時</ct>
+            <ea>Establecer tasa salarial base: Baja=15$/h, Media=25$/h, Alta=40$/h</ea>
+            <fc>Définir le taux de salaire de base : Bas=15$/h, Moyen=25$/h, Élevé=40$/h</fc>
+            <id>Atur upah dasar: Rendah=$15/jam, Sedang=$25/jam, Tinggi=$40/jam</id>
+            <vi>Đặt mức lương cơ bản: Thấp=$15/giờ, Trung bình=$25/giờ, Cao=$40/giờ</vi>
         </text>
         
         <text name="wc_diff_1">
@@ -351,6 +456,21 @@
             <ru>Уведомления</ru>
         
             <da>Notifikationer</da>
+            <pt>Notificações</pt>
+            <nl>Meldingen</nl>
+            <hu>Értesítések</hu>
+            <tr>Bildirimler</tr>
+            <ro>Notificări</ro>
+            <sv>Aviseringar</sv>
+            <fi>Ilmoitukset</fi>
+            <no>Varsler</no>
+            <jp>通知</jp>
+            <kr>알림</kr>
+            <ct>通知</ct>
+            <ea>Notificaciones</ea>
+            <fc>Notifications</fc>
+            <id>Notifikasi</id>
+            <vi>Thông báo</vi>
         </text>
         
         <text name="wc_notifications_long">
@@ -366,6 +486,21 @@
             <ru>Включить/выключить уведомления о выплате заработной платы</ru>
         
             <da>Slå notifikationer om lønudbetalinger til/fra</da>
+            <pt>Ativar/desativar notificações de pagamento de salários</pt>
+            <nl>Meldingen van loonbetalingen aan/uit</nl>
+            <hu>Bérfizetési értesítések be/ki</hu>
+            <tr>Ücret ödeme bildirimlerini aç/kapat</tr>
+            <ro>Activează/dezactivează notificările de plată a salariilor</ro>
+            <sv>Aktivera/inaktivera aviseringar om löneutbetalningar</sv>
+            <fi>Palkanmaksuilmoitukset päälle/pois</fi>
+            <no>Slå varsler om lønnsutbetaling av/på</no>
+            <jp>賃金支払い通知のオン/オフ</jp>
+            <kr>임금 지급 알림 켜기/끄기</kr>
+            <ct>開啟/關閉工資支付通知</ct>
+            <ea>Activar/desactivar notificaciones de pago de salarios</ea>
+            <fc>Activer/désactiver les notifications de paiement des salaires</fc>
+            <id>Aktifkan/nonaktifkan notifikasi pembayaran upah</id>
+            <vi>Bật/tắt thông báo trả lương</vi>
         </text>
         
         <text name="wc_customrate_short">

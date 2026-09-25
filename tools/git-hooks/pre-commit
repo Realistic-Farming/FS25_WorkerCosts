@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Lua 5.1 syntax (+ repo lint where present) pre-commit gate.
+# Pre-commit gates: every l10n key declared once (l10n-once.mjs, when modDesc.xml or a
+# translation file is staged) and Lua 5.1 syntax (+ repo lint where present).
 #
 # WHY THIS EXISTS: a Lua parse error does not stop FS25 loading the mod. The mod
 # loads, the game runs, and the offending FILE is silently dropped, so one feature
@@ -22,7 +23,9 @@ repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root/tools/test"
 
 # Every l10n key declared once (MAINTENANCE row 65): modDesc.xml's inline block against
-# the translation files, whenever either side is staged.
+# the translation files, whenever either side is staged. It reads the WORKING TREE, not the
+# index (MAINTENANCE row 88): a staged edit whose revert is left unstaged passes here, so
+# run it again on a clean tree before pushing.
 if [ -n "$staged_l10n" ]; then
   echo "pre-commit: l10n keys declared once…"
   node ./l10n-once.mjs "$repo_root"

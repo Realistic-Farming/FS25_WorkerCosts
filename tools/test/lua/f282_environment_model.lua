@@ -5,9 +5,11 @@
 -- updateTimeValues :322-357 is VERBATIM through the hour and the day (the minute loop
 -- abbreviated to its assignment): the monotonic day only ever increments, :356.
 -- setEnvironmentTime :494-510 is VERBATIM (isDelta false). consoleCommandSetDayTime
--- :570-583 is VERBATIM through its time arithmetic: the day and the monotonic day are
--- held and only the day time moves, so a set below the current time is a same-day
--- rewind, the one actor the brief names.
+-- :570-583 is modelled through its time arithmetic: it keeps the day and the monotonic
+-- day it read (:576-577) and moves only the day time (:583). Its branch for a lower time
+-- (:579-581) decompiles EMPTY, so modelling it as holding the day (a set below the current
+-- time is a same-day rewind, the one actor the brief names) is the brief's reading of that
+-- branch, not something the source shows (MAINTENANCE row 102).
 F282Env = {}
 
 function F282Env.new(opts)
@@ -62,7 +64,8 @@ function F282Env.setEnvironmentTime(env, currentMonotonicDay, currentDay, dayTim
     F282Env.updateTimeValues(env)
 end
 
---- :570-583 through its arithmetic (gsSetDayTime): the day and the monotonic day held.
+--- :570-583 through its arithmetic (gsSetDayTime): the day and the monotonic day held,
+--- the brief's reading of the empty lower-time branch :579-581 (MAINTENANCE row 102).
 function F282Env.consoleCommandSetDayTime(env, dayTime)
     local newDayTime = math.floor(tonumber(dayTime) * 1000 * 60 * 60)
     local newDay = env.currentDay

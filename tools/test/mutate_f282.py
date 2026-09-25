@@ -7,8 +7,9 @@
 #
 # NOT RUN, and why:
 #   - the daily settlement's day-change branch: a backward monotonic day is unreachable
-#     for the server's WorkerSystem (the tick only increments it, the console setter
-#     holds it, and every mission load re-baselines the markers, WorkerSystem:initialize),
+#     for the server's WorkerSystem (the tick only increments it, the console setter holds
+#     it on the brief's reading of its empty lower-time branch, Environment.lua:579-581,
+#     and every mission load re-baselines the markers, WorkerSystem:initialize),
 #     so no bar can reach a rewind there and the branch is left as it was.
 #
 # Anchors are written with "\n"; in a CRLF file they are matched as "\r\n".
@@ -41,6 +42,10 @@ MUTATIONS = [
   [("    local lastMs = self.lastAbsoluteGameTimeMs\n    self.lastAbsoluteGameTimeMs = nowMs\n",
     "    local lastMs = self.lastAbsoluteGameTimeMs\n    if nowMs >= (lastMs or 0) then self.lastAbsoluteGameTimeMs = nowMs end\n", 1)],
   "the stale baseline stays, so the next forward hour bills the span back to the position the clock left"),
+ ("W103-rewind-said-twice", "src/WorkerSystem.lua",
+  [("            -- Logging.info only (MAINTENANCE row 103: it used to be said twice).\n            Logging.info",
+    "            -- Logging.info only (MAINTENANCE row 103: it used to be said twice).\n            self:log(\"Clock moved backwards by %d in-game ms on day %d; nothing billed, clock re-baselined\", -delta, monotonicDay)\n            Logging.info", 1)],
+  "the rewind is said twice with debug mode on (the mod's own debug line restored)"),
 ]
 
 

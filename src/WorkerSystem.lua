@@ -740,12 +740,15 @@ function WorkerSystem:consumeInGameMs()
         if env.currentMonotonicDay ~= nil then
             -- RSF-F282: with the monotonic day present a negative span is never a
             -- midnight wrap. The per-frame tick only ever increments that day
-            -- (Environment.lua:356) and the console setter holds it flat while it
-            -- lowers the day time (:574-583), so the clock was set backwards. Nothing
-            -- is billed for a span that did not happen; the baseline already moved to
-            -- the new position above, so the next forward span bills once and
-            -- correctly. Said once per event so a developer sees why.
-            self:log("Clock moved backwards by %d in-game ms on day %d; nothing billed, clock re-baselined", -delta, monotonicDay)
+            -- (Environment.lua:356). The console setter keeps the day and the
+            -- monotonic day it read (:576-577) and sets the new day time (:583); its
+            -- branch for a time lower than the current one (:579-581) decompiles
+            -- empty, so that the setter holds the day flat is the brief's reading of
+            -- that branch, not something the source shows. Either way a negative span
+            -- here means the clock was set backwards: nothing is billed for a span that
+            -- did not happen, the baseline already moved to the new position above, and
+            -- the next forward span bills once and correctly. Said once per event, on
+            -- Logging.info only (MAINTENANCE row 103: it used to be said twice).
             Logging.info("[Worker Costs] Clock moved backwards by %d in-game ms (day %d); nothing billed, clock re-baselined", -delta, monotonicDay)
             return 0
         end

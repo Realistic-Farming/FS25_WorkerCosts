@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-10-02T00:23:55Z
-**Days tracked:** 158 | **Download snapshots:** 669 (hourly)
+**Last updated:** 2026-10-02T06:31:18Z
+**Days tracked:** 158 | **Download snapshots:** 670 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 184 | 77 |
-| Git Clones | 512 | 193 |
+| Page Views | 183 | 76 |
+| Git Clones | 520 | 195 |
 
-> **Engagement:** 2.3 pages per visitor (14-day avg)
+> **Engagement:** 2.4 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 958 of 77 visitors cloned or downloaded (**1244.1%**)
+> **14-day conversion:** 961 of 76 visitors cloned or downloaded (**1264.4%**)
 >
-> Unique cloners: 193 | Release downloads: 765
+> Unique cloners: 195 | Release downloads: 766
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 765 |
-| Git Clones (14-day) | 512 |
-| **Total Acquisitions** | **1277** |
+| Zip Downloads | 766 |
+| Git Clones (14-day) | 520 |
+| **Total Acquisitions** | **1286** |
 
 ---
 
@@ -54,11 +54,10 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 48 | 28 |
-| Google | 29 | 21 |
-| realisticfarming.com | 4 | 3 |
+| github.com | 49 | 29 |
+| Google | 30 | 22 |
 | chatgpt.com | 3 | 2 |
-| Bing | 1 | 1 |
+| realisticfarming.com | 2 | 2 |
 | kingmods.net | 1 | 1 |
 
 ---
@@ -80,8 +79,8 @@
 | Page | Views | Unique |
 |------|-------|--------|
 | `/Realistic-Farming/FS25_WorkerCosts` | 107 | 71 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 27 | 20 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 10 | 8 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 28 | 21 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 8 | 7 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues` | 4 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/tree/main/translations` | 4 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/CLAUDE.md` | 3 | 2 |

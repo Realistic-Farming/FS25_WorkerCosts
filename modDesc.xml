@@ -6,26 +6,26 @@
     <title>
         <en>Realistic Worker Costs</en>
         <de>Realistische Arbeiterkosten</de>
-        <fr>CoÃƒÂ»ts RÃƒÂ©alistes des Ouvriers</fr>
-        <pl>Realistyczne Koszty PracownikÃƒÂ³w</pl>
+        <fr>Coûts Réalistes des Ouvriers</fr>
+        <pl>Realistyczne Koszty Pracowników</pl>
         <es>Costos Realistas de Trabajadores</es>
         <it>Costi Realistici Operai</it>
-        <cz>RealistickÃƒÂ© NÃƒÂ¡klady na PracovnÃƒÂ­ky</cz>
+        <cz>Realistické Náklady na Pracovníky</cz>
         <br>Custos Realistas de Trabalhadores</br>
-        <uk>ÃÂ ÃÂµÃÂ°ÃÂ»Ã‘â€“Ã‘ÂÃ‘â€šÃÂ¸Ã‘â€¡ÃÂ½Ã‘â€“ ÃÂ²ÃÂ¸Ã‘â€šÃ‘â‚¬ÃÂ°Ã‘â€šÃÂ¸ ÃÂ½ÃÂ° ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃ‘â€“ÃÂ²</uk>
-        <ru>ÃÂ ÃÂµÃÂ°ÃÂ»ÃÂ¸Ã‘ÂÃ‘â€šÃÂ¸Ã‘â€¡ÃÂ½Ã‘â€¹ÃÂµ Ã‘â‚¬ÃÂ°Ã‘ÂÃ‘â€¦ÃÂ¾ÃÂ´Ã‘â€¹ ÃÂ½ÃÂ° Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ¾ÃÂ²</ru>
+        <uk>Реалістичні витрати на працівників</uk>
+        <ru>Реалистичные расходы на работников</ru>
     </title>
     <description>
         <en>Adds hourly wages for workers with skill-based pricing and configurable rates.</en>
-        <de>FÃƒÂ¼gt stÃƒÂ¼ndliche LÃƒÂ¶hne fÃƒÂ¼r Arbeiter mit fÃƒÂ¤higkeitsbasierten Preisen und konfigurierbaren SÃƒÂ¤tzen hinzu.</de>
-        <fr>Ajoute des salaires horaires pour les ouvriers avec tarification basÃƒÂ©e sur les compÃƒÂ©tences et taux configurables.</fr>
-        <pl>Dodaje godzinowe stawki dla pracownikÃƒÂ³w z cenami opartymi na umiejÃ„â„¢tnoÃ…â€ºciach i konfigurowalnymi stawkami.</pl>
-        <es>AÃƒÂ±ade salarios por hora para trabajadores con precios basados en habilidades y tarifas configurables.</es>
-        <it>Aggiunge salari orari per operai con prezzi basati su abilitÃƒÂ  e tariffe configurabili.</it>
-        <cz>PÃ…â„¢idÃƒÂ¡vÃƒÂ¡ hodinovÃƒÂ© mzdy pro pracovnÃƒÂ­ky s cenami zaloÃ…Â¾enÃƒÂ½mi na dovednostech a konfigurovatelnÃƒÂ½mi sazbami.</cz>
-        <br>Adiciona salÃƒÂ¡rios por hora para trabalhadores com preÃƒÂ§os baseados em habilidades e taxas configurÃƒÂ¡veis.</br>
-        <uk>Ãâ€ÃÂ¾ÃÂ´ÃÂ°Ã‘â€ ÃÂ¿ÃÂ¾ÃÂ³ÃÂ¾ÃÂ´ÃÂ¸ÃÂ½ÃÂ½Ã‘Æ’ ÃÂ¾ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘Æ’ ÃÂ¿Ã‘â‚¬ÃÂ°Ã‘â€ Ã‘â€“ÃÂ²ÃÂ½ÃÂ¸ÃÂºÃÂ°ÃÂ¼ ÃÂ· Ã‘â€ Ã‘â€“ÃÂ½ÃÂ¾Ã‘Å½ ÃÂ½ÃÂ° ÃÂ¾Ã‘ÂÃÂ½ÃÂ¾ÃÂ²Ã‘â€“ ÃÂ½ÃÂ°ÃÂ²ÃÂ¸Ã‘â€¡ÃÂ¾ÃÂº Ã‘â€šÃÂ° ÃÂ½ÃÂ°Ã‘ÂÃ‘â€šÃ‘â‚¬ÃÂ¾Ã‘Å½ÃÂ²ÃÂ°ÃÂ½ÃÂ¸ÃÂ¼ÃÂ¸ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃÂ°ÃÂ¼ÃÂ¸.</uk>
-        <ru>Ãâ€ÃÂ¾ÃÂ±ÃÂ°ÃÂ²ÃÂ»Ã‘ÂÃÂµÃ‘â€š ÃÂ¿ÃÂ¾Ã‘â€¡ÃÂ°Ã‘ÂÃÂ¾ÃÂ²Ã‘Æ’Ã‘Å½ ÃÂ¾ÃÂ¿ÃÂ»ÃÂ°Ã‘â€šÃ‘Æ’ Ã‘â‚¬ÃÂ°ÃÂ±ÃÂ¾Ã‘â€šÃÂ½ÃÂ¸ÃÂºÃÂ°ÃÂ¼ Ã‘Â Ã‘â€ ÃÂµÃÂ½ÃÂ°ÃÂ¼ÃÂ¸ ÃÂ½ÃÂ° ÃÂ¾Ã‘ÂÃÂ½ÃÂ¾ÃÂ²ÃÂµ ÃÂ½ÃÂ°ÃÂ²Ã‘â€¹ÃÂºÃÂ¾ÃÂ² ÃÂ¸ ÃÂ½ÃÂ°Ã‘ÂÃ‘â€šÃ‘â‚¬ÃÂ°ÃÂ¸ÃÂ²ÃÂ°ÃÂµÃÂ¼Ã‘â€¹ÃÂ¼ÃÂ¸ Ã‘ÂÃ‘â€šÃÂ°ÃÂ²ÃÂºÃÂ°ÃÂ¼ÃÂ¸.</ru>
+        <de>Fügt stündliche Löhne für Arbeiter mit fähigkeitsbasierten Preisen und konfigurierbaren Sätzen hinzu.</de>
+        <fr>Ajoute des salaires horaires pour les ouvriers avec tarification basée sur les compétences et taux configurables.</fr>
+        <pl>Dodaje godzinowe stawki dla pracowników z cenami opartymi na umiejętnościach i konfigurowalnymi stawkami.</pl>
+        <es>Añade salarios por hora para trabajadores con precios basados en habilidades y tarifas configurables.</es>
+        <it>Aggiunge salari orari per operai con prezzi basati su abilità e tariffe configurabili.</it>
+        <cz>Přidává hodinové mzdy pro pracovníky s cenami založenými na dovednostech a konfigurovatelnými sazbami.</cz>
+        <br>Adiciona salários por hora para trabalhadores com preços baseados em habilidades e taxas configuráveis.</br>
+        <uk>Додає погодинну оплату працівникам з ціною на основі навичок та настроюваними ставками.</uk>
+        <ru>Добавляет почасовую оплату работникам с ценами на основе навыков и настраиваемыми ставками.</ru>
     </description>
     <iconFilename>icon.dds</iconFilename>
     

@@ -51,3 +51,7 @@
 
 - [x] The shared Esc door file `xml/gui/RfPdaMenuPage.xml`, byte-same in all ten door mods (Wizard, #149, merged at 4d4d9fd6): the side info boxes (`rfSideInfoShell`, `wcSideInfoShell`, `mdSideInfoShell`, `csSideInfoShell`) take an explicit position and size, 16 px further right and 16 px narrower (384 to 368 px), so the dark box starts clear of the selected tab's lime edge and its right edge stays where it was. The side text bodies narrow by the same 16 px, to 352 px (the main side text, from 368) and 348 px (the Worker Costs and Market Dynamics side help, from 364), so the text starts 16 px further right and each line ends where it did.
 - The change's in-game check is TESTING row 443. Docs by Fred's catch-up, on Tyson's word of 2026-10-05.
+
+## 2026-10-06 (Fred): the mod's title and description readable again in every language (MAINTENANCE row 222)
+
+- [x] `modDesc.xml`: 14 title and description lines (French, Polish, Czech, Ukrainian, Russian, German, Spanish, Italian, Portuguese) had been saved through the Windows cp1252 code page twice, so the mod manager showed garbled text such as "CoÃƒÂ»ts". Each is decoded back to the exact text the file held before the damage (it matches the file at the parent of 4b33dfb, 2026-08-10, line for line). Row 143 had repaired only the inline l10n block, which is why these were left. No other line changes; an XML comment further down keeps its old bytes, since no player sees it.

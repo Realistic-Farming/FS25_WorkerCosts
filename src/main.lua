@@ -30,6 +30,9 @@ local modName = WorkerCostsModName
 -- =========================================================
 
 -- Load all source files in correct order
+-- Live Controls chord for an InputAction, so hints show the real
+-- binding rather than a factory default (KEYBINDS-R220-20261006).
+source(modDirectory .. "src/utils/WcLiveKeyLabel.lua")
 source(modDirectory .. "src/integrations/OptionScalingResolver.lua")
 source(modDirectory .. "src/settings/SettingsManager.lua")
 source(modDirectory .. "src/settings/Settings.lua")

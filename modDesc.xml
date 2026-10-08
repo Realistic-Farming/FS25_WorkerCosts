@@ -1997,10 +1997,96 @@ Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
             <id>Detail lahan</id>
             <vi>Chi tiết thửa ruộng</vi>
         </text>
+        <text name="rf_live_key_unbound">
+            <en><![CDATA[Unbound]]></en>
+            <de><![CDATA[Nicht belegt]]></de>
+            <fr><![CDATA[Non assignée]]></fr>
+            <nl><![CDATA[Niet toegewezen]]></nl>
+            <it><![CDATA[Non assegnato]]></it>
+            <pl><![CDATA[Nieprzypisane]]></pl>
+            <es><![CDATA[Sin asignar]]></es>
+            <ea><![CDATA[Sin asignar]]></ea>
+            <pt><![CDATA[Não atribuído]]></pt>
+            <br><![CDATA[Não atribuído]]></br>
+            <ru><![CDATA[Не назначено]]></ru>
+            <uk><![CDATA[Не призначено]]></uk>
+            <cz><![CDATA[Nepřiřazeno]]></cz>
+            <hu><![CDATA[Nincs hozzárendelve]]></hu>
+            <ro><![CDATA[Neatribuit]]></ro>
+            <tr><![CDATA[Atanmamış]]></tr>
+            <fi><![CDATA[Ei sidottu]]></fi>
+            <no><![CDATA[Ikke bundet]]></no>
+            <sv><![CDATA[Obunden]]></sv>
+            <da><![CDATA[Ikke bundet]]></da>
+            <kr><![CDATA[미할당]]></kr>
+            <jp><![CDATA[未割り当て]]></jp>
+            <ct><![CDATA[未綁定]]></ct>
+            <fc><![CDATA[未绑定]]></fc>
+            <id><![CDATA[Tidak terikat]]></id>
+            <vi><![CDATA[Chưa gán]]></vi>
+        </text>
+        <text name="rf_live_key_keyboard_unbound">
+            <en><![CDATA[Keyboard unbound]]></en>
+            <de><![CDATA[Tastatur nicht belegt]]></de>
+            <fr><![CDATA[Clavier non assigné]]></fr>
+            <nl><![CDATA[Toetsenbord niet toegewezen]]></nl>
+            <it><![CDATA[Tastiera non assegnata]]></it>
+            <pl><![CDATA[Klawiatura nieprzypisana]]></pl>
+            <es><![CDATA[Teclado sin asignar]]></es>
+            <ea><![CDATA[Teclado sin asignar]]></ea>
+            <pt><![CDATA[Teclado não atribuído]]></pt>
+            <br><![CDATA[Teclado não atribuído]]></br>
+            <ru><![CDATA[Клавиатура не назначена]]></ru>
+            <uk><![CDATA[Клавіатура не призначена]]></uk>
+            <cz><![CDATA[Klávesnice neprirazena]]></cz>
+            <hu><![CDATA[Billentyuzet nincs hozzarendelve]]></hu>
+            <ro><![CDATA[Tastatura neatribuita]]></ro>
+            <tr><![CDATA[Klavye atanmamis]]></tr>
+            <fi><![CDATA[Nappaimisto ei sidottu]]></fi>
+            <no><![CDATA[Tastatur ikke bundet]]></no>
+            <sv><![CDATA[Tangentbord obundet]]></sv>
+            <da><![CDATA[Tastatur ikke bundet]]></da>
+            <kr><![CDATA[키보드 미할당]]></kr>
+            <jp><![CDATA[キーボード未割当]]></jp>
+            <ct><![CDATA[鍵盤未綁定]]></ct>
+            <fc><![CDATA[键盘未绑定]]></fc>
+            <id><![CDATA[Keyboard tidak terikat]]></id>
+            <vi><![CDATA[Ban phim chua gan]]></vi>
+        </text>
+        <text name="rf_live_key_unavailable">
+            <en><![CDATA[unavailable]]></en>
+            <de><![CDATA[nicht verfügbar]]></de>
+            <fr><![CDATA[indisponible]]></fr>
+            <nl><![CDATA[niet beschikbaar]]></nl>
+            <it><![CDATA[non disponibile]]></it>
+            <pl><![CDATA[niedostępne]]></pl>
+            <es><![CDATA[no disponible]]></es>
+            <ea><![CDATA[no disponible]]></ea>
+            <pt><![CDATA[indisponível]]></pt>
+            <br><![CDATA[indisponível]]></br>
+            <ru><![CDATA[недоступно]]></ru>
+            <uk><![CDATA[недоступно]]></uk>
+            <cz><![CDATA[nedostupné]]></cz>
+            <hu><![CDATA[nem elérhető]]></hu>
+            <ro><![CDATA[indisponibil]]></ro>
+            <tr><![CDATA[kullanılamıyor]]></tr>
+            <fi><![CDATA[ei saatavilla]]></fi>
+            <no><![CDATA[utilgjengelig]]></no>
+            <sv><![CDATA[otillgänglig]]></sv>
+            <da><![CDATA[utilgængelig]]></da>
+            <kr><![CDATA[사용 불가]]></kr>
+            <jp><![CDATA[利用不可]]></jp>
+            <ct><![CDATA[無法使用]]></ct>
+            <fc><![CDATA[不可用]]></fc>
+            <id><![CDATA[tidak tersedia]]></id>
+            <vi><![CDATA[không khả dụng]]></vi>
+        </text>
 </l10n>
 
     <inputBinding>
-        <actionBinding action="WC_OPEN_ROSTER" />
+        <actionBinding action="WC_OPEN_ROSTER">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_q" />
+        </actionBinding>
     </inputBinding>
 
 </modDesc>

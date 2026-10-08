@@ -45142,26 +45142,26 @@
     "watchers": 0
   },
   {
-    "timestamp": "2026-10-08T00:52:32Z",
+    "timestamp": "2026-10-08T06:54:31Z",
     "date": "2026-10-08",
     "views": {
-      "count": 153,
-      "uniques": 74
+      "count": 134,
+      "uniques": 71
     },
     "clones": {
-      "count": 573,
-      "uniques": 211
+      "count": 550,
+      "uniques": 204
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 36,
-        "uniques": 22
+        "count": 32,
+        "uniques": 21
       },
       {
         "referrer": "Google",
-        "count": 32,
-        "uniques": 23
+        "count": 28,
+        "uniques": 21
       },
       {
         "referrer": "chatgpt.com",
@@ -45193,32 +45193,26 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 97,
-        "uniques": 67
+        "count": 86,
+        "uniques": 63
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
-        "count": 23,
-        "uniques": 16
+        "count": 19,
+        "uniques": 12
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 11,
-        "uniques": 7
+        "count": 10,
+        "uniques": 6
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues",
         "title": "/issues",
         "count": 4,
         "uniques": 3
-      },
-      {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/pull/135",
-        "title": "/pull/135",
-        "count": 2,
-        "uniques": 2
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/blob/main/icon.png",
@@ -45239,14 +45233,20 @@
         "uniques": 1
       },
       {
-        "path": "/Realistic-Farming/FS25_WorkerCosts/fork",
-        "title": "/fork",
+        "path": "/Realistic-Farming/FS25_WorkerCosts/issues/38",
+        "title": "/issues/38",
         "count": 1,
         "uniques": 1
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/54",
         "title": "/issues/54",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/Realistic-Farming/FS25_WorkerCosts/issues/59",
+        "title": "/issues/59",
         "count": 1,
         "uniques": 1
       }

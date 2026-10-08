@@ -64,6 +64,7 @@ WorkerNetworkSyncBridge.ACTIONS = {
     UNASSIGN     = "WorkerCosts_Unassign",
     SET_TRUSTED  = "WorkerCosts_SetTrusted",
     REFRESH_POOL = "WorkerCosts_RefreshPool",
+    SET_SETTINGS = "WorkerCosts_SetSettings",   -- [MAINTENANCE row 290] a client admin's settings edit
 }
 
 WorkerNetworkSyncBridge.active    = false   -- NetworkSync present and we registered
@@ -400,6 +401,17 @@ function WorkerNetworkSyncBridge.sendCommand(action, uuid, slot, vehicleUniqueId
     return true
 end
 
+--- [MAINTENANCE row 290] A pure client's admin settings edit (positional key/value pairs) through NetworkSync's
+--- action channel. Returns false when NetworkSync is not active or on a server, so the caller falls back.
+function WorkerNetworkSyncBridge.sendSettings(args)
+    if not WorkerNetworkSyncBridge.active then return false end
+    if g_currentMission ~= nil and g_currentMission:getIsServer() then return false end
+    local ns = (g_currentMission and g_currentMission.networkSync) or g_networkSync
+    if ns == nil then return false end
+    ns:requestAction(WorkerNetworkSyncBridge.ACTIONS.SET_SETTINGS, args)
+    return true
+end
+
 -- =========================================================
 -- Registration (loadMission00Finished)
 -- =========================================================
@@ -457,6 +469,12 @@ local function registerActions(ns, mgr)
     end })
     ns:registerAction(A.REFRESH_POOL, { adminOnly = false, onAction = function(_userId, _args)
         mgr:_applyCommandFromNetwork(WCCommand.REFRESH_POOL, 0, 0, "", 0)
+    end })
+    -- [MAINTENANCE row 290] A client admin's settings edit, positional key/value pairs. adminOnly: NetworkSync
+    -- refuses a sender who is not master before this runs (NetworkSync:_applyAction), and its 30 s full resync
+    -- reverts that client.
+    ns:registerAction(A.SET_SETTINGS, { adminOnly = true, onAction = function(_userId, args)
+        mgr:applySettingsFromNetwork(args)
     end })
 end
 

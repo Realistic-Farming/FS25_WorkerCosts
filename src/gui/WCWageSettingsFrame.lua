@@ -146,8 +146,19 @@ function WCWageSettingsFrame:refresh()
 
     self._refreshing = false
 
+    self:applyAdminLock()
     self:refreshRatePreview()
     self:refreshHelpText()
+end
+
+-- [MAINTENANCE row 290] The admin options are the server's: a client whose user is not master sees them locked.
+-- After setTexts/setState, since a MultiTextOption may reset its disabled state in updateContentElement
+-- (MultiTextOptionElement.lua:639-640).
+function WCWageSettingsFrame:applyAdminLock()
+    local locked = not Settings.canEditAdminSettings()
+    for _, opt in ipairs({ self.optEnabled, self.optCostMode, self.optWageLevel, self.optMonthlySalary }) do
+        if opt ~= nil and opt.setDisabled ~= nil then opt:setDisabled(locked) end
+    end
 end
 
 -- #83 Build the Compensation Tier option labels with a unit that tracks the active
@@ -221,7 +232,7 @@ end
 -- Reset button callback (wired from XML onClick)
 function WCWageSettingsFrame:onClickReset()
     if g_WorkerManager and g_WorkerManager.settings then
-        g_WorkerManager.settings:resetToDefaults()
+        g_WorkerManager.settings:resetForUser()   -- [MAINTENANCE row 290] the player's own keys only, where locked
         self:refresh()
         Logging.info("WCWageSettingsFrame: Settings reset to defaults.")
     end

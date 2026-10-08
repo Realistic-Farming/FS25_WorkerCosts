@@ -60,3 +60,8 @@
 
 - [x] In multiplayer, a client's Worker Costs screens (the dashboard, menu page, About, Stats, the Esc PDA page, the editing screens' current values) read the client's own settings, which the roster sync never carried, so a client showed its own file's values (the last server it quit) or the defaults. The roster snapshot now carries the five admin settings (on/off, cost mode, wage level, custom rate, monthly salary) on both wires, NetworkSync and the mod's own event; a pure client applies them; and every settings write on the host sends the sync, so a change reaches clients within about a second instead of at the next hire or fire. Notifications and Debug Mode stay each player's own. Design origin none (Bob's R-15).
 - The in-game check is TESTING row 523. A client's own edit of an admin setting reverting at the next sync is MAINTENANCE row 290, next.
+
+## 2026-10-08 (Fred): an admin's Worker Costs settings change in multiplayer reaches the server (MAINTENANCE row 290)
+
+- [x] In multiplayer, an admin changing Worker Costs' settings on a client (the wage settings tab, the game's settings screen, the Esc PDA page, the console) changed only their own machine, and after row 271 the change reverted at the next sync. The change now goes to the server, which applies it for an admin and sends it to every player. For a player who is not an admin, the four admin options are locked in each of those screens, and the reset buttons reset only that player's own Notifications and Debug Mode. Design origin none (Bob's R-15).
+- The in-game check is TESTING row 524.

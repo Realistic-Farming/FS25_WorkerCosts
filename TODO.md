@@ -59,3 +59,9 @@
 
 - [x] 14 garbled title and description lines decoded back to the text already decided; nothing else touched.
 - [~] In game (owed): TESTING row 481.
+
+## 2026-10-08 (Fred): admin settings reach clients (MAINTENANCE row 271)
+
+- [x] `src/WorkerManager.lua`: `getServerSnapshot` carries `settings` (the five admin keys, raw); `applyClientSnapshot` applies them on a pure client by raw assignment (`SYNCED_SETTINGS`), no setters, no save; `onSettingsSaved` sends the roster sync on the server once the mission has started, never while shutting down (`delete` sets `_shuttingDown`). `src/settings/Settings.lua`: `save` calls it, the one choke point every writer passes through. `src/integrations/WorkerNetworkSyncBridge.lua`: the aggregate carries the settings (17 to 22 values, FULL and delta). `src/WCNetworkEvents.lua`: `WCRosterSyncEvent` carries them field for field. Bar `MAINT-271-settings_reach_clients_test.lua`; battery `tools/test/mutate_maint271.py`, 8 of 8.
+- [~] In game (owed): TESTING row 523.
+- [ ] MAINTENANCE row 290: a client's admin edits reach the server (next).

@@ -37,7 +37,8 @@
 --
 -- The wire shape mirrors WCNetworkEvents' writeSnapshot/readSnapshot field-for-field
 -- (the server computes every derived/financial value once; clients render what they
--- receive), so a client still needs no local settings or wage pipeline. Booleans go
+-- receive). [MAINTENANCE row 271] The admin settings now ride it too and are applied on a client
+-- (WorkerManager:applyClientSnapshot), so every client reader shows the server's values. Booleans go
 -- on the wire as 0/1 ints to keep each array purely numeric+string.
 --
 -- Authority: the six actions register adminOnly=false to preserve the shipped model
@@ -75,7 +76,7 @@ WorkerNetworkSyncBridge._lastRows = {}      -- server: uuid -> last-sent flat ro
 local function b2i(v) return v and 1 or 0 end
 local function i2b(v) return (tonumber(v) or 0) ~= 0 end
 
--- Aggregate + finance + hiring header: 17 values. Shared prefix of FULL and DELTA.
+-- Aggregate + finance + hiring + settings header: 22 values. Shared prefix of FULL and DELTA.
 local function writeAggregate(arr, snap)
     local levels  = snap.levels  or {}
     local finance = snap.finance or {}
@@ -97,6 +98,13 @@ local function writeAggregate(arr, snap)
     arr[#arr + 1] = hiring.limit     or 0
     arr[#arr + 1] = hiring.usedToday or 0
     arr[#arr + 1] = hiring.remaining or 0
+    -- [MAINTENANCE row 271] the admin settings, field for field with WCNetworkEvents' writeSnapshot
+    local settings = snap.settings or {}
+    arr[#arr + 1] = b2i(settings.enabled ~= false)
+    arr[#arr + 1] = settings.costMode or 1
+    arr[#arr + 1] = settings.wageLevel or 2
+    arr[#arr + 1] = settings.customRate or 0
+    arr[#arr + 1] = b2i(settings.monthlySalaryEnabled ~= false)
 end
 
 local function readAggregate(arr, i, snap)
@@ -123,7 +131,14 @@ local function readAggregate(arr, i, snap)
         usedToday = arr[i + 15] or 0,
         remaining = arr[i + 16] or 0,
     }
-    return i + 17
+    snap.settings = {
+        enabled              = i2b(arr[i + 17]),
+        costMode             = arr[i + 18] or 1,
+        wageLevel            = arr[i + 19] or 2,
+        customRate           = arr[i + 20] or 0,
+        monthlySalaryEnabled = i2b(arr[i + 21]),
+    }
+    return i + 22
 end
 
 -- One worker row: 16 values (matches WCNetworkEvents writeSnapshot per-worker order).

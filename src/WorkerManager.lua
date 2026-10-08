@@ -605,10 +605,83 @@ end
 -- [MAINTENANCE row 271] Every settings writer ends in Settings:save (the hub's applyChange, the wage settings
 -- frame, WorkerSettingsUI, the PDA page, the console setters), which calls this: on the server, once the mission
 -- has started and not while shutting down, the roster sync carries the new settings to clients.
+-- [MAINTENANCE row 290] On a pure client the same choke point sends the server the admin keys this machine
+-- changed, so an admin's edit reaches the server and every client.
 function WorkerManager:onSettingsSaved()
     if self._shuttingDown then return end
-    if g_server == nil or g_currentMission == nil or g_currentMission.isMissionStarted ~= true then return end
-    self:_broadcastRosterSync()
+    if g_currentMission == nil or g_currentMission.isMissionStarted ~= true then return end
+    if g_server ~= nil then
+        self:_broadcastRosterSync()
+    elseif g_client ~= nil then
+        self:_sendAdminEditsToServer()
+    end
+end
+
+-- [MAINTENANCE row 290] The admin keys this client changed since the last snapshot it applied, as positional
+-- key/value pairs. With no snapshot yet there is no baseline and nothing is sent: a save before the first
+-- snapshot must not push this machine's file values at the server. The player-local keys are never in the list.
+function WorkerManager:_adminEditsSinceSnapshot()
+    local snap = self.clientRosterSnapshot
+    local base = type(snap) == "table" and snap.settings or nil
+    if type(base) ~= "table" or self.settings == nil then return nil end
+    local args = {}
+    for _, key in ipairs(WorkerManager.SYNCED_SETTINGS) do
+        local value = self.settings[key]
+        if value ~= nil and value ~= base[key] then
+            args[#args + 1] = key
+            args[#args + 1] = value
+        end
+    end
+    return args
+end
+
+function WorkerManager:_sendAdminEditsToServer()
+    local args = self:_adminEditsSinceSnapshot()
+    if args == nil or #args == 0 then return end
+    WCNetwork_SendSettings(args)
+end
+
+-- [MAINTENANCE row 290] What the server accepts for each admin key: the values the setters, the hub's defs
+-- (SettingsHubBridge.lua:47-51) and the snapshot carry. NaN fails both customRate comparisons.
+WorkerManager.SETTING_CHECKS = {
+    enabled              = function(v) return type(v) == "boolean" end,
+    costMode             = function(v) return v == Settings.COST_MODE_HOURLY or v == Settings.COST_MODE_PER_HECTARE end,
+    wageLevel            = function(v) return v == Settings.WAGE_LEVEL_LOW or v == Settings.WAGE_LEVEL_MEDIUM or v == Settings.WAGE_LEVEL_HIGH end,
+    customRate           = function(v) return type(v) == "number" and v >= 0 and v <= 1000 end,
+    monthlySalaryEnabled = function(v) return type(v) == "boolean" end,
+}
+
+-- [MAINTENANCE row 290] SERVER: a client admin's settings edit (the NetworkSync action or WCSettingsChangeEvent,
+-- each after its own master-user gate). Each valid key is applied through the setters, then one save, whose
+-- onSettingsSaved sends the roster sync so every client converges, the sender included. An invalid key is refused
+-- and the request logs once. Returns true when nothing was refused.
+function WorkerManager:applySettingsFromNetwork(args)
+    local s = self.settings
+    if s == nil or type(args) ~= "table" then return false end
+    local applied, refused = 0, {}
+    for i = 1, #args, 2 do
+        local key, value = args[i], args[i + 1]
+        local check = type(key) == "string" and WorkerManager.SETTING_CHECKS[key] or nil
+        if check ~= nil and check(value) then
+            if key == "costMode" then
+                s:setCostMode(value)
+            elseif key == "wageLevel" then
+                s:setWageLevel(value)
+            else
+                s[key] = value
+            end
+            applied = applied + 1
+        else
+            refused[#refused + 1] = tostring(key) .. "=" .. tostring(value)
+        end
+    end
+    if #refused > 0 then
+        Logging.warning("[Worker Costs] Refused a client's settings change: %s", table.concat(refused, ", "))
+    end
+    if applied > 0 then
+        s:save()
+    end
+    return #refused == 0
 end
 
 -- Farm-scoped roster read (companion maturity ask, e.g. DairyCore staffing context).

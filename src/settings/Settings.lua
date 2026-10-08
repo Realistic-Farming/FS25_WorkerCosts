@@ -137,6 +137,28 @@ function Settings:save()
 end
 
 ---@param saveImmediately boolean
+-- [MAINTENANCE row 290] Whether this machine may change the admin settings (enabled, costMode, wageLevel,
+-- customRate, monthlySalaryEnabled): the server (a host or single player) or a client whose user is master
+-- (FSBaseMission.isMasterUser, false at FSBaseMission.lua:118, set in onMasterUserAdded at :2974-2977). The
+-- editing UIs lock the admin options and the user-facing resets leave them alone everywhere else.
+function Settings.canEditAdminSettings()
+    return g_server ~= nil or (g_currentMission ~= nil and g_currentMission.isMasterUser == true)
+end
+
+-- [MAINTENANCE row 290] The reset every user-facing button and the console call. On a machine that may change
+-- the admin settings it is resetToDefaults; elsewhere it resets only the player's own keys (showNotifications,
+-- debugMode), so the save finds no admin key to send and nothing reverts. Settings.new keeps resetToDefaults(false),
+-- which sets all seven on every machine.
+function Settings:resetForUser()
+    if Settings.canEditAdminSettings() then
+        self:resetToDefaults()
+        return
+    end
+    self.showNotifications = true
+    self.debugMode = false
+    self:save()
+end
+
 function Settings:resetToDefaults(saveImmediately)
     saveImmediately = saveImmediately ~= false
     

@@ -549,6 +549,12 @@ local function syncWageWidgets(container)
             optMonthlySalary:setState(settings.monthlySalaryEnabled and 2 or 1, false)
         end
     end
+    -- [MAINTENANCE row 290] The admin options are the server's: locked for a client whose user is not master,
+    -- after setTexts/setState (a MultiTextOption may reset its disabled state in updateContentElement).
+    local locked = not Settings.canEditAdminSettings()
+    for _, opt in ipairs({ optEnabled, optCostMode, optWageLevel, optMonthlySalary }) do
+        if opt ~= nil and type(opt.setDisabled) == "function" then opt:setDisabled(locked) end
+    end
 
     local rate = settings:getWageRate()
     if settings.costMode == Settings.COST_MODE_HOURLY then
@@ -603,13 +609,16 @@ function WcRfPdaGuest.onWageOptionChanged(container)
     local optDebugMode = findDescendant(container, "wcOptDebugMode")
     local optMonthlySalary = findDescendant(container, "wcOptMonthlySalary")
 
-    if optEnabled and optEnabled.getState then
+    -- [MAINTENANCE row 290] Where the admin options are locked, only the player's own keys are written: a stale
+    -- admin widget must not write over the server's value.
+    local canAdmin = Settings.canEditAdminSettings()
+    if canAdmin and optEnabled and optEnabled.getState then
         settings.enabled = (optEnabled:getState() == 2)
     end
-    if optCostMode and optCostMode.getState and settings.setCostMode then
+    if canAdmin and optCostMode and optCostMode.getState and settings.setCostMode then
         settings:setCostMode(optCostMode:getState())
     end
-    if optWageLevel and optWageLevel.getState and settings.setWageLevel then
+    if canAdmin and optWageLevel and optWageLevel.getState and settings.setWageLevel then
         settings:setWageLevel(optWageLevel:getState())
     end
     if optNotifications and optNotifications.getState then
@@ -618,7 +627,7 @@ function WcRfPdaGuest.onWageOptionChanged(container)
     if optDebugMode and optDebugMode.getState then
         settings.debugMode = (optDebugMode:getState() == 2)
     end
-    if optMonthlySalary and optMonthlySalary.getState then
+    if canAdmin and optMonthlySalary and optMonthlySalary.getState then
         settings.monthlySalaryEnabled = (optMonthlySalary:getState() == 2)
     end
     if settings.save then
@@ -629,10 +638,10 @@ end
 
 function WcRfPdaGuest.onWageReset(container)
     local mgr = getMgr()
-    if mgr == nil or mgr.settings == nil or mgr.settings.resetToDefaults == nil then
+    if mgr == nil or mgr.settings == nil or mgr.settings.resetForUser == nil then
         return
     end
-    mgr.settings:resetToDefaults()
+    mgr.settings:resetForUser()   -- [MAINTENANCE row 290] the player's own keys only, where locked
     syncWageWidgets(container)
 end
 

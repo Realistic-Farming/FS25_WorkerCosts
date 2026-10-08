@@ -523,7 +523,7 @@ end
 
 function WorkerSettingsGUI:consoleCommandResetSettings()
     if g_WorkerManager and g_WorkerManager.settings then
-        g_WorkerManager.settings:resetToDefaults()
+        g_WorkerManager.settings:resetForUser()   -- [MAINTENANCE row 290] the player's own keys only, where locked
 
         -- Refresh UI widgets to reflect restored defaults
         if g_WorkerManager.WorkerSettingsUI then

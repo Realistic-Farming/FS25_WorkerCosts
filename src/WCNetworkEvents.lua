@@ -335,6 +335,97 @@ function WCRequestRosterSyncEvent:run(connection)
 end
 
 -- ========================================
+-- SETTINGS CHANGE EVENT (Client -> Server)   [MAINTENANCE row 290]
+-- ========================================
+-- A client admin's edit of the admin settings when NetworkSync is absent. Each pair is the key's index in
+-- WorkerManager.SYNCED_SETTINGS and its value in that key's snapshot wire type. The server applies it for a master
+-- user only. A refused request (not master, a malformed pair, a refused value) is answered with the current
+-- snapshot to the sender, so the edit reverts at once: without NetworkSync there is no periodic resync.
+WCSettingsChangeEvent = WCSettingsChangeEvent or {}
+WCSettingsChangeEvent_mt = Class(WCSettingsChangeEvent, Event)
+
+InitEventClass(WCSettingsChangeEvent, "WCSettingsChangeEvent")
+
+local SETTING_WIRE = { enabled = "bool", costMode = "uint8", wageLevel = "uint8", customRate = "float32",
+                       monthlySalaryEnabled = "bool" }
+
+function WCSettingsChangeEvent.emptyNew()
+    return Event.new(WCSettingsChangeEvent_mt)
+end
+
+function WCSettingsChangeEvent.new(args)
+    local self = WCSettingsChangeEvent.emptyNew()
+    self.args = args or {}
+    return self
+end
+
+function WCSettingsChangeEvent:writeStream(streamId, connection)
+    local index = {}
+    for i, key in ipairs(WorkerManager.SYNCED_SETTINGS) do index[key] = i end
+    local out = {}
+    for i = 1, #self.args, 2 do
+        local key = self.args[i]
+        if index[key] ~= nil then out[#out + 1] = { index[key], SETTING_WIRE[key], self.args[i + 1] } end
+    end
+    streamWriteUInt8(streamId, #out)
+    for _, p in ipairs(out) do
+        streamWriteUInt8(streamId, p[1])
+        if p[2] == "bool" then
+            streamWriteBool(streamId, p[3] == true)
+        elseif p[2] == "uint8" then
+            streamWriteUInt8(streamId, p[3])
+        else
+            streamWriteFloat32(streamId, p[3])
+        end
+    end
+end
+
+function WCSettingsChangeEvent:readStream(streamId, connection)
+    self.args = {}
+    local n = streamReadUInt8(streamId)
+    for _ = 1, n do
+        local key = WorkerManager.SYNCED_SETTINGS[streamReadUInt8(streamId)]
+        local wire = key ~= nil and SETTING_WIRE[key] or nil
+        if wire == nil then
+            self.malformed = true   -- an unknown index: the rest of the stream cannot be read
+            break
+        end
+        local value
+        if wire == "bool" then
+            value = streamReadBool(streamId)
+        elseif wire == "uint8" then
+            value = streamReadUInt8(streamId)
+        else
+            value = streamReadFloat32(streamId)
+        end
+        self.args[#self.args + 1] = key
+        self.args[#self.args + 1] = value
+    end
+    self:run(connection)
+end
+
+function WCSettingsChangeEvent:run(connection)
+    -- SERVER ONLY: a master user's request is applied; anything refused is answered with the snapshot.
+    if g_server == nil or connection == nil then return end
+    local wm = g_currentMission and g_currentMission.workerCostsManager
+    if wm == nil then return end
+    local um = g_currentMission.userManager
+    local user = um ~= nil and um:getUserByConnection(connection) or nil
+    local ok = false
+    if user == nil or not user:getIsMasterUser() then
+        Logging.warning("[Worker Costs] Refused a settings change from %s: not an admin",
+            (user ~= nil and user.getNickname ~= nil) and tostring(user:getNickname()) or "a client")
+    elseif self.malformed then
+        Logging.warning("[Worker Costs] Refused a malformed settings change")
+    else
+        ok = wm:applySettingsFromNetwork(self.args)
+    end
+    if not ok then
+        connection:sendEvent(WCRosterSyncEvent.new(wm:getServerSnapshot()))
+    end
+end
+
+-- ========================================
 -- HELPERS — the single entry points the rest of the mod calls
 -- ========================================
 
@@ -360,6 +451,17 @@ function WCNetwork_SendCommand(action, uuid, slot, vehicleUniqueId, farmId)
         if wm then
             wm:_applyCommandFromNetwork(action, uuid, slot, vehicleUniqueId, farmId)
         end
+    end
+end
+
+--- [MAINTENANCE row 290] A pure client's admin settings edit (positional key/value pairs): NetworkSync's action
+--- channel when it is active, otherwise the own WCSettingsChangeEvent. The server's save sends nothing here.
+function WCNetwork_SendSettings(args)
+    if WorkerNetworkSyncBridge and WorkerNetworkSyncBridge.sendSettings(args) then
+        return
+    end
+    if g_client ~= nil and g_server == nil then
+        g_client:getServerConnection():sendEvent(WCSettingsChangeEvent.new(args))
     end
 end
 

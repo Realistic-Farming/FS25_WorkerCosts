@@ -467,6 +467,15 @@ function WorkerManager:getServerSnapshot()
             usedToday = self:getHiresUsedToday(),
             remaining = math.max(0, WorkerManager.DAILY_HIRE_LIMIT - self:getHiresUsedToday()),
         },
+        -- [MAINTENANCE row 271] The server's admin settings, raw, so a client shows the server's values, not its
+        -- own file's (applyClientSnapshot applies them on a pure client).
+        settings = {
+            enabled              = settings ~= nil and settings.enabled ~= false,
+            costMode             = settings and settings.costMode or Settings.COST_MODE_HOURLY,
+            wageLevel            = settings and settings.wageLevel or Settings.WAGE_LEVEL_MEDIUM,
+            customRate           = settings and settings.customRate or 0,
+            monthlySalaryEnabled = settings ~= nil and settings.monthlySalaryEnabled ~= false,
+        },
     }
 
     if self.workerRoster then
@@ -574,9 +583,32 @@ function WorkerManager:getRosterSnapshot()
     }
 end
 
--- Client stores the host's snapshot mirror (called from WCRosterSyncEvent).
+-- [MAINTENANCE row 271] The admin settings the roster snapshot carries to clients (SettingsHubBridge's adminOnly keys).
+WorkerManager.SYNCED_SETTINGS = { "enabled", "costMode", "wageLevel", "customRate", "monthlySalaryEnabled" }
+
+-- Client stores the host's snapshot mirror (called from WCRosterSyncEvent and the NetworkSync bridge's reads).
 function WorkerManager:applyClientSnapshot(snapshot)
     self.clientRosterSnapshot = snapshot
+    -- [MAINTENANCE row 271] On a pure client the server's admin settings become this machine's, so every reader
+    -- (the dashboard, menu page, About, Stats, the PDA page, the editing UIs' option states) shows the server's
+    -- values. Raw assignment, not setCostMode/setWageLevel (each logs, and NetworkSync's delta lands every second),
+    -- and no save; the player-local keys (showNotifications, debugMode) are untouched.
+    local isServer = g_currentMission ~= nil and g_currentMission.getIsServer ~= nil and g_currentMission:getIsServer()
+    local st = type(snapshot) == "table" and snapshot.settings or nil
+    if not isServer and type(st) == "table" and self.settings ~= nil then
+        for _, key in ipairs(WorkerManager.SYNCED_SETTINGS) do
+            if st[key] ~= nil then self.settings[key] = st[key] end
+        end
+    end
+end
+
+-- [MAINTENANCE row 271] Every settings writer ends in Settings:save (the hub's applyChange, the wage settings
+-- frame, WorkerSettingsUI, the PDA page, the console setters), which calls this: on the server, once the mission
+-- has started and not while shutting down, the roster sync carries the new settings to clients.
+function WorkerManager:onSettingsSaved()
+    if self._shuttingDown then return end
+    if g_server == nil or g_currentMission == nil or g_currentMission.isMissionStarted ~= true then return end
+    self:_broadcastRosterSync()
 end
 
 -- Farm-scoped roster read (companion maturity ask, e.g. DairyCore staffing context).
@@ -901,6 +933,7 @@ function WorkerManager:delete()
     end
 
     if self.settings then
+        self._shuttingDown = true   -- [MAINTENANCE row 271] the shutdown save sends nothing
         self.settings:save()
     end
 

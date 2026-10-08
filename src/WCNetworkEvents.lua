@@ -28,8 +28,9 @@ WCCommand = {
 -- ---------------------------------------------------------------------------
 -- Shared snapshot serialization. The roster snapshot (built server-side by
 -- WorkerManager:getServerSnapshot) IS the wire format: the server computes every
--- derived/financial value once and clients render exactly what they receive, so
--- clients never need the settings or wage pipeline locally.
+-- derived/financial value once and clients render exactly what they receive.
+-- [MAINTENANCE row 271] The admin settings ride it too, field for field with the NetworkSync bridge's
+-- aggregate, and a client applies them (WorkerManager:applyClientSnapshot).
 -- ---------------------------------------------------------------------------
 local function writeSnapshot(streamId, snap)
     snap = snap or {}
@@ -60,6 +61,14 @@ local function writeSnapshot(streamId, snap)
     streamWriteInt32(streamId, hiring.limit or 0)
     streamWriteInt32(streamId, hiring.usedToday or 0)
     streamWriteInt32(streamId, hiring.remaining or 0)
+
+    -- [MAINTENANCE row 271] Admin settings block
+    local settings = snap.settings or {}
+    streamWriteBool(streamId,    settings.enabled ~= false)
+    streamWriteUInt8(streamId,   settings.costMode or 1)
+    streamWriteUInt8(streamId,   settings.wageLevel or 2)
+    streamWriteFloat32(streamId, settings.customRate or 0)
+    streamWriteBool(streamId,    settings.monthlySalaryEnabled ~= false)
 
     -- Workers
     streamWriteInt32(streamId, #workers)
@@ -123,6 +132,15 @@ local function readSnapshot(streamId)
         limit     = streamReadInt32(streamId),
         usedToday = streamReadInt32(streamId),
         remaining = streamReadInt32(streamId),
+    }
+
+    -- [MAINTENANCE row 271] Admin settings block
+    snap.settings = {
+        enabled              = streamReadBool(streamId),
+        costMode             = streamReadUInt8(streamId),
+        wageLevel            = streamReadUInt8(streamId),
+        customRate           = streamReadFloat32(streamId),
+        monthlySalaryEnabled = streamReadBool(streamId),
     }
 
     local workerCount = streamReadInt32(streamId)

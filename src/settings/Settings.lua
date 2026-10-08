@@ -130,6 +130,10 @@ function Settings:save()
     self.manager:saveSettings(self)
     Logging.info("Worker Costs Mod: Settings saved. Wage Level: %s, Cost Mode: %s",
         self:getWageLevelName(), self:getCostModeName())
+    -- [MAINTENANCE row 271] The one choke point every settings writer passes through: tell the manager, which sends
+    -- the roster sync (and with it the admin settings) to clients on the server.
+    local wm = g_WorkerManager
+    if wm ~= nil and wm.settings == self and type(wm.onSettingsSaved) == "function" then wm:onSettingsSaved() end
 end
 
 ---@param saveImmediately boolean

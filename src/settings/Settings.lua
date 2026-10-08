@@ -136,7 +136,6 @@ function Settings:save()
     if wm ~= nil and wm.settings == self and type(wm.onSettingsSaved) == "function" then wm:onSettingsSaved() end
 end
 
----@param saveImmediately boolean
 -- [MAINTENANCE row 290] Whether this machine may change the admin settings (enabled, costMode, wageLevel,
 -- customRate, monthlySalaryEnabled): the server (a host or single player) or a client whose user is master
 -- (FSBaseMission.isMasterUser, false at FSBaseMission.lua:118, set in onMasterUserAdded at :2974-2977). The
@@ -159,6 +158,7 @@ function Settings:resetForUser()
     self:save()
 end
 
+---@param saveImmediately boolean
 function Settings:resetToDefaults(saveImmediately)
     saveImmediately = saveImmediately ~= false
     

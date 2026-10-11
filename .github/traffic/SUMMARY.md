@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-10-09T00:54:54Z
-**Days tracked:** 162 | **Download snapshots:** 685 (hourly)
+**Last updated:** 2026-10-11T00:03:00Z
+**Days tracked:** 163 | **Download snapshots:** 689 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 134 | 71 |
-| Git Clones | 550 | 204 |
+| Page Views | 126 | 68 |
+| Git Clones | 499 | 185 |
 
 > **Engagement:** 1.8 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 983 of 71 visitors cloned or downloaded (**1384.5%**)
+> **14-day conversion:** 968 of 68 visitors cloned or downloaded (**1423.5%**)
 >
-> Unique cloners: 204 | Release downloads: 779
+> Unique cloners: 185 | Release downloads: 783
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 779 |
-| Git Clones (14-day) | 550 |
-| **Total Acquisitions** | **1329** |
+| Zip Downloads | 783 |
+| Git Clones (14-day) | 499 |
+| **Total Acquisitions** | **1282** |
 
 ---
 
@@ -54,13 +54,13 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 32 | 21 |
-| Google | 28 | 21 |
-| chatgpt.com | 3 | 2 |
+| github.com | 26 | 21 |
+| Google | 25 | 18 |
+| chatgpt.com | 2 | 2 |
+| yandex.ru | 2 | 2 |
 | Bing | 1 | 1 |
 | kingmods.net | 1 | 1 |
 | realisticfarming.com | 1 | 1 |
-| yandex.ru | 1 | 1 |
 
 ---
 
@@ -80,10 +80,10 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 86 | 63 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 19 | 12 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 10 | 6 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues` | 4 | 3 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 76 | 60 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 21 | 14 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 13 | 6 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues` | 3 | 2 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/icon.png` | 2 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/actions` | 1 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/CLAUDE.md` | 1 | 1 |

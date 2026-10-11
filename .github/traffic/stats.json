@@ -45820,31 +45820,26 @@
     "watchers": 0
   },
   {
-    "timestamp": "2026-10-11T06:42:02Z",
+    "timestamp": "2026-10-11T18:33:38Z",
     "date": "2026-10-11",
     "views": {
       "count": 126,
       "uniques": 68
     },
     "clones": {
-      "count": 499,
-      "uniques": 185
+      "count": 480,
+      "uniques": 179
     },
     "referrers": [
       {
         "referrer": "github.com",
-        "count": 26,
+        "count": 25,
         "uniques": 21
       },
       {
         "referrer": "Google",
-        "count": 25,
-        "uniques": 18
-      },
-      {
-        "referrer": "chatgpt.com",
-        "count": 2,
-        "uniques": 2
+        "count": 24,
+        "uniques": 17
       },
       {
         "referrer": "yandex.ru",
@@ -45853,6 +45848,11 @@
       },
       {
         "referrer": "Bing",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "referrer": "chatgpt.com",
         "count": 1,
         "uniques": 1
       },
@@ -45871,20 +45871,20 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 76,
-        "uniques": 60
+        "count": 74,
+        "uniques": 59
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2",
         "title": "/releases/tag/v2.2.2.2",
         "count": 21,
-        "uniques": 14
+        "uniques": 15
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 13,
-        "uniques": 6
+        "count": 15,
+        "uniques": 7
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues",

@@ -2084,8 +2084,14 @@ Brug Nulstil for at gendanne alle indstillinger til standardværdierne.</da>
 </l10n>
 
     <inputBinding>
+        <!-- [523/529] rctrl+p, not rshift+q. This action was UNBOUND on
+             development, so it is a new binding rather than a re-chord, and
+             rshift+q is RandomWorldEvents' RWE_HUD_DRAG on development, which
+             the 523 default policy restores. rctrl+p is free across all 21
+             development modDescs, all 11 wave heads, 133 third-party installed
+             chords and the base game, which binds nothing on a right modifier. -->
         <actionBinding action="WC_OPEN_ROSTER">
-            <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_q" />
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl KEY_p" />
         </actionBinding>
     </inputBinding>
 

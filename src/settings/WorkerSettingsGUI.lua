@@ -65,7 +65,15 @@ function WorkerSettingsGUI:consoleCommandHelp()
     print("WorkerCostsDebug true|false - Toggle debug logging")
     print("WorkerCostsShowSettings - Show current settings")
     print("WorkerCostsShowRoster - Show the worker roster")
-    print("WorkerCostsRoster - Open the clickable roster panel (or press ALT+H)")
+    -- WC_OPEN_ROSTER had NO binding at all in the shipped modDesc, so "ALT+H"
+    -- was an invented chord. Read it live; name the action when unresolved.
+    local rosterKey = "the Open Worker Roster action"
+    if WcLiveKeyLabel ~= nil and WcLiveKeyLabel.get ~= nil then
+        local c = WcLiveKeyLabel.get("WC_OPEN_ROSTER")
+        if type(c) == "string" and c ~= "" then rosterKey = c end
+    end
+    print("WorkerCostsRoster - Open the clickable roster panel (or press "
+        .. rosterKey .. ")")
     print("WorkerCostsGrantXP <xp> - TESTING: grant XP to all workers")
     print("WorkerCostsHire <name> - Hire a worker")
     print("WorkerCostsFire <id> - Fire a worker (pays severance)")
@@ -523,7 +531,7 @@ end
 
 function WorkerSettingsGUI:consoleCommandResetSettings()
     if g_WorkerManager and g_WorkerManager.settings then
-        g_WorkerManager.settings:resetToDefaults()
+        g_WorkerManager.settings:resetForUser()   -- [MAINTENANCE row 290] the player's own keys only, where locked
 
         -- Refresh UI widgets to reflect restored defaults
         if g_WorkerManager.WorkerSettingsUI then

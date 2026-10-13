@@ -180,7 +180,7 @@ At these stages, Claude and Samantha MUST have explicit dialog:
 ## Build & Deploy
 
 ```bash
-bash build.sh --deploy
+py build.py --deploy
 ```
 
 This zips the mod and copies it to `C:\Users\tison\Documents\My Games\FarmingSimulator2025\mods`. After deploying, check `log.txt` in that directory for errors tagged with `[Worker Costs]` or `Worker Costs Mod:`.

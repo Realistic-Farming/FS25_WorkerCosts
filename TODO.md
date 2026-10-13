@@ -44,3 +44,29 @@
 
 ## Module page dots always visible (2026-08-07)
 - [x] The Esc RF module page dots were hidden while Worker Costs or Market Dynamics was active, so WC never read as the 3rd module. All four RfPdaMenuPage copies now keep them visible. Built, deployed, PR open.
+
+## 2026-10-04 (Fred): the shared RF Esc door (Wizard, #147)
+
+- [x] The four shared door files at the suite's STOCK page set, byte-same in all ten door mods; StockGuard's STOCK page chrome inert without StockGuard; the herd-advisory panel hidden. `build.py` packs `textures/` too.
+- [~] In game (owed): TESTING row 421.
+
+## 2026-10-05 (Fred): the Esc side panel's info box (Wizard, #149)
+
+- [x] The side info boxes start clear of the selected tab; text bodies 352 and 348 px wide, so line length and the right edge are unchanged; byte-same in all ten door mods.
+- [~] In game (owed): TESTING row 443.
+
+## 2026-10-06 (Fred): modDesc.xml encoding repair (MAINTENANCE row 222)
+
+- [x] 14 garbled title and description lines decoded back to the text already decided; nothing else touched.
+- [~] In game (owed): TESTING row 481.
+
+## 2026-10-08 (Fred): admin settings reach clients (MAINTENANCE row 271)
+
+- [x] `src/WorkerManager.lua`: `getServerSnapshot` carries `settings` (the five admin keys, raw); `applyClientSnapshot` applies them on a pure client by raw assignment (`SYNCED_SETTINGS`), no setters, no save; `onSettingsSaved` sends the roster sync on the server once the mission has started, never while shutting down (`delete` sets `_shuttingDown`). `src/settings/Settings.lua`: `save` calls it, the one choke point every writer passes through. `src/integrations/WorkerNetworkSyncBridge.lua`: the aggregate carries the settings (17 to 22 values, FULL and delta). `src/WCNetworkEvents.lua`: `WCRosterSyncEvent` carries them field for field. Bar `MAINT-271-settings_reach_clients_test.lua`; battery `tools/test/mutate_maint271.py`, 8 of 8.
+- [~] In game (owed): TESTING row 523.
+- [ ] MAINTENANCE row 290: a client's admin edits reach the server (next).
+
+## 2026-10-08 (Fred): a client admin's edits reach the server (MAINTENANCE row 290)
+
+- [x] `src/WorkerManager.lua`: `onSettingsSaved` on a pure client sends the admin keys changed since the last snapshot (`_adminEditsSinceSnapshot`, nothing with no snapshot); `applySettingsFromNetwork` validates (`SETTING_CHECKS`), applies through the setters and saves. `src/integrations/WorkerNetworkSyncBridge.lua`: the `WorkerCosts_SetSettings` action (adminOnly) and `sendSettings`. `src/WCNetworkEvents.lua`: `WCSettingsChangeEvent` (master-user gate, a refusal answered with the snapshot) and `WCNetwork_SendSettings`. `src/settings/Settings.lua`: `canEditAdminSettings` and `resetForUser`. The admin lock in `WCWageSettingsFrame`, `WorkerSettingsUI` (which now refreshes at every later open) and `WcRfPdaGuest`; the four user-facing resets call `resetForUser`. Bar `MAINT-290-client_admin_edits_test.lua`; battery `tools/test/mutate_maint290.py`, 21 of 21.
+- [~] In game (owed): TESTING row 524.

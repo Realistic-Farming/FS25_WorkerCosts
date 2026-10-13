@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<!--
+    Worker Costs Field Guide - Field Guide
+    4 tabs. Content is built in Lua and swapped per tab (one column pair).
+    Chrome copied from SoilGuideDialog so every Realistic Farming guide reads the same.
+    Controller: WcGuideDialog
+-->
+<GUI onOpen="onOpen" onClose="onClose" onCreate="onCreate">
+  <GuiElement profile="newLayer"/>
+  <Bitmap profile="dialogFullscreenBg" id="dialogBg"/>
+
+  <GuiElement profile="wcGuide_bg" id="dialogElement">
+
+    <ThreePartBitmap profile="fs25_dialogBgMiddle"/>
+    <ThreePartBitmap profile="fs25_dialogBgTop"/>
+    <ThreePartBitmap profile="fs25_dialogBgBottom"/>
+
+    <GuiElement profile="fs25_dialogContentContainer">
+
+      <Text profile="fs25_dialogTitle" id="wcGuide_title" text="Worker Costs Field Guide" position="0px -28px"/>
+
+      <BoxLayout profile="wcGuide_tabRow" position="0px -66px">
+        <Button profile="wcGuide_tab" id="wcGuide_tab1" text="Overview" onClick="onClickTab1"/>
+        <Button profile="wcGuide_tab" id="wcGuide_tab2" text="Wages" onClick="onClickTab2"/>
+        <Button profile="wcGuide_tab" id="wcGuide_tab3" text="Crew" onClick="onClickTab3"/>
+        <Button profile="wcGuide_tab" id="wcGuide_tab4" text="Settings" onClick="onClickTab4"/>
+      </BoxLayout>
+
+      <Text profile="wcGuide_subtitle" id="wcGuide_subtitle" text="" position="0px -110px"/>
+
+      <GuiElement profile="wcGuide_colPanel" position="-253px -138px">
+        <Bitmap profile="wcGuide_colBg" position="0px 0px"/>
+        <BoxLayout profile="wcGuide_col" id="wcGuide_col1" position="0px -8px"/>
+      </GuiElement>
+
+      <GuiElement profile="wcGuide_colPanel" position="253px -138px">
+        <Bitmap profile="wcGuide_colBgAlt" position="0px 0px"/>
+        <BoxLayout profile="wcGuide_col" id="wcGuide_col2" position="0px -8px"/>
+      </GuiElement>
+
+    </GuiElement>
+
+    <BoxLayout profile="fs25_dialogButtonBox">
+      <Button profile="buttonOK" text="Close" onClick="onClickClose"/>
+    </BoxLayout>
+
+  </GuiElement>
+
+  <GUIProfiles>
+
+    <Profile name="wcGuide_bg" extends="fs25_dialogBg">
+      <size value="1120px 930px"/>
+    </Profile>
+
+    <Profile name="wcGuide_tabRow" extends="emptyPanel" with="anchorTopCenter">
+      <size value="960px 38px"/>
+      <flowDirection value="horizontal"/>
+      <elementSpacing value="10px"/>
+    </Profile>
+
+    <!-- The guide tabs and Close stay buttonOK: dialog chrome, not Esc overlay chips. -->
+    <Profile name="wcGuide_tab" extends="buttonOK">
+      <size value="174px 36px"/>
+      <textSize value="11px"/>
+      <textUpperCase value="true"/>
+    </Profile>
+
+    <Profile name="wcGuide_subtitle" extends="fs25_textDefault" with="anchorTopCenter">
+      <size value="960px 22px"/>
+      <textSize value="11px"/>
+      <textColor value="0.85 0.75 0.30 0.90"/>
+      <textAlignment value="center"/>
+    </Profile>
+
+    <Profile name="wcGuide_colPanel" extends="emptyPanel" with="anchorTopCenter">
+      <size value="510px 630px"/>
+    </Profile>
+    <Profile name="wcGuide_colBg" extends="baseReference" with="anchorTopCenter">
+      <size value="510px 630px"/>
+      <imageColor value="0.08 0.08 0.12 0.90"/>
+    </Profile>
+    <Profile name="wcGuide_colBgAlt" extends="baseReference" with="anchorTopCenter">
+      <size value="510px 630px"/>
+      <imageColor value="0.06 0.10 0.14 0.90"/>
+    </Profile>
+
+    <Profile name="wcGuide_col" extends="emptyPanel" with="anchorTopCenter">
+      <size value="494px 614px"/>
+      <flowDirection value="vertical"/>
+      <useFullVisibility value="false"/>
+      <alignmentX value="left"/>
+      <elementSpacing value="3px"/>
+    </Profile>
+
+    <Profile name="wcGuide_colHeader" extends="fs25_textDefault" with="anchorTopLeft">
+      <size value="472px 22px"/>
+      <textSize value="15px"/>
+      <textBold value="true"/>
+      <textUpperCase value="true"/>
+      <textColor value="1 0.8 0.2 1"/>
+      <textAlignment value="left"/>
+    </Profile>
+    <Profile name="wcGuide_colBody" extends="fs25_textDefault" with="anchorTopLeft">
+      <size value="472px 19px"/>
+      <textSize value="14px"/>
+      <textColor value="1 1 1 1"/>
+      <textAlignment value="left"/>
+    </Profile>
+    <Profile name="wcGuide_colSpacer" extends="fs25_textDefault" with="anchorTopLeft">
+      <size value="472px 10px"/>
+      <textSize value="8px"/>
+      <textColor value="0.0 0.0 0.0 0.0"/>
+    </Profile>
+
+  </GUIProfiles>
+</GUI>

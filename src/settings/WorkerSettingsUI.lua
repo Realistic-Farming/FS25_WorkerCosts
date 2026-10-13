@@ -33,8 +33,11 @@ function WorkerSettingsUI.new(settings)
 end
 
 function WorkerSettingsUI:inject()
-    if self.injected then 
-        return 
+    if self.injected then
+        -- [MAINTENANCE row 290] Every later open of the Settings screen re-reads the values (a client's change by
+        -- the server's snapshot) and the admin lock (a client made master mid-session).
+        self:refreshUI()
+        return
     end
     
     local page = g_gui.screenControllers[InGameMenu].pageSettings
@@ -143,6 +146,7 @@ function WorkerSettingsUI:inject()
     self.monthlySalaryOption   = monthlySalaryOpt
     
     self.injected = true
+    self:applyAdminLock()
     layout:invalidateLayout()
 
     Logging.info("Worker Costs Mod: Settings UI injected successfully")
@@ -184,6 +188,16 @@ function WorkerSettingsUI:refreshUI()
     elseif self.monthlySalaryOption and self.monthlySalaryOption.setState then
         self.monthlySalaryOption:setState(self.settings.monthlySalaryEnabled and 2 or 1)
     end
+
+    self:applyAdminLock()
+end
+
+-- [MAINTENANCE row 290] The admin options are the server's: a client whose user is not master sees them locked.
+function WorkerSettingsUI:applyAdminLock()
+    local locked = not Settings.canEditAdminSettings()
+    for _, opt in ipairs({ self.enabledOption, self.costModeOption, self.wageLevelOption, self.monthlySalaryOption }) do
+        if opt ~= nil and opt.setDisabled ~= nil then opt:setDisabled(locked) end
+    end
 end
 
 function WorkerSettingsUI:ensureResetButton(settingsFrame)
@@ -197,7 +211,7 @@ function WorkerSettingsUI:ensureResetButton(settingsFrame)
             text = g_i18n:getText("wc_reset") or "Reset Settings",
             callback = function()
                 if g_WorkerManager and g_WorkerManager.settings then
-                    g_WorkerManager.settings:resetToDefaults()
+                    g_WorkerManager.settings:resetForUser()   -- [MAINTENANCE row 290]
                     if g_WorkerManager.WorkerSettingsUI then
                         g_WorkerManager.WorkerSettingsUI:refreshUI()
                     end

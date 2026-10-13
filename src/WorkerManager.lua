@@ -27,6 +27,25 @@
 WorkerManager = WorkerManager or {}
 local WorkerManager_mt = Class(WorkerManager)
 
+-- RSF-F201 input record and expected sets. The record lives on this class table
+-- (latched `WorkerManager = WorkerManager or {}` above) so it survives mission
+-- teardown and a script reload; the per-mission instance only binds as owner.
+local function wcInputRecord()
+    return WorkerContextInput.record(WorkerManager, "_f201Input")
+end
+
+local function wcHasRosterPanel(owner) return owner.rosterPanel ~= nil end
+local function wcHideRow(binding, eventId) binding:setActionEventTextVisibility(eventId, false) end
+
+local WC_PLAYER_SPECS = {
+    { action = "WC_OPEN_ROSTER", handler = "onOpenRosterInput", idField = "rosterPlayerEventId",
+      present = wcHasRosterPanel, after = wcHideRow, up = false, down = true, always = false, startActive = true },
+}
+local WC_VEHICLE_SPECS = {
+    { action = "WC_OPEN_ROSTER", handler = "onOpenRosterInput", idField = "rosterVehicleEventId",
+      present = wcHasRosterPanel, after = wcHideRow, up = false, down = true, always = false, startActive = true },
+}
+
 -- Pro-Staff Phase 5: recruitment pool. The host keeps a small rotating set of
 -- candidates the player can hire from the Farm Tablet Personnel app. Candidate
 -- names come from this pool (no text-input field on a controller-friendly tablet).
@@ -85,7 +104,7 @@ function WorkerManager.new(mission, modDirectory, modName)
     -- renders. Opened via the WorkerCostsRoster console command.
     if mission:getIsClient() and WCRosterPanel then
         self.rosterPanel = WCRosterPanel.new(self.workerRoster, self.workerSystem)
-        self:installRosterInput()
+        self:installRosterInput(mission)
     end
 
     if mission:getIsClient() and g_gui then
@@ -182,6 +201,14 @@ function WorkerManager:onMissionLoaded()
         -- After initialize() so nothing clobbers the loaded values.
         if g_currentMission and g_currentMission:getIsServer() then
             self.workerSystem:loadMonthlyState(g_currentMission.missionInfo)
+            -- F223: apply the native MP-to-SP farm conversion map ONCE, after the
+            -- snapshot is loaded and native farm loading has completed (mergedFarms is
+            -- populated during FarmManager load, before loadMission00Finished). A repeat
+            -- load/map cannot double-pool: remap retargets ids without re-adding money.
+            local fm = g_farmManager
+            if fm ~= nil and type(fm.mergedFarms) == "table" and next(fm.mergedFarms) ~= nil then
+                self.workerSystem:remapMergedFarms(fm.mergedFarms)
+            end
         end
     end
 
@@ -197,6 +224,9 @@ function WorkerManager:onMissionLoaded()
 end
 
 function WorkerManager:update(dt)
+    -- RSF-F201: admission reset is the first input act of every update interval,
+    -- before the server/client gates below.
+    WorkerContextInput.resetAdmission(wcInputRecord())
     -- Wage billing is server-authoritative. workerSystem:update runs the payment
     -- tick that calls g_currentMission:addMoney, so a pure MP client must never
     -- enter it. (Clients being spared today only because aiSystem:getActiveJobs()
@@ -405,12 +435,13 @@ function WorkerManager:getServerSnapshot()
     local baseRate   = (settings and settings.getWageRate and settings:getWageRate()) or 0
     local isHourly   = (settings and settings.costMode == Settings.COST_MODE_HOURLY) and true or false
 
-    -- Aggregate "this month" accrued wages from the worker system.
+    -- Aggregate "this month" accrued wages from the worker system. F223: monthlyCosts
+    -- is now nested per farm, and frozen unpaid bills also carry owed base wages, so the
+    -- display aggregate is assembled by the owner helper (unbilled base + unpaid frozen
+    -- base portions). Keeps the existing "base accrual" meaning; no penalised final here.
     local monthAccrued = 0
-    if workerSys and workerSys.monthlyCosts then
-        for _, amt in pairs(workerSys.monthlyCosts) do
-            monthAccrued = monthAccrued + (amt or 0)
-        end
+    if workerSys and workerSys._baseAccrualAggregate then
+        monthAccrued = workerSys:_baseAccrualAggregate()
     end
 
     local snapshot = {
@@ -435,6 +466,15 @@ function WorkerManager:getServerSnapshot()
             limit     = WorkerManager.DAILY_HIRE_LIMIT,
             usedToday = self:getHiresUsedToday(),
             remaining = math.max(0, WorkerManager.DAILY_HIRE_LIMIT - self:getHiresUsedToday()),
+        },
+        -- [MAINTENANCE row 271] The server's admin settings, raw, so a client shows the server's values, not its
+        -- own file's (applyClientSnapshot applies them on a pure client).
+        settings = {
+            enabled              = settings ~= nil and settings.enabled ~= false,
+            costMode             = settings and settings.costMode or Settings.COST_MODE_HOURLY,
+            wageLevel            = settings and settings.wageLevel or Settings.WAGE_LEVEL_MEDIUM,
+            customRate           = settings and settings.customRate or 0,
+            monthlySalaryEnabled = settings ~= nil and settings.monthlySalaryEnabled ~= false,
         },
     }
 
@@ -543,9 +583,105 @@ function WorkerManager:getRosterSnapshot()
     }
 end
 
--- Client stores the host's snapshot mirror (called from WCRosterSyncEvent).
+-- [MAINTENANCE row 271] The admin settings the roster snapshot carries to clients (SettingsHubBridge's adminOnly keys).
+WorkerManager.SYNCED_SETTINGS = { "enabled", "costMode", "wageLevel", "customRate", "monthlySalaryEnabled" }
+
+-- Client stores the host's snapshot mirror (called from WCRosterSyncEvent and the NetworkSync bridge's reads).
 function WorkerManager:applyClientSnapshot(snapshot)
     self.clientRosterSnapshot = snapshot
+    -- [MAINTENANCE row 271] On a pure client the server's admin settings become this machine's, so every reader
+    -- (the dashboard, menu page, About, Stats, the PDA page, the editing UIs' option states) shows the server's
+    -- values. Raw assignment, not setCostMode/setWageLevel (each logs, and NetworkSync's delta lands every second),
+    -- and no save; the player-local keys (showNotifications, debugMode) are untouched.
+    local isServer = g_currentMission ~= nil and g_currentMission.getIsServer ~= nil and g_currentMission:getIsServer()
+    local st = type(snapshot) == "table" and snapshot.settings or nil
+    if not isServer and type(st) == "table" and self.settings ~= nil then
+        for _, key in ipairs(WorkerManager.SYNCED_SETTINGS) do
+            if st[key] ~= nil then self.settings[key] = st[key] end
+        end
+    end
+end
+
+-- [MAINTENANCE row 271] Every settings writer ends in Settings:save (the hub's applyChange, the wage settings
+-- frame, WorkerSettingsUI, the PDA page, the console setters), which calls this: on the server, once the mission
+-- has started and not while shutting down, the roster sync carries the new settings to clients.
+-- [MAINTENANCE row 290] On a pure client the same choke point sends the server the admin keys this machine
+-- changed, so an admin's edit reaches the server and every client.
+function WorkerManager:onSettingsSaved()
+    if self._shuttingDown then return end
+    if g_currentMission == nil or g_currentMission.isMissionStarted ~= true then return end
+    if g_server ~= nil then
+        self:_broadcastRosterSync()
+    elseif g_client ~= nil then
+        self:_sendAdminEditsToServer()
+    end
+end
+
+-- [MAINTENANCE row 290] The admin keys this client changed since the last snapshot it applied, as positional
+-- key/value pairs. With no snapshot yet there is no baseline and nothing is sent: a save before the first
+-- snapshot must not push this machine's file values at the server. The player-local keys are never in the list.
+function WorkerManager:_adminEditsSinceSnapshot()
+    local snap = self.clientRosterSnapshot
+    local base = type(snap) == "table" and snap.settings or nil
+    if type(base) ~= "table" or self.settings == nil then return nil end
+    local args = {}
+    for _, key in ipairs(WorkerManager.SYNCED_SETTINGS) do
+        local value = self.settings[key]
+        if value ~= nil and value ~= base[key] then
+            args[#args + 1] = key
+            args[#args + 1] = value
+        end
+    end
+    return args
+end
+
+function WorkerManager:_sendAdminEditsToServer()
+    local args = self:_adminEditsSinceSnapshot()
+    if args == nil or #args == 0 then return end
+    WCNetwork_SendSettings(args)
+end
+
+-- [MAINTENANCE row 290] What the server accepts for each admin key: the values the setters, the hub's defs
+-- (SettingsHubBridge.lua:47-51) and the snapshot carry. NaN fails both customRate comparisons.
+WorkerManager.SETTING_CHECKS = {
+    enabled              = function(v) return type(v) == "boolean" end,
+    costMode             = function(v) return v == Settings.COST_MODE_HOURLY or v == Settings.COST_MODE_PER_HECTARE end,
+    wageLevel            = function(v) return v == Settings.WAGE_LEVEL_LOW or v == Settings.WAGE_LEVEL_MEDIUM or v == Settings.WAGE_LEVEL_HIGH end,
+    customRate           = function(v) return type(v) == "number" and v >= 0 and v <= 1000 end,
+    monthlySalaryEnabled = function(v) return type(v) == "boolean" end,
+}
+
+-- [MAINTENANCE row 290] SERVER: a client admin's settings edit (the NetworkSync action or WCSettingsChangeEvent,
+-- each after its own master-user gate). Each valid key is applied through the setters, then one save, whose
+-- onSettingsSaved sends the roster sync so every client converges, the sender included. An invalid key is refused
+-- and the request logs once. Returns true when nothing was refused.
+function WorkerManager:applySettingsFromNetwork(args)
+    local s = self.settings
+    if s == nil or type(args) ~= "table" then return false end
+    local applied, refused = 0, {}
+    for i = 1, #args, 2 do
+        local key, value = args[i], args[i + 1]
+        local check = type(key) == "string" and WorkerManager.SETTING_CHECKS[key] or nil
+        if check ~= nil and check(value) then
+            if key == "costMode" then
+                s:setCostMode(value)
+            elseif key == "wageLevel" then
+                s:setWageLevel(value)
+            else
+                s[key] = value
+            end
+            applied = applied + 1
+        else
+            refused[#refused + 1] = tostring(key) .. "=" .. tostring(value)
+        end
+    end
+    if #refused > 0 then
+        Logging.warning("[Worker Costs] Refused a client's settings change: %s", table.concat(refused, ", "))
+    end
+    if applied > 0 then
+        s:save()
+    end
+    return #refused == 0
 end
 
 -- Farm-scoped roster read (companion maturity ask, e.g. DairyCore staffing context).
@@ -562,6 +698,33 @@ function WorkerManager:getWorkersForFarm(farmId)
     if type(farmId) ~= "number" or farmId <= 0 then return {} end
     local snap = self:getRosterSnapshot()
     return (snap and snap.workers) or {}
+end
+
+-- =========================================================
+-- F223 / C3: payroll obligations read contract (for the emergency-loan forecast)
+-- =========================================================
+-- IncomeMod's emergency loan calls this COLON method on mission.workerCostsManager to
+-- learn a farm's dated payroll cash bills for its one-period cash forecast. Server-only
+-- and PURE: it never issues, pays, flushes open work or migrates (the owner keeps its
+-- money and formulas; C3 only reads). Delegates to the WorkerSystem collector, which
+-- returns a copied version-1 snapshot that never aliases live payroll state. `horizon`
+-- carries the shared date contract { asOf, horizonEnd, daysPerPeriod, dayInPeriod }.
+---@param farmId number
+---@param horizon table
+---@return table  version-1 payroll obligations snapshot
+function WorkerManager:getPayrollObligations(farmId, horizon)
+    if self.workerSystem and self.workerSystem.getPayrollObligations then
+        return self.workerSystem:getPayrollObligations(farmId, horizon)
+    end
+    return {
+        version         = (WorkerSystem and WorkerSystem.PAYROLL_CONTRACT_VERSION) or 1,
+        status          = "UNAVAILABLE",
+        farmId          = farmId,
+        enabled         = false,
+        settlementMode  = "IMMEDIATE",
+        coverageReasons = { "NO_WORKER_SYSTEM" },
+        events          = {},
+    }
 end
 
 -- =========================================================
@@ -769,72 +932,41 @@ end
 
 -- Phase 5: register the rebindable WC_OPEN_ROSTER action (default ALT+H, shown in
 -- the Controls menu) in BOTH the on-foot (PLAYER) and in-vehicle (VEHICLE) input
--- contexts. Mirrors SoilFertilizer's proven dual-context registration so the hotkey
--- works whether the player is walking or driving. The console command is the fallback.
-function WorkerManager:installRosterInput()
+-- contexts, so the hotkey works whether the player is walking or driving. The
+-- console command is the fallback.
+--
+-- RSF-F201: each context registers through its own private forwarding target,
+-- so the two registrations never share an engine identifier (the old shared
+-- `mgr` target made them one global slot, which is why the vehicle hook used
+-- to clear both ids on every seat change and never restored PLAYER). Membership
+-- is asked of the wrap's own context; a complete set costs no transaction. The
+-- wrappers install once per loaded script environment and the record lives on
+-- the WorkerManager class table; each mission only binds a new owner.
+function WorkerManager:installRosterInput(mission)
     if not (InputAction and InputAction.WC_OPEN_ROSTER and g_inputBinding) then
         Logging.warning("[Worker Costs] WC_OPEN_ROSTER action unavailable - roster hotkey not bound")
         return
     end
-
-    -- PLAYER (on-foot) context.
-    if PlayerInputComponent and PlayerInputComponent.registerActionEvents then
-        local original = PlayerInputComponent.registerActionEvents
-        self._rosterPlayerInputOriginal = original
-        PlayerInputComponent.registerActionEvents = function(inputComponent, ...)
-            original(inputComponent, ...)
-            if not (inputComponent.player and inputComponent.player.isOwner) then return end
-            local mgr = g_WorkerManager
-            if not mgr or not mgr.rosterPanel or mgr.rosterPlayerEventId then return end
-            g_inputBinding:beginActionEventsModification(PlayerInputComponent.INPUT_CONTEXT_NAME)
-            local ok, id = g_inputBinding:registerActionEvent(
-                InputAction.WC_OPEN_ROSTER, mgr, mgr.onOpenRosterInput, false, true, false, true)
-            if ok and id then
-                mgr.rosterPlayerEventId = id
-                g_inputBinding:setActionEventTextVisibility(id, false)
-            end
-            g_inputBinding:endActionEventsModification()
-        end
+    -- Install once per loaded script environment; the helper latches on its
+    -- captured predecessors, so a second call is a no-op.
+    local record = wcInputRecord()
+    WorkerContextInput.installPlayerWrapper(record, WC_PLAYER_SPECS)
+    if Vehicle then
+        WorkerContextInput.installVehicleWrapper(record, WC_VEHICLE_SPECS)
     end
+    if PlayerInputComponent == nil or Vehicle == nil then return end
+    WorkerContextInput.activate(record, self, mission or self.mission or g_currentMission, {
+        [PlayerInputComponent.INPUT_CONTEXT_NAME] = WC_PLAYER_SPECS,
+        [Vehicle.INPUT_CONTEXT_NAME]              = WC_VEHICLE_SPECS,
+    })
+end
 
-    -- VEHICLE context, via InputBinding.endActionEventsModification (hooking
-    -- Vehicle.registerActionEvents directly does not work once vehicles exist).
-    if InputBinding and InputBinding.endActionEventsModification and Vehicle then
-        local originalEndMod = InputBinding.endActionEventsModification
-        self._rosterVehicleInputOriginal = originalEndMod
-        local reentrant = false
-        InputBinding.endActionEventsModification = function(binding, ignoreCheck)
-            local contextName = ""
-            if binding.registrationContext and
-               binding.registrationContext ~= InputBinding.NO_REGISTRATION_CONTEXT then
-                contextName = binding.registrationContext.name or ""
-            end
-            originalEndMod(binding, ignoreCheck)
-            if contextName ~= Vehicle.INPUT_CONTEXT_NAME or reentrant then return end
-            local mgr = g_WorkerManager
-            if not mgr or not mgr.rosterPanel then return end
-            reentrant = true
-            -- Fires on every seat change; purge stale ids (slot-based removeActionEvent
-            -- can invalidate the PLAYER slot too, so clear both and let them re-register).
-            if mgr.rosterVehicleEventId then
-                pcall(function() binding:removeActionEvent(mgr.rosterVehicleEventId) end)
-                mgr.rosterVehicleEventId = nil
-            end
-            if mgr.rosterPlayerEventId then
-                pcall(function() binding:removeActionEvent(mgr.rosterPlayerEventId) end)
-                mgr.rosterPlayerEventId = nil
-            end
-            binding:beginActionEventsModification(Vehicle.INPUT_CONTEXT_NAME)
-            local ok, id = binding:registerActionEvent(
-                InputAction.WC_OPEN_ROSTER, mgr, mgr.onOpenRosterInput, false, true, false, true)
-            if ok and id then
-                mgr.rosterVehicleEventId = id
-                binding:setActionEventTextVisibility(id, false)
-            end
-            binding:endActionEventsModification()
-            reentrant = false
-        end
-    end
+--- RSF-F201 deterministic post-load recovery: one complete PLAYER reconciliation
+--- from main.lua's loadedMission door, if the local owning player and the native
+--- PLAYER context already exist. Creates no context and no timer; when the
+--- context is not there yet the installed PLAYER wrapper is the later door.
+function WorkerManager:catchUpRosterInput()
+    WorkerContextInput.catchUpPlayer(wcInputRecord(), WC_PLAYER_SPECS)
 end
 
 -- Input callback for the WC_OPEN_ROSTER action.
@@ -845,15 +977,11 @@ function WorkerManager:onOpenRosterInput()
 end
 
 function WorkerManager:delete()
-    -- Restore the original input functions we hooked, so they don't accumulate.
-    if self._rosterPlayerInputOriginal and PlayerInputComponent then
-        PlayerInputComponent.registerActionEvents = self._rosterPlayerInputOriginal
-        self._rosterPlayerInputOriginal = nil
-    end
-    if self._rosterVehicleInputOriginal and InputBinding then
-        InputBinding.endActionEventsModification = self._rosterVehicleInputOriginal
-        self._rosterVehicleInputOriginal = nil
-    end
+    -- RSF-F201: retire this owner's registration activity. Old forwarding
+    -- targets go inert and the owner reference is released. The captured
+    -- input predecessors are NOT restored: restoring per mission can remove a
+    -- later mod's wrapper. They stay installed for the whole session.
+    WorkerContextInput.retire(wcInputRecord())
 
     -- Restore the original mission.addMoney before the mission object is torn down
     if self.workerSystem then
@@ -878,6 +1006,7 @@ function WorkerManager:delete()
     end
 
     if self.settings then
+        self._shuttingDown = true   -- [MAINTENANCE row 271] the shutdown save sends nothing
         self.settings:save()
     end
 

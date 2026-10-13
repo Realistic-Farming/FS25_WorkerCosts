@@ -32,6 +32,7 @@ INCLUDE = [
     "src",
     "xml",
     "translations",
+    "textures",
 ]
 
 

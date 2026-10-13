@@ -62,34 +62,19 @@ function Settings:getWageLevelName()
     end
 end
 
-Settings.SPINE_WAGE_SCALE = {
-    id   = "wc_wageScale",
-    dial = "labor",
-    base = 1.0,
-}
-
 ---@return number
 function Settings:getWageRate()
-    local baseRate
     if self.customRate > 0 then
-        baseRate = self.customRate
-    elseif self.wageLevel == Settings.WAGE_LEVEL_LOW then
-        baseRate = 15
+        return self.customRate
+    end
+    
+    if self.wageLevel == Settings.WAGE_LEVEL_LOW then
+        return 15
     elseif self.wageLevel == Settings.WAGE_LEVEL_HIGH then
-        baseRate = 40
+        return 40
     else
-        baseRate = 25
+        return 25
     end
-
-    if OptionScalingResolver ~= nil then
-        local hub = (g_currentMission ~= nil and g_currentMission.settingsHub) or g_settingsHub
-        local profile = OptionScalingResolver.readProfile(hub)
-        if profile ~= nil then
-            baseRate = baseRate * OptionScalingResolver.resolve(Settings.SPINE_WAGE_SCALE, profile)
-        end
-    end
-
-    return baseRate
 end
 
 ---@param mode number
@@ -145,6 +130,32 @@ function Settings:save()
     self.manager:saveSettings(self)
     Logging.info("Worker Costs Mod: Settings saved. Wage Level: %s, Cost Mode: %s",
         self:getWageLevelName(), self:getCostModeName())
+    -- [MAINTENANCE row 271] The one choke point every settings writer passes through: tell the manager, which sends
+    -- the roster sync (and with it the admin settings) to clients on the server.
+    local wm = g_WorkerManager
+    if wm ~= nil and wm.settings == self and type(wm.onSettingsSaved) == "function" then wm:onSettingsSaved() end
+end
+
+-- [MAINTENANCE row 290] Whether this machine may change the admin settings (enabled, costMode, wageLevel,
+-- customRate, monthlySalaryEnabled): the server (a host or single player) or a client whose user is master
+-- (FSBaseMission.isMasterUser, false at FSBaseMission.lua:118, set in onMasterUserAdded at :2974-2977). The
+-- editing UIs lock the admin options and the user-facing resets leave them alone everywhere else.
+function Settings.canEditAdminSettings()
+    return g_server ~= nil or (g_currentMission ~= nil and g_currentMission.isMasterUser == true)
+end
+
+-- [MAINTENANCE row 290] The reset every user-facing button and the console call. On a machine that may change
+-- the admin settings it is resetToDefaults; elsewhere it resets only the player's own keys (showNotifications,
+-- debugMode), so the save finds no admin key to send and nothing reverts. Settings.new keeps resetToDefaults(false),
+-- which sets all seven on every machine.
+function Settings:resetForUser()
+    if Settings.canEditAdminSettings() then
+        self:resetToDefaults()
+        return
+    end
+    self.showNotifications = true
+    self.debugMode = false
+    self:save()
 end
 
 ---@param saveImmediately boolean

@@ -88,7 +88,7 @@ The mod ships with a full **in-game manager UI** (accessible from the pause menu
 ```bash
 git clone https://github.com/TheCodingDad-TisonK/FS25_WorkerCosts.git
 cd FS25_WorkerCosts
-bash build.sh --deploy
+py build.py --deploy
 ```
 
 ---

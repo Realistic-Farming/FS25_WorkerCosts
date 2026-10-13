@@ -37,7 +37,8 @@
 --
 -- The wire shape mirrors WCNetworkEvents' writeSnapshot/readSnapshot field-for-field
 -- (the server computes every derived/financial value once; clients render what they
--- receive), so a client still needs no local settings or wage pipeline. Booleans go
+-- receive). [MAINTENANCE row 271] The admin settings now ride it too and are applied on a client
+-- (WorkerManager:applyClientSnapshot), so every client reader shows the server's values. Booleans go
 -- on the wire as 0/1 ints to keep each array purely numeric+string.
 --
 -- Authority: the six actions register adminOnly=false to preserve the shipped model
@@ -63,6 +64,7 @@ WorkerNetworkSyncBridge.ACTIONS = {
     UNASSIGN     = "WorkerCosts_Unassign",
     SET_TRUSTED  = "WorkerCosts_SetTrusted",
     REFRESH_POOL = "WorkerCosts_RefreshPool",
+    SET_SETTINGS = "WorkerCosts_SetSettings",   -- [MAINTENANCE row 290] a client admin's settings edit
 }
 
 WorkerNetworkSyncBridge.active    = false   -- NetworkSync present and we registered
@@ -75,7 +77,7 @@ WorkerNetworkSyncBridge._lastRows = {}      -- server: uuid -> last-sent flat ro
 local function b2i(v) return v and 1 or 0 end
 local function i2b(v) return (tonumber(v) or 0) ~= 0 end
 
--- Aggregate + finance + hiring header: 17 values. Shared prefix of FULL and DELTA.
+-- Aggregate + finance + hiring + settings header: 22 values. Shared prefix of FULL and DELTA.
 local function writeAggregate(arr, snap)
     local levels  = snap.levels  or {}
     local finance = snap.finance or {}
@@ -97,6 +99,13 @@ local function writeAggregate(arr, snap)
     arr[#arr + 1] = hiring.limit     or 0
     arr[#arr + 1] = hiring.usedToday or 0
     arr[#arr + 1] = hiring.remaining or 0
+    -- [MAINTENANCE row 271] the admin settings, field for field with WCNetworkEvents' writeSnapshot
+    local settings = snap.settings or {}
+    arr[#arr + 1] = b2i(settings.enabled ~= false)
+    arr[#arr + 1] = settings.costMode or 1
+    arr[#arr + 1] = settings.wageLevel or 2
+    arr[#arr + 1] = settings.customRate or 0
+    arr[#arr + 1] = b2i(settings.monthlySalaryEnabled ~= false)
 end
 
 local function readAggregate(arr, i, snap)
@@ -123,7 +132,14 @@ local function readAggregate(arr, i, snap)
         usedToday = arr[i + 15] or 0,
         remaining = arr[i + 16] or 0,
     }
-    return i + 17
+    snap.settings = {
+        enabled              = i2b(arr[i + 17]),
+        costMode             = arr[i + 18] or 1,
+        wageLevel            = arr[i + 19] or 2,
+        customRate           = arr[i + 20] or 0,
+        monthlySalaryEnabled = i2b(arr[i + 21]),
+    }
+    return i + 22
 end
 
 -- One worker row: 16 values (matches WCNetworkEvents writeSnapshot per-worker order).
@@ -356,6 +372,10 @@ end
 -- false when NetworkSync is absent so the caller runs its own path.
 function WorkerNetworkSyncBridge.sendCommand(action, uuid, slot, vehicleUniqueId, farmId)
     if not WorkerNetworkSyncBridge.active then return false end
+    -- On a server the caller applies locally with its own farm (WCNetwork_SendCommand's
+    -- other branch); routing the host through NetworkSync's in-memory apply would reach
+    -- the handlers with no user, which they now refuse (MAINTENANCE row 117).
+    if g_currentMission ~= nil and g_currentMission:getIsServer() then return false end
     local ns = (g_currentMission and g_currentMission.networkSync) or g_networkSync
     if ns == nil then return false end
 
@@ -381,6 +401,17 @@ function WorkerNetworkSyncBridge.sendCommand(action, uuid, slot, vehicleUniqueId
     return true
 end
 
+--- [MAINTENANCE row 290] A pure client's admin settings edit (positional key/value pairs) through NetworkSync's
+--- action channel. Returns false when NetworkSync is not active or on a server, so the caller falls back.
+function WorkerNetworkSyncBridge.sendSettings(args)
+    if not WorkerNetworkSyncBridge.active then return false end
+    if g_currentMission ~= nil and g_currentMission:getIsServer() then return false end
+    local ns = (g_currentMission and g_currentMission.networkSync) or g_networkSync
+    if ns == nil then return false end
+    ns:requestAction(WorkerNetworkSyncBridge.ACTIONS.SET_SETTINGS, args)
+    return true
+end
+
 -- =========================================================
 -- Registration (loadMission00Finished)
 -- =========================================================
@@ -388,26 +419,42 @@ end
 local function registerActions(ns, mgr)
     local A = WorkerNetworkSyncBridge.ACTIONS
 
-    -- Reproduce WCWorkerCommandEvent:run's guard: hire/fire need a real farm to charge.
-    local function farmOk(farmId, action)
-        if not farmId or farmId == 0 then
-            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - invalid farmId", action)
-            return false
+    -- THE CHARGED FARM IS THE SENDER'S OWN (MAINTENANCE row 117): the server's farm for
+    -- the requesting user (FarmManager:getFarmByUserId, farms/FarmManager.lua:192-202: the
+    -- singleplayer farm in singleplayer, farm 0 for a user in no farm), never the wire.
+    -- NetworkSync hands the userId it resolved from the connection's user (_applyAction);
+    -- nil means no user could be named, and is refused (the host never comes this way:
+    -- sendCommand stands down on a server). The wire farm stays only as an equality
+    -- check, so the action shape does not change; a client naming another farm is refused.
+    local function chargedFarm(userId, wireFarmId, action)
+        if userId == nil then
+            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - no user for the sender", action)
+            return nil
         end
-        return true
+        local farm = g_farmManager ~= nil and g_farmManager:getFarmByUserId(userId) or nil
+        local farmId = farm ~= nil and farm.farmId or nil
+        if type(farmId) ~= "number" or farmId <= 0 then
+            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - the sender is in no farm", action)
+            return nil
+        end
+        if wireFarmId ~= nil and wireFarmId ~= 0 and wireFarmId ~= farmId then
+            Logging.warning("[Worker Costs] Rejected NS action (action=%d) - names farm %s but is farm %d", action, tostring(wireFarmId), farmId)
+            return nil
+        end
+        return farmId
     end
 
-    ns:registerAction(A.HIRE, { adminOnly = false, onAction = function(_userId, args)
+    ns:registerAction(A.HIRE, { adminOnly = false, onAction = function(userId, args)
         local slot   = (args and args[1]) or 1
-        local farmId = (args and args[2]) or 0
-        if farmOk(farmId, WCCommand.HIRE) then
+        local farmId = chargedFarm(userId, args and args[2], WCCommand.HIRE)
+        if farmId ~= nil then
             mgr:_applyCommandFromNetwork(WCCommand.HIRE, 0, slot, "", farmId)
         end
     end })
-    ns:registerAction(A.FIRE, { adminOnly = false, onAction = function(_userId, args)
+    ns:registerAction(A.FIRE, { adminOnly = false, onAction = function(userId, args)
         local uuid   = (args and args[1]) or 0
-        local farmId = (args and args[2]) or 0
-        if farmOk(farmId, WCCommand.FIRE) then
+        local farmId = chargedFarm(userId, args and args[2], WCCommand.FIRE)
+        if farmId ~= nil then
             mgr:_applyCommandFromNetwork(WCCommand.FIRE, uuid, 0, "", farmId)
         end
     end })
@@ -422,6 +469,12 @@ local function registerActions(ns, mgr)
     end })
     ns:registerAction(A.REFRESH_POOL, { adminOnly = false, onAction = function(_userId, _args)
         mgr:_applyCommandFromNetwork(WCCommand.REFRESH_POOL, 0, 0, "", 0)
+    end })
+    -- [MAINTENANCE row 290] A client admin's settings edit, positional key/value pairs. adminOnly: NetworkSync
+    -- refuses a sender who is not master before this runs (NetworkSync:_applyAction), and its 30 s full resync
+    -- reverts that client.
+    ns:registerAction(A.SET_SETTINGS, { adminOnly = true, onAction = function(_userId, args)
+        mgr:applySettingsFromNetwork(args)
     end })
 end
 

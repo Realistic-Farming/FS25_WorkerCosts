@@ -30,6 +30,9 @@ local modName = WorkerCostsModName
 -- =========================================================
 
 -- Load all source files in correct order
+-- Live Controls chord for an InputAction, so hints show the real
+-- binding rather than a factory default (KEYBINDS-R220-20261006).
+source(modDirectory .. "src/utils/WcLiveKeyLabel.lua")
 source(modDirectory .. "src/integrations/OptionScalingResolver.lua")
 source(modDirectory .. "src/settings/SettingsManager.lua")
 source(modDirectory .. "src/settings/Settings.lua")
@@ -58,6 +61,7 @@ source(modDirectory .. "src/hireHallCore/integration/HireHallJobMonitor.lua") --
 source(modDirectory .. "src/hireHallCore/xml/HireHallSchema.lua")
 
 source(modDirectory .. "src/gui/WCRosterPanel.lua") -- created in WorkerManager.new, so load before it
+source(modDirectory .. "src/WorkerContextInput.lua")
 source(modDirectory .. "src/WorkerManager.lua")
 source(modDirectory .. "src/WCNetworkEvents.lua")   -- Pro-Staff Phase 5: MP roster sync + command events
 
@@ -75,6 +79,7 @@ source(modDirectory .. "src/gui/RfPdaMenuPage.lua")
 source(modDirectory .. "src/gui/RfEscBootstrap.lua")
 -- DEV: Esc UIDebugger (F6). Install no-ops if Soil (or another mod) already registered.
 source(modDirectory .. "src/gui/RfEscUiDebugger.lua")
+source(modDirectory .. "src/gui/WcGuideDialog.lua")
 source(modDirectory .. "src/gui/WcRfPdaGuest.lua")
 source(modDirectory .. "src/gui/WCModGui.lua")
 
@@ -94,6 +99,10 @@ local function loadedMission(mission, node)
     end
     
     wm:onMissionLoaded()
+
+    -- RSF-F201: deterministic PLAYER input recovery once the mission is loaded.
+    -- No-op when the expected set is already complete or the context is absent.
+    wm:catchUpRosterInput()
 
     -- Trigger GUI tab registration after map load
     if g_wcModGui ~= nil then
@@ -124,6 +133,33 @@ end
 -- Hook into Mission lifecycle
 Mission00.load = Utils.prependedFunction(Mission00.load, load)
 Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadedMission)
+
+-- ---------------------------------------------------------
+-- Realistic Farming Control Center: publish a runnable delegate.
+-- Both the registry and the manager are read off g_currentMission at call time,
+-- which is the only channel that carries live between mod environments and also
+-- avoids capturing a manager that a reload has since replaced.
+-- ---------------------------------------------------------
+local function registerControlCenterActions()
+    local registry = g_currentMission ~= nil and g_currentMission.rfActionRegistry or nil
+    if registry == nil then return end
+
+    registry.registerAction({
+        action = "WC_OPEN_ROSTER",
+        button = "Open",
+        -- The roster panel draws on the HUD, so the dialog has to be out of the way.
+        closeFirst = true,
+        run = function()
+            local mgr = g_currentMission ~= nil and g_currentMission.workerCostsManager or nil
+            if mgr ~= nil and mgr.onOpenRosterInput ~= nil then
+                mgr:onOpenRosterInput()
+            end
+        end,
+    })
+end
+
+Mission00.loadMission00Finished = Utils.appendedFunction(
+    Mission00.loadMission00Finished, registerControlCenterActions)
 FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, unload)
 
 -- Update hook

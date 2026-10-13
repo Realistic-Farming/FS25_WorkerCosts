@@ -13,6 +13,23 @@ the repo's git history and README.
 
 ## [Unreleased]
 
+## [2.3.0.0] - 2026-10-12
+
+> **This is not a final release.** It gives everyone, testers and players, new or returning, everything we have built so far, so nobody has to wait on an old version any longer. The Realistic Farming suite is far from done: we are still building and expanding every mod, and completing it could take months, possibly a year. Expect changes and rough edges along the way, and please report anything that looks wrong.
+
+### Changed
+- **Payroll follows the game's calendar.** The monthly bill is issued on the last day of each month whatever the month length (a short month used to issue no bill), each farm is billed only for its own workers, and a bill is frozen when issued: Pay and Decline act on that exact bill, and declining no longer compounds the late penalty into the amount owed.
+- The Worker Costs page on the Realistic Farming Esc menu now holds hiring, firing, wage options, Reset and the crew board on one page; the old Worker Manager footer is gone.
+- The emergency loan in Income Mod can read your upcoming payroll bill.
+
+### Fixed
+- A save sitting on the last day of a month no longer opens the salary dialog on the loading screen, which could stop the game from starting.
+- Setting the clock backwards within a day no longer bills the "missed" hours.
+- Multiplayer: hiring and firing charge the farm of the player who did it; players see the host's Worker Costs settings within about a second; an admin's change applies for everyone from any settings screen or the console, and those settings are locked for non-admins.
+- The hire hall keeps its place when the roster grows.
+- Key presses are registered only where they belong (on foot or in a vehicle), and the roster key has a default and shows the live key.
+- Translations: the Cost Mode and Wage Level settings have their labels and Monthly Salary its tooltip, accented letters show correctly in seven languages, the settings labels reach all 26 languages, the Korean "Field Detail" label is fixed, the page legend shows a plain dot between page names, and the title and description read correctly in the mod manager.
+
 ### Added
 - Changelog file established (suite ruling 2026-08-22).
 - Playtest fixes: wage rate reads plain level/custom rates directly, dropping the option-scaling spine multiplier.

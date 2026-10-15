@@ -13,6 +13,13 @@ the repo's git history and README.
 
 ## [Unreleased]
 
+## [2.3.0.1] - 2026-10-15
+
+> **This is not a final release.** It gives everyone, testers and players, new or returning, everything we have built so far, so nobody has to wait on an old version any longer. The Realistic Farming suite is far from done: we are still building and expanding every mod, and completing it could take months, possibly a year. Expect changes and rough edges along the way, and please report anything that looks wrong.
+
+### Fixed
+- **Paying or declining the monthly salary after sleeping no longer leaves you without controls.** When the month ended while you slept, the salary summary opened during sleep, and after Pay or Decline the game kept running with no controls except the console. The summary now opens when you wake up.
+
 ## [2.3.0.0] - 2026-10-12
 
 > **This is not a final release.** It gives everyone, testers and players, new or returning, everything we have built so far, so nobody has to wait on an old version any longer. The Realistic Farming suite is far from done: we are still building and expanding every mod, and completing it could take months, possibly a year. Expect changes and rough edges along the way, and please report anything that looks wrong.

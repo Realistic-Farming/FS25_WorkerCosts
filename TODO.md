@@ -70,3 +70,15 @@
 
 - [x] `src/WorkerManager.lua`: `onSettingsSaved` on a pure client sends the admin keys changed since the last snapshot (`_adminEditsSinceSnapshot`, nothing with no snapshot); `applySettingsFromNetwork` validates (`SETTING_CHECKS`), applies through the setters and saves. `src/integrations/WorkerNetworkSyncBridge.lua`: the `WorkerCosts_SetSettings` action (adminOnly) and `sendSettings`. `src/WCNetworkEvents.lua`: `WCSettingsChangeEvent` (master-user gate, a refusal answered with the snapshot) and `WCNetwork_SendSettings`. `src/settings/Settings.lua`: `canEditAdminSettings` and `resetForUser`. The admin lock in `WCWageSettingsFrame`, `WorkerSettingsUI` (which now refreshes at every later open) and `WcRfPdaGuest`; the four user-facing resets call `resetForUser`. Bar `MAINT-290-client_admin_edits_test.lua`; battery `tools/test/mutate_maint290.py`, 21 of 21.
 - [~] In game (owed): TESTING row 524.
+
+## 2026-10-14 (Fred (via Desk)): keyboard defaults (Wizard, #152)
+
+- [x] `modDesc.xml`: WC_OPEN_ROSTER on Right Ctrl + P; `src/settings/WorkerSettingsGUI.lua` reads the live key through `src/utils/WcLiveKeyLabel.lua` (new, sourced in `src/main.lua`).
+- [ ] Known MINOR from the review: with Open Worker Roster unbound, the console line may read '(or press Unbound)'; TESTING row 542 asks for the exact wording.
+- [~] In game (owed): TESTING row 542.
+
+## 2026-10-15 (Fred (via Desk)): salary dialog held during sleep
+
+- [x] `src/WorkerSystem.lua`: `WorkerSystem.isPlayerSleeping()` (`g_sleepManager:getIsSleeping()`); `showSalaryDialog` stores the bill in `deferredSalaryDialog` while asleep; `update` shows it on the first awake frame, before its enabled/initialized early return.
+- [x] Bar `WC-sleep-salary_dialog_entry_test.lua` (32 rows; development fails 8, S1 and S2).
+- [~] In game (owed): TESTING row 587.

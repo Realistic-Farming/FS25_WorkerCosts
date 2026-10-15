@@ -70,3 +70,8 @@
 
 - [x] Open Worker Roster is bound to Right Ctrl + P (it was unbound; Right Shift + Q stays World Events' HUD drag). The 'workerCosts' console help names the live key (`src/utils/WcLiveKeyLabel.lua`) instead of 'ALT+H'. (Wizard's #152, merged at 79931238 on 2026-10-11, one PR of his keyboard-defaults wave.)
 - The in-game check is TESTING row 542. Docs by Fred's catch-up (R-51), on Tyson's word of 2026-10-14.
+
+## 2026-10-15 (Fred (via Desk)): the salary dialog waits until the player wakes
+
+- [x] With one day per month the month changes at midnight, often while the player sleeps, and the salary dialog opened during sleep. The game restores normal controls on wake-up only when no dialog is on top, so after Pay or Decline the player was left with no controls (only the console). While the player sleeps the dialog is now held, and it opens on the first frame after waking. Found by Tyson in play, 2026-10-15.
+- The in-game check is TESTING row 587. Design origin none.

@@ -76,3 +76,9 @@
 - [x] `modDesc.xml`: WC_OPEN_ROSTER on Right Ctrl + P; `src/settings/WorkerSettingsGUI.lua` reads the live key through `src/utils/WcLiveKeyLabel.lua` (new, sourced in `src/main.lua`).
 - [ ] Known MINOR from the review: with Open Worker Roster unbound, the console line may read '(or press Unbound)'; TESTING row 542 asks for the exact wording.
 - [~] In game (owed): TESTING row 542.
+
+## 2026-10-15 (Fred (via Desk)): salary dialog held during sleep
+
+- [x] `src/WorkerSystem.lua`: `WorkerSystem.isPlayerSleeping()` (`g_sleepManager:getIsSleeping()`); `showSalaryDialog` stores the bill in `deferredSalaryDialog` while asleep; `update` shows it on the first awake frame, before its enabled/initialized early return.
+- [x] Bar `WC-sleep-salary_dialog_entry_test.lua` (32 rows; development fails 8, S1 and S2).
+- [~] In game (owed): TESTING row 587.

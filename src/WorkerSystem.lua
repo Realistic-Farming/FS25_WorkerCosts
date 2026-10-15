@@ -94,6 +94,7 @@ function WorkerSystem.new(settings, roster)
     self.lastMonthPaid  = -1       -- LEGACY schema-1 field; retained only for load seeding
     self.declinedLastMonth = false -- true if player declined last bill (next bill +20%)
     self.pendingSalary  = nil      -- { billId, entries, total, month } while dialog is open
+    self.deferredSalaryDialog = nil -- { entries, total, month } held while the player sleeps
     -- F223: legacy schema-1 rows with no valid recorded farm. Never defaulted to a
     -- farm, never charged to a borrower; retained as inspectable evidence only.
     self.legacyUnattributed = {}
@@ -763,6 +764,13 @@ function WorkerSystem:consumeInGameMs()
 end
 
 function WorkerSystem:update(dt)
+    -- A salary bill issued while the player slept is shown once they wake (showSalaryDialog).
+    if self.deferredSalaryDialog ~= nil and not WorkerSystem.isPlayerSleeping() then
+        local held = self.deferredSalaryDialog
+        self.deferredSalaryDialog = nil
+        self:showSalaryDialog(held.entries, held.total, held.month)
+    end
+
     if not self.settings.enabled or not self.isInitialized then
         return
     end
@@ -1209,6 +1217,14 @@ function WorkerSystem:_billFullyResolved(bill)
     return true
 end
 
+--- True while the local player is asleep. A dialog opened during sleep breaks the wake-up:
+--- SleepManager:stopSleep reverts the sleep input context only when it is the current one,
+--- so with a dialog on top the sleep context stays under it and the player is left with no
+--- controls once the dialog closes.
+function WorkerSystem.isPlayerSleeping()
+    return g_sleepManager ~= nil and g_sleepManager.getIsSleeping ~= nil and g_sleepManager:getIsSleeping() == true
+end
+
 --- Show the salary summary to the player using the registered WCSalaryDialog screen.
 function WorkerSystem:showSalaryDialog(entries, total, month)
     local capturedSelf = self
@@ -1218,6 +1234,13 @@ function WorkerSystem:showSalaryDialog(entries, total, month)
     if g_wcSalaryDialog == nil or g_gui == nil then
         self:log("showSalaryDialog: WCSalaryDialog not registered — paying automatically")
         self:executeMonthlySalaryPayment()
+        return
+    end
+
+    -- Asleep: hold the bill until the player wakes; update shows it then.
+    if WorkerSystem.isPlayerSleeping() then
+        self.deferredSalaryDialog = { entries = entries, total = total, month = month }
+        self:log("showSalaryDialog: player asleep, dialog held until wake-up")
         return
     end
 

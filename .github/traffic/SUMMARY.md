@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-10-22T12:42:09Z
-**Days tracked:** 172 | **Download snapshots:** 735 (hourly)
+**Last updated:** 2026-10-23T00:18:38Z
+**Days tracked:** 173 | **Download snapshots:** 737 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 127 | 73 |
-| Git Clones | 677 | 196 |
+| Page Views | 122 | 69 |
+| Git Clones | 693 | 205 |
 
 > **Engagement:** 1.7 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 1060 of 73 visitors cloned or downloaded (**1452.0%**)
+> **14-day conversion:** 1071 of 69 visitors cloned or downloaded (**1552.1%**)
 >
-> Unique cloners: 196 | Release downloads: 864
+> Unique cloners: 205 | Release downloads: 866
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 864 |
-| Git Clones (14-day) | 677 |
-| **Total Acquisitions** | **1541** |
+| Zip Downloads | 866 |
+| Git Clones (14-day) | 693 |
+| **Total Acquisitions** | **1559** |
 
 ---
 
@@ -54,10 +54,10 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 31 | 26 |
+| github.com | 29 | 24 |
 | realisticfarming.com | 10 | 9 |
-| Google | 6 | 5 |
 | kingmods.net | 5 | 5 |
+| Google | 5 | 4 |
 | yandex.ru | 4 | 3 |
 
 ---
@@ -78,8 +78,8 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 62 | 47 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 21 | 16 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 59 | 44 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 20 | 16 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.0` | 16 | 13 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.1` | 10 | 10 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 6 | 6 |

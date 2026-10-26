@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-10-24T18:30:04Z
-**Days tracked:** 174 | **Download snapshots:** 745 (hourly)
+**Last updated:** 2026-10-26T00:59:03Z
+**Days tracked:** 175 | **Download snapshots:** 750 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 119 | 69 |
-| Git Clones | 671 | 198 |
+| Page Views | 119 | 68 |
+| Git Clones | 675 | 195 |
 
 > **Engagement:** 1.7 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 1071 of 69 visitors cloned or downloaded (**1552.1%**)
+> **14-day conversion:** 1073 of 68 visitors cloned or downloaded (**1577.9%**)
 >
-> Unique cloners: 198 | Release downloads: 873
+> Unique cloners: 195 | Release downloads: 878
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 873 |
-| Git Clones (14-day) | 671 |
-| **Total Acquisitions** | **1544** |
+| Zip Downloads | 878 |
+| Git Clones (14-day) | 675 |
+| **Total Acquisitions** | **1553** |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 28 | 23 |
-| realisticfarming.com | 10 | 9 |
+| github.com | 28 | 21 |
+| realisticfarming.com | 11 | 10 |
 | Google | 6 | 5 |
 | kingmods.net | 5 | 5 |
 | yandex.ru | 3 | 2 |
@@ -78,11 +78,11 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 59 | 44 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 17 | 16 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 59 | 42 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 17 | 15 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.0` | 16 | 13 |
 | `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.1` | 12 | 12 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 4 | 4 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.2.2.2` | 3 | 3 |
 | `/Realistic-Farming/FS25_WorkerCosts/actions` | 1 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md` | 1 | 1 |
 | `/Realistic-Farming/FS25_WorkerCosts/blob/main/src/main.lua` | 1 | 1 |

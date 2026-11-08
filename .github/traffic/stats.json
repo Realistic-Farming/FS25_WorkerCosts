@@ -52514,15 +52514,15 @@
     "watchers": 0
   },
   {
-    "timestamp": "2026-11-08T06:51:30Z",
+    "timestamp": "2026-11-08T18:42:52Z",
     "date": "2026-11-08",
     "views": {
-      "count": 284,
-      "uniques": 228
+      "count": 295,
+      "uniques": 234
     },
     "clones": {
-      "count": 295,
-      "uniques": 103
+      "count": 289,
+      "uniques": 104
     },
     "referrers": [
       {
@@ -52532,18 +52532,18 @@
       },
       {
         "referrer": "github.com",
-        "count": 44,
-        "uniques": 32
+        "count": 49,
+        "uniques": 36
       },
       {
         "referrer": "Google",
-        "count": 8,
-        "uniques": 7
+        "count": 10,
+        "uniques": 9
       },
       {
         "referrer": "realisticfarming.com",
-        "count": 6,
-        "uniques": 6
+        "count": 5,
+        "uniques": 5
       },
       {
         "referrer": "Bing",
@@ -52570,14 +52570,14 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts",
         "title": "Overview",
-        "count": 91,
-        "uniques": 69
+        "count": 97,
+        "uniques": 73
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.1",
         "title": "/releases/tag/v2.3.0.1",
-        "count": 22,
-        "uniques": 19
+        "count": 25,
+        "uniques": 22
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/1",
@@ -52588,8 +52588,8 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/releases",
         "title": "/releases",
-        "count": 15,
-        "uniques": 14
+        "count": 13,
+        "uniques": 12
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/65",
@@ -52618,8 +52618,8 @@
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/78",
         "title": "/issues/78",
-        "count": 7,
-        "uniques": 7
+        "count": 8,
+        "uniques": 8
       },
       {
         "path": "/Realistic-Farming/FS25_WorkerCosts/issues/79",
@@ -52632,7 +52632,7 @@
       {
         "assets": [
           {
-            "downloads": 100,
+            "downloads": 101,
             "name": "FS25_WorkerCosts.zip"
           }
         ],

@@ -5969,5 +5969,52 @@
       "count": 1,
       "uniques": 1
     }
+  ],
+  "2026-11-12": [
+    {
+      "referrer": "aocr.org",
+      "count": 146,
+      "uniques": 145
+    },
+    {
+      "referrer": "github.com",
+      "count": 50,
+      "uniques": 37
+    },
+    {
+      "referrer": "Google",
+      "count": 14,
+      "uniques": 10
+    },
+    {
+      "referrer": "realisticfarming.com",
+      "count": 3,
+      "uniques": 3
+    },
+    {
+      "referrer": "Bing",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "DuckDuckGo",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "duck.ai",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "search.brave.com",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "referrer": "ya.ru",
+      "count": 1,
+      "uniques": 1
+    }
   ]
 }

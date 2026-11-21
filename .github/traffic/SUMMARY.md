@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-11-20T00:06:22Z
-**Days tracked:** 189 | **Download snapshots:** 813 (hourly)
+**Last updated:** 2026-11-21T18:41:04Z
+**Days tracked:** 190 | **Download snapshots:** 819 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 217 | 165 |
-| Git Clones | 245 | 102 |
+| Page Views | 139 | 87 |
+| Git Clones | 253 | 107 |
 
-> **Engagement:** 1.3 pages per visitor (14-day avg)
+> **Engagement:** 1.5 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 1086 of 165 visitors cloned or downloaded (**658.1%**)
+> **14-day conversion:** 1098 of 87 visitors cloned or downloaded (**1262.0%**)
 >
-> Unique cloners: 102 | Release downloads: 984
+> Unique cloners: 107 | Release downloads: 991
 
 ---
 
@@ -42,9 +42,9 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 984 |
-| Git Clones (14-day) | 245 |
-| **Total Acquisitions** | **1229** |
+| Zip Downloads | 991 |
+| Git Clones (14-day) | 253 |
+| **Total Acquisitions** | **1244** |
 
 ---
 
@@ -54,14 +54,14 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| aocr.org | 88 | 87 |
-| github.com | 40 | 32 |
-| Google | 16 | 13 |
+| github.com | 42 | 35 |
+| Google | 18 | 15 |
+| Bing | 3 | 3 |
 | realisticfarming.com | 3 | 3 |
-| Bing | 2 | 2 |
 | ya.ru | 2 | 2 |
 | DuckDuckGo | 1 | 1 |
 | duck.ai | 1 | 1 |
+| kingmods.net | 1 | 1 |
 | search.brave.com | 1 | 1 |
 
 ---
@@ -82,16 +82,16 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/Realistic-Farming/FS25_WorkerCosts` | 79 | 57 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.1` | 26 | 23 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/1` | 17 | 17 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/73` | 7 | 7 |
-| `/Realistic-Farming/FS25_WorkerCosts/releases` | 7 | 7 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/78` | 6 | 6 |
+| `/Realistic-Farming/FS25_WorkerCosts` | 86 | 65 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases/tag/v2.3.0.1` | 29 | 26 |
+| `/Realistic-Farming/FS25_WorkerCosts/releases` | 6 | 6 |
 | `/Realistic-Farming/FS25_WorkerCosts/issues/54` | 6 | 5 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/28` | 5 | 5 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/38` | 5 | 5 |
-| `/Realistic-Farming/FS25_WorkerCosts/issues/69` | 5 | 5 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues/75` | 3 | 2 |
+| `/Realistic-Farming/FS25_WorkerCosts/blob/main/README.md` | 2 | 2 |
+| `/Realistic-Farming/FS25_WorkerCosts/blob/main/icon.png` | 2 | 2 |
+| `/Realistic-Farming/FS25_WorkerCosts/commit/dd2991f218d1ff97a5ed48ef6aef4a5b25fd8f21` | 1 | 1 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues/24` | 1 | 1 |
+| `/Realistic-Farming/FS25_WorkerCosts/issues/28` | 1 | 1 |
 
 ---
 

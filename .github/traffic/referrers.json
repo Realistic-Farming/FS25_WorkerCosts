@@ -6335,22 +6335,27 @@
     {
       "referrer": "github.com",
       "count": 38,
-      "uniques": 30
+      "uniques": 29
     },
     {
       "referrer": "Google",
-      "count": 14,
-      "uniques": 14
+      "count": 12,
+      "uniques": 12
     },
     {
       "referrer": "Bing",
-      "count": 4,
-      "uniques": 4
+      "count": 3,
+      "uniques": 3
     },
     {
       "referrer": "realisticfarming.com",
       "count": 3,
       "uniques": 3
+    },
+    {
+      "referrer": "kingmods.net",
+      "count": 2,
+      "uniques": 2
     },
     {
       "referrer": "ya.ru",
@@ -6364,11 +6369,6 @@
     },
     {
       "referrer": "duck.ai",
-      "count": 1,
-      "uniques": 1
-    },
-    {
-      "referrer": "kingmods.net",
       "count": 1,
       "uniques": 1
     },
